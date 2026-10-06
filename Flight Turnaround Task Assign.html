@@ -137,7 +137,8 @@ function jpg(){
  const iy=y+HH-35;x.textAlign="left";x.font="600 26px sans-serif";let cx=L0;
  const item=(col,t,v)=>{x.fillStyle=col;x.beginPath();x.arc(cx+8,iy-9,8,0,7);x.fill();x.fillStyle="#fff";x.font="600 26px sans-serif";x.fillText(t,cx+26,iy);cx+=26+x.measureText(t).width+10;
   if(v!=null){const w=x.measureText(String(v)).width+22;rr(x,cx,iy-30,w,40,10);x.fillStyle="rgba(255,255,255,0.18)";x.fill();x.fillStyle="#fff";x.fillText(String(v),cx+11,iy);cx+=w}cx+=26};
- item("#2fd4c0","OFFICER: "+U(res.off||"—"));item("#3fdc6a","STAFF AVAILABLE",av);item("#ff4d4d","STAFF ON LEAVE",lv);
+ x.fillStyle="#2fd4c0";x.beginPath();x.arc(cx+8,iy-9,8,0,7);x.fill();x.fillStyle="#fff";x.font="600 26px sans-serif";x.fillText("OFFICER: ",cx+26,iy);cx+=26+x.measureText("OFFICER: ").width;
+ const on=U(res.off||"—");x.fillStyle="#3fdc6a";x.font="700 26px sans-serif";x.fillText(on,cx,iy);cx+=x.measureText(on).width+26;item("#3fdc6a","STAFF AVAILABLE",av);item("#ff4d4d","STAFF ON LEAVE",lv);
  y+=HH+30;
  blocks.forEach((b,k)=>{card(y,hc[k]);x.textAlign="center";x.fillStyle="#fff";x.font="800 34px sans-serif";x.fillText(b[0],W/2,y+60);
   x.strokeStyle="rgba(255,255,255,0.2)";x.lineWidth=2;x.beginPath();x.moveTo(L0,y+82);x.lineTo(R0,y+82);x.stroke();
@@ -146,8 +147,8 @@ function jpg(){
    x.strokeStyle="rgba(255,255,255,0.12)";x.beginPath();x.moveTo(L0,ry+h);x.lineTo(R0,ry+h);x.stroke();ry+=h});
   y+=hc[k]+30});
  x.textAlign="center";x.font="800 40px sans-serif";const t1="PRE-FLIGHT BRIEFING : ",t2=brief(),w1=x.measureText(t1).width,w2=x.measureText(t2).width,sx=W/2-(w1+w2)/2;
- x.textAlign="left";x.fillStyle="#fff";x.fillText(t1,sx,y+45);x.fillStyle="#ff3b3b";x.fillText(t2,sx+w1,y+45);
- x.textAlign="center";x.font="700 26px sans-serif";x.fillText("MANDATORY ATTENDANCE",W/2,y+90);
+ x.textAlign="left";x.fillStyle="#fff";x.fillText(t1,sx,y+45);x.fillStyle="#ff8a8a";x.fillText(t2,sx+w1,y+45);
+ x.textAlign="center";x.fillStyle="#ff3b3b";x.font="700 26px sans-serif";x.fillText("MANDATORY ATTENDANCE",W/2,y+90);
  return c}
 let cv=null;
 $("jpg").onclick=()=>{cv=jpg();$("img").src=cv.toDataURL("image/jpeg",.92);$("modal").style.display="block"};
@@ -203,4 +204,5 @@ function editFlight(id){const l=H.log.find(x=>x.id==id);if(!l)return;
  drawStaff();res={a:JSON.parse(JSON.stringify(l.a)),b:JSON.parse(JSON.stringify(l.b)),saved:0,sid:l.id,off:l.off||"",ord:ordFor($("ac").value)};
  tab("A");render();window.scrollTo(0,0);alert("Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.")}
 $("dc").onclick=e=>{const b=e.target.closest("[data-ed]");if(b)editFlight(b.dataset.ed)};
+$("ci").onchange=()=>{const v=$("ci").value;if(!v)return;const [h,m]=v.split(":").map(Number),f=d=>{const t=(h*60+m+d)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};$("ar").value=f(90);$("dp").value=f(120)};
 </script></body></html>
