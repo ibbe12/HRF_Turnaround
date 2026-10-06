@@ -103,7 +103,7 @@ function render(){
  $("out").innerHTML=`<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>`+sec("1 · Check-In Tasks","a")+sec("2 · Flight Turnaround Tasks ("+$("ac").value+")","b");
  $("ex").style.display="flex";document.querySelectorAll("#out select").forEach(e=>e.onchange=()=>manual(e.dataset.p,e.dataset.t,+e.dataset.i,e.value))}
 $("go").onclick=assign;
-$("save").onclick=()=>{if(!res){alert("Assign first");return}if(res.saved){alert("Already saved");return}res.saved=1;H.log=H.log||[];if(res.sid)H.log=H.log.filter(l=>l.id!=res.sid);res.sid=Date.now();H.log.push({id:res.sid,date:$("date").value,fno:$("fno").value,ac:$("ac").value,a:res.a,b:res.b});
+$("save").onclick=()=>{if(!res){alert("Assign first");return}if(res.saved){alert("Already saved");return}res.saved=1;H.log=H.log||[];if(res.sid)H.log=H.log.filter(l=>l.id!=res.sid);res.sid=Date.now();H.log.push({id:res.sid,date:$("date").value,fno:$("fno").value,ac:$("ac").value,ci:$("ci").value,ar:$("ar").value,dp:$("dp").value,a:res.a,b:res.b});
  [...res.a.map(o=>o),...res.b].forEach(o=>o.staff.forEach(s=>{if(STAFF.includes(s))H.last[key(s,o.task)]=++H.seq}));
  try{localStorage.setItem("ta_h",JSON.stringify(H))}catch(e){}alert("Saved. Next assignment will favour staff who haven't done each task for longest.")};
 $("rst").onclick=()=>{if(confirm("Clear task history?")){H={seq:0,last:{},log:[]};try{localStorage.removeItem("ta_h")}catch(e){}dash()}};
@@ -166,7 +166,7 @@ function dash(){
   h+=`<div class="card"><h2>${who} · task breakdown</h2>${Object.keys(tc).map(t=>bar(t,tc[t],m)).join("")||"No records in this period"}</div>`;
   if(F.length)h+=`<div class="card"><h2>${who} · task details</h2><div class="sc"><table><tr><th>Date</th><th>Flight</th><th>Part</th><th>Task</th></tr>${F.sort((a,b)=>a.d<b.d?1:-1).map(x=>`<tr><td>${x.d}</td><td>${esc(x.f||"—")}</td><td>${x.part}</td><td>${esc(x.t)}</td></tr>`).join("")}</table></div></div>`;
  }
- h+=`<div class="card"><h2>Saved flights (${L.length})</h2>${L.map(l=>`<details><summary>${l.date} · ${esc(l.fno||"—")} · ${l.ac}</summary>${[...l.a,...l.b].map(o=>`<div class="t"><b>${esc(o.task)}</b><span>${esc(o.staff.join(", "))}</span></div>`).join("")}<button class="del" data-del="${l.id}">Delete</button></details>`).join("")||"No saved flights"}</div>`;
+ h+=`<div class="card"><h2>Saved flights (${L.length})</h2>${L.map(l=>`<details><summary>${l.date} · ${esc(l.fno||"—")} · ${l.ac}</summary>${[...l.a,...l.b].map(o=>`<div class="t"><b>${esc(o.task)}</b><span>${esc(o.staff.join(", "))}</span></div>`).join("")}<button class="del" data-ed="${l.id}">Edit</button> <button class="del" data-del="${l.id}">Delete</button></details>`).join("")||"No saved flights"}</div>`;
  $("dc").innerHTML=h;
  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this flight record?")){H.log=H.log.filter(l=>l.id!=b.dataset.del);try{localStorage.setItem("ta_h",JSON.stringify(H))}catch(e){}dash()}})}
 
@@ -175,4 +175,11 @@ $("ls").innerHTML=STAFF.map(n=>`<option>${n}</option>`).join("");$("lf").value=$
 $("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value});$("ln").value="";svL();leaves();drawStaff()};
 function leaves(){const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">Delete</button></span></div>`).join("")||"No leave records";
  document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{LV=LV.filter(l=>l.id!=b.dataset.lv);svL();leaves();drawStaff()})}
+
+function ordFor(ac){return["Baggage Tractor","GPU","Chock / Cabin Cleaning",...(ac.startsWith("ATR")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Unload / Load","Unload / Load Help"])]}
+function editFlight(id){const l=H.log.find(x=>x.id==id);if(!l)return;
+ $("date").value=l.date;$("fno").value=l.fno||"";$("ac").value=({ATR:"ATR-72",Dash:"DH-300"})[l.ac]||l.ac;$("ci").value=l.ci||"";$("ar").value=l.ar||"";$("dp").value=l.dp||"";
+ drawStaff();res={a:JSON.parse(JSON.stringify(l.a)),b:JSON.parse(JSON.stringify(l.b)),saved:0,sid:l.id,ord:ordFor($("ac").value)};
+ tab("A");render();window.scrollTo(0,0);alert("Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.")}
+$("dc").onclick=e=>{const b=e.target.closest("[data-ed]");if(b)editFlight(b.dataset.ed)};
 </script></body></html>
