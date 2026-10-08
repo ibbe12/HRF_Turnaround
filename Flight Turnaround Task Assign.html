@@ -6,7 +6,7 @@
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--background:240 10% 3.9%;--foreground:0 0% 98%;--card:240 10% 3.9%;--primary:0 0% 98%;--primary-foreground:240 5.9% 10%;--secondary:240 3.7% 15.9%;--secondary-foreground:0 0% 98%;--muted:240 3.7% 15.9%;--muted-foreground:240 5% 64.9%;--accent:240 3.7% 15.9%;--border:240 3.7% 15.9%;--ring:240 4.9% 83.9%;--sidebar:240 5.9% 10%;}}
 :root[data-theme="dark"]{--background:240 10% 3.9%;--foreground:0 0% 98%;--card:240 10% 3.9%;--primary:0 0% 98%;--primary-foreground:240 5.9% 10%;--secondary:240 3.7% 15.9%;--secondary-foreground:0 0% 98%;--muted:240 3.7% 15.9%;--muted-foreground:240 5% 64.9%;--accent:240 3.7% 15.9%;--border:240 3.7% 15.9%;--ring:240 4.9% 83.9%;--sidebar:240 5.9% 10%;}
 *{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:hsl(var(--muted)/.4);color:var(--tx);-webkit-font-smoothing:antialiased}
-main{max-width:760px;margin:auto;padding:16px}
+main{max-width:none;padding:16px}
 h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:4px 0 14px;display:flex;align-items:center;gap:8px}
 .card{background:hsl(var(--card));border:1px solid var(--bd);border-radius:calc(var(--radius) + 2px);padding:20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 h2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px;color:var(--tx)}
@@ -41,7 +41,13 @@ details{border-bottom:1px solid var(--bd);padding:10px 0}summary{cursor:pointer;
 #sb.o{transform:none;box-shadow:4px 0 24px rgba(0,0,0,.25)}#sb h2{display:flex;align-items:center;gap:10px;font-size:15px;padding:4px 8px 16px;margin:0}
 #sb h2 .i{background:hsl(var(--primary));color:hsl(var(--primary-foreground));padding:6px;width:30px;height:30px;border-radius:8px;margin:0}
 #sb button{width:100%;justify-content:flex-start;background:transparent;color:var(--tx);height:36px;margin-bottom:2px}#sb button:hover{background:hsl(var(--accent));opacity:1}#sb button.on{background:hsl(var(--accent));font-weight:600}
-@media(min-width:900px){#sb{transform:none;box-shadow:none}main{margin-left:250px!important;max-width:900px!important}#mb{display:none}}
+@media(min-width:900px){#sb{transform:none;box-shadow:none}main{margin-left:250px!important;max-width:none!important}#mb{display:none}}
+#pL>.card:has(#lbal){grid-column:1/-1}
+.mx{table-layout:fixed}.mx th:first-child{width:76px}.mx th:not(:first-child){writing-mode:vertical-rl;transform:rotate(180deg);height:128px;white-space:nowrap;font-size:11px;padding:6px 0;vertical-align:middle}.mx td{padding:6px 0;font-size:12px}.mx td:first-child{font-size:12px;padding-left:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#dc>.card{margin-bottom:0}#dc>.kp,#dc>.card:has(.mx),#dc>.card:last-child{grid-column:1/-1}
+#out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#out>p{grid-column:1/-1;margin:0}#out>.card{margin-bottom:0}#out>div:first-of-type{grid-column:1/-1}
+#pL{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#pL>.card{margin-bottom:0}#pL>.card:first-child{grid-column:1/-1}#pB .card{max-width:760px}
+@media(max-width:600px){.card{padding:14px}}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);overflow:auto;padding:16px;z-index:9}#modal img{width:100%;max-width:480px;display:block;margin:12px auto;border-radius:var(--radius)}
 </style></head><body><aside id="sb"><h2 style="padding:0 6px"><span data-ic="airplane"></span> Ops Menu</h2><button id="nD"><span data-ic="stats-chart-outline"></span> Dashboard</button><button id="nA" class="on"><span data-ic="clipboard-outline"></span> Task Assign</button><button id="nL"><span data-ic="calendar-outline"></span> Leave Management</button><button id="nB"><span data-ic="save-outline"></span> Data Backup</button><p id="sbw" class="lic" style="padding:0 6px"></p></aside><main>
 <h1><span data-ic="airplane"></span> Flight Turnaround Task Assign</h1>
@@ -63,7 +69,8 @@ details{border-bottom:1px solid var(--bd);padding:10px 0}summary{cursor:pointer;
 <div class="card"><h2>Filter</h2><div class="tabs" id="ptabs" style="margin-bottom:12px"><button data-p="day">Daily</button><button data-p="week">Weekly</button><button data-p="month" class="on">Monthly</button><button data-p="year">Yearly</button><button data-p="all">All time</button></div><div class="g"><div style="display:none"><label>Period</label><select id="fp"><option value="day">Daily</option><option value="week">Weekly</option><option value="month" selected>Monthly</option><option value="year">Yearly</option><option value="all">All time</option></select></div>
 <div><label>Reference date</label><input type="date" id="fr"></div><div><label>Staff</label><select id="fs"><option value="all">All staff</option></select></div></div><p class="lic" id="fl"></p></div>
 <div id="dc"></div></div>
-<div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px"><span data-ic="calendar-outline"></span> Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
+<div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Leave type</label><select id="lty"><option>Annual Leave</option><option>FRL</option><option>SL</option><option>SLM</option></select></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px"><span data-ic="calendar-outline"></span> Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
+<div class="card"><h2>Leave balance</h2><p class="lic">Annual Leave 30 days, FRL 10, SL 15, SLM 15 per leave year. Each person's leave year starts on the anniversary of their join date, so enter join dates below. Days are counted as calendar days (weekends included). Leave records saved before this update count as Annual Leave.</p><div id="lbal" class="sc"></div></div>
 <div class="card"><h2>Calendar</h2><div id="lc"></div></div>
 <div class="card"><h2>Leave records</h2><div id="ll"></div></div></div>
 <div id="pB" style="display:none"><div class="card"><h2>Data backup</h2><p id="bkst" class="lic"></p>
@@ -209,7 +216,7 @@ function dash(){
  if(who=="all"){
   h+=`<div class="card"><h2>Assignments per staff</h2>${STAFF.map(n=>bar(n,cnt[n],mx)).join("")}</div>`;
   const T=[...new Set(F.map(x=>x.t))],M={};let cm=1;F.forEach(x=>{const k=x.n+"|"+x.t;M[k]=(M[k]||0)+1;cm=Math.max(cm,M[k])});
-  if(T.length)h+=`<div class="card"><h2>Staff × task</h2><div class="sc"><table><tr><th>Staff</th>${T.map(t=>`<th>${esc(t)}</th>`).join("")}</tr>${STAFF.map(n=>`<tr><td>${n}</td>${T.map(t=>{const c=M[n+"|"+t]||0;return`<td style="background:hsla(142,71%,45%,${c/cm*.6})">${c||""}</td>`}).join("")}</tr>`).join("")}</table></div></div>`;
+  if(T.length)h+=`<div class="card"><h2>Staff × task</h2><div class="sc"><table class="mx"><tr><th>Staff</th>${T.map(t=>`<th>${esc(t)}</th>`).join("")}</tr>${STAFF.map(n=>`<tr><td>${n}</td>${T.map(t=>{const c=M[n+"|"+t]||0;return`<td style="background:hsla(142,71%,45%,${c/cm*.6})">${c||""}</td>`}).join("")}</tr>`).join("")}</table></div></div>`;
  }else{
   const tc={};F.forEach(x=>tc[x.t]=(tc[x.t]||0)+1);const m=Math.max(1,...Object.values(tc));
   h+=`<div class="card"><h2>${who} · task breakdown</h2>${Object.keys(tc).map(t=>bar(t,tc[t],m)).join("")||"No records in this period"}</div>`;
@@ -222,8 +229,8 @@ function dash(){
 
 const svL=()=>{persist("ta_lv",LV);};
 $("ls").innerHTML=`<optgroup label="Staff">${STAFF.map(n=>`<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map(n=>`<option>${n}</option>`).join("")}</optgroup>`;$("lf").value=$("lt").value=fd(new Date());
-$("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value});$("ln").value="";svL();leaves();drawStaff()};
-function leaves(){cal();const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`).join("")||"No leave records";
+$("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value,type:$("lty").value});$("ln").value="";svL();leaves();drawStaff()};
+function leaves(){cal();bal();const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type||"Annual Leave")} · ${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`).join("")||"No leave records";
  document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{LV=LV.filter(l=>l.id!=b.dataset.lv);svL();leaves();drawStaff()})}
 
 function ordFor(ac){return["Baggage Tractor","GPU","Chock / Cabin Cleaning",...(ac.startsWith("ATR")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Unload / Load","Unload / Load Help"])]}
@@ -242,7 +249,7 @@ function cal(){const y=cm.getFullYear(),mo=cm.getMonth(),first=(new Date(y,mo,1)
  for(let d=1;d<=dim;d++){const ds=y+"-"+pad(mo+1)+"-"+pad(d),ls=LV.filter(l=>l.f<=ds&&ds<=l.t);
   h+=`<div class="cd ${ds==td?"td":""} ${ds==sel?"sl":""}" data-d="${ds}"><span>${d}</span>${ls.length?`<em>${ls.length}</em>`:""}${ls.slice(0,3).map(l=>`<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`).join("")}${ls.length>3?`<div class="lic" style="font-size:9px">+${ls.length-3} more</div>`:""}</div>`}
  const sl=LV.filter(l=>l.f<=sel&&sel<=l.t);
- h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
+ h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${esc(l.type||"Annual Leave")} · ${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
  $("lc").innerHTML=h;$("cp").onclick=()=>{cm=new Date(y,mo-1,1);cal()};$("cn").onclick=()=>{cm=new Date(y,mo+1,1);cal()};
  document.querySelectorAll("[data-d]").forEach(e=>e.onclick=()=>{sel=e.dataset.d;$("lf").value=$("lt").value=sel;cal()})}
 
@@ -258,7 +265,7 @@ async function saveFile(name,text,mime){
  try{const f=new File([text],name,{type:mime});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return"shared"}}catch(e){if(e&&e.name=="AbortError")return"declined"}
  try{const u=URL.createObjectURL(new Blob([text],{type:mime})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return"link"}catch(e){}
  return"none"}
-const bkData=()=>JSON.stringify({app:"ta",v:1,saved:new Date().toISOString(),H,S,LV});
+const bkData=()=>JSON.stringify({app:"ta",v:1,saved:new Date().toISOString(),H,S,LV,JD});
 $("bkb").onclick=async()=>{const name="turnaround-backup-"+fd(new Date())+".json",r=await saveFile(name,bkData(),"application/json");
  if(r=="declined"){$("bkm").textContent="Backup cancelled.";return}
  if(r=="none"||r=="link"){$("bkm").textContent=r=="link"?"Download started. If no file appears on your device, use “Copy Backup Text” below and paste it into a note or message to yourself.":"This view can't save files. Use “Copy Backup Text” below instead.";return}
@@ -270,7 +277,7 @@ function merge(d,label){try{if(d.app!="ta"||!d.H)throw 0;
   const ids=new Set(H.log.map(l=>l.id));let n=0;(d.H.log||[]).forEach(l=>{if(!ids.has(l.id)){H.log.push(l);n++}});
   Object.entries(d.H.last||{}).forEach(([k,v])=>{if(!(k in H.last)||H.last[k]<v)H.last[k]=v});H.seq=Math.max(H.seq||0,d.H.seq||0);
   const li=new Set(LV.map(l=>l.id));let m2=0;(d.LV||[]).forEach(l=>{if(!li.has(l.id)){LV.push(l);m2++}});
-  persist("ta_h",H);persist("ta_lv",LV);META.changes=0;svM();bk();drawStaff();
+  Object.entries(d.JD||{}).forEach(([k,v])=>{if(!JD[k])JD[k]=v});persist("ta_jd",JD);persist("ta_h",H);persist("ta_lv",LV);META.changes=0;svM();bk();drawStaff();
   $("bkm").textContent=`Restored ${n} flight(s) and ${m2} leave record(s) from ${label}.`}
  catch(x){$("bkm").textContent="That isn't a valid backup."}}
 $("bkr").onclick=()=>$("bkf").click();
@@ -279,4 +286,16 @@ $("bkp").onclick=()=>{try{merge(JSON.parse($("bkpaste").value.trim()),"pasted te
 bk();
 $("ptabs").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;$("fp").value=b.dataset.p;[...$("ptabs").children].forEach(x=>x.classList.toggle("on",x==b));dash()};
 document.querySelectorAll("[data-ic]").forEach(e=>{e.innerHTML=ic(e.dataset.ic);e.style.display="contents"});
+
+let JD={};try{JD=JSON.parse(localStorage.getItem("ta_jd"))||{}}catch(e){}
+const LT={"Annual Leave":30,"FRL":10,"SL":15,"SLM":15};
+function cyc(jd,ref){const j=new Date(jd+"T00:00:00"),r=new Date(ref+"T00:00:00");let st=new Date(r.getFullYear(),j.getMonth(),j.getDate());if(st>r)st=new Date(r.getFullYear()-1,j.getMonth(),j.getDate());if(r<j)st=j;
+ return[fd(st),fd(new Date(st.getFullYear()+1,st.getMonth(),st.getDate()-1))]}
+function used(n,t,cs,ce){return LV.filter(l=>l.n==n&&(l.type||"Annual Leave")==t).reduce((a,l)=>{const s0=l.f>cs?l.f:cs,e0=l.t<ce?l.t:ce;if(s0>e0)return a;return a+Math.round((new Date(e0+"T00:00:00")-new Date(s0+"T00:00:00"))/864e5)+1},0)}
+function bal(){const ref=fd(new Date()),ks=Object.keys(LT);
+ $("lbal").innerHTML=`<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map(k=>`<th>${k}<br><small class="lic">${LT[k]} days</small></th>`).join("")}</tr>`+[...STAFF,...OFFS].map(n=>{const jd=JD[n]||"";let c="",cells;
+  if(jd){const [cs,ce]=cyc(jd,ref);c=cs+" → "+ce;cells=ks.map(k=>{const u=used(n,k,cs,ce),r=LT[k]-u;return`<td style="font-weight:600;${r<0?"color:hsl(0 84% 60%)":""}">${r}<br><small class="lic">${u} used</small></td>`}).join("")}
+  else cells=ks.map(()=>`<td class="lic">—</td>`).join("");
+  return`<tr><td>${esc(n)}</td><td><input type="date" data-jd="${esc(n)}" value="${jd}" style="height:32px;font-size:12px;min-width:130px"></td><td class="lic">${c||"Set join date"}</td>${cells}</tr>`}).join("")+"</table>";
+ document.querySelectorAll("[data-jd]").forEach(i=>i.onchange=()=>{JD[i.dataset.jd]=i.value;persist("ta_jd",JD);bal()})}
 </script></body></html>
