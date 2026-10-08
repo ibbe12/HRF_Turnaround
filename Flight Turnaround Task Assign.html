@@ -25,6 +25,9 @@ details{border-bottom:1px solid var(--bd);padding:6px 0}summary{cursor:pointer;f
 .sb0{}#sb{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--card);border-right:1px solid var(--bd);padding:calc(16px + env(safe-area-inset-top,0px)) 10px 16px;z-index:8;transform:translateX(-100%);transition:transform .2s}
 #sb.o{transform:none;box-shadow:4px 0 20px rgba(0,0,0,.3)}#sb button{display:block;width:100%;text-align:left;background:transparent;color:var(--tx);margin-bottom:6px}#sb button.on{background:var(--ok);color:var(--ac)}
 @media(min-width:900px){#sb{transform:none;box-shadow:none}main{margin-left:230px!important;max-width:900px!important}#mb{display:none}}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px;text-align:center}.cd{min-height:54px;border:1px solid var(--bd);border-radius:8px;padding:3px;position:relative;cursor:pointer;text-align:left}
+.cd span{font-size:12px;font-weight:600}.cd em{position:absolute;top:3px;right:5px;font-size:10px;font-style:normal;color:var(--mu)}.dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}.dots i,.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.cd.td{border-color:var(--ac);border-width:2px}.cd.sl{background:var(--ok)}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);overflow:auto;padding:14px;z-index:9}
 #modal img{width:100%;max-width:480px;display:block;margin:10px auto;border-radius:8px}
 </style></head><body><aside id="sb"><h2 style="padding:0 6px">✈️ Ops Menu</h2><button id="nD">📊 Dashboard</button><button id="nA" class="on">📋 Task Assign</button><button id="nL">🏖️ Leave Management</button></aside><main>
@@ -48,6 +51,7 @@ details{border-bottom:1px solid var(--bd);padding:6px 0}summary{cursor:pointer;f
 <div><label>Reference date</label><input type="date" id="fr"></div><div><label>Staff</label><select id="fs"><option value="all">All staff</option></select></div></div><p class="lic" id="fl"></p></div>
 <div id="dc"></div></div>
 <div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px">Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
+<div class="card"><h2>Calendar</h2><div id="lc"></div></div>
 <div class="card"><h2>Leave records</h2><div id="ll"></div></div></div>
 <div id="modal"><div class="row"><button id="shr">Share</button><button class="s" id="dl">Download</button><button class="s" id="cl">Close</button></div>
 <img id="img" alt="Roster"><p class="lic" style="color:#fff;text-align:center">If Share/Download doesn't work, long-press the image to save.</p></div>
@@ -64,7 +68,9 @@ function drawStaff(){$("staff").innerHTML=STAFF.map(n=>`<div class="st ${isL(n)?
 $("cnt").textContent=STAFF.filter(n=>!isL(n)).length;
 document.querySelectorAll("[data-n]").forEach(s=>s.onchange=()=>{S[s.dataset.n]=s.value;try{localStorage.setItem("ta_s",JSON.stringify(S))}catch(e){}drawStaff()})}
 drawStaff();
-const key=(s,t)=>s+"|"+t;
+const key=(s,t)=>s+"|"+t,OFFS=["I.Rafeeu","H.Amir","Faisal","A.Nabeel","Shah"];
+function offOrder(excl){const li={},cn={};H.log.filter(l=>l.off&&l.id!=excl).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id).forEach((l,i)=>{li[l.off]=i;cn[l.off]=(cn[l.off]||0)+1});
+ return OFFS.filter(n=>!lr(n)).sort((p,q)=>(li[p]??-1)-(li[q]??-1)||(cn[p]||0)-(cn[q]||0)||OFFS.indexOf(p)-OFFS.indexOf(q))}
 function build(avail,slots,rest){ // slots: {task,lic}; order = priority order
  let pool=[...avail],out=[];
  for(const sl of slots){const c=pool.filter(s=>!sl.lic||LIC.includes(s)).map(s=>[s,H.last[key(s,sl.task)]??-1,Math.random()]).sort((a,b)=>a[1]-b[1]||a[2]-b[2])[0];
@@ -83,9 +89,7 @@ function assign(){
  const order=["Baggage Tractor","GPU",...tt];if(atr){const g=["Unload / Load CP 1-2","Unload / Load Help CP 1-2"].flatMap(t=>(b.find(o=>o.task==t)||{staff:[]}).staff).filter(n=>STAFF.includes(n));b.push({task:"GPU",staff:g})}else{const u=b.find(o=>o.task=="Unload / Load");b.push({task:"GPU",staff:u?u.staff.filter(n=>STAFF.includes(n)):[]})}
  // keep tractor first, then listed order, Arrival last
  b.sort((x,y)=>{const f=t=>t=="Arrival"?99:order.indexOf(t);return f(x.task)-f(y.task)});
- const OFFS=["I.Rafeeu","H.Amir","Faisal","A.Nabeel","Shah"];
- const off=OFFS.map(n=>[n,H.last[key(n,"OFFICER")]??-1,Math.random()]).sort((p,q)=>p[1]-q[1]||p[2]-q[2])[0][0];
- res={a,b,saved:0,ord:order,off};render()}
+ res={a,b,saved:0,ord:order,off:offOrder(0)[0]||""};render()}
 function brief(){const v=$("ci").value;if(!v)return"—";const [h,m]=v.split(":").map(Number),t=(h*60+m-20+1440)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")}
 const RESTS={a:"Tag",b:"Arrival"},CO=["Counter","Tag","Machine-In","Machine-Out","Trolley","Sticker","Cart Load"];
 function fixRest(part){const arr=res[part],Rt=RESTS[part],used=new Set(arr.filter(o=>o.task!=Rt&&o.task!="GPU").flatMap(o=>o.staff));
@@ -103,7 +107,7 @@ function render(){
  const sec=(t,part)=>`<div class="card"><div class="sec">${t}</div>${res[part].map(o=>{const auto=o.task==RESTS[part]||o.task=="GPU";
   const cell=auto?o.staff.join(", "):o.staff.map((s,i)=>`<select data-p="${part}" data-t="${o.task}" data-i="${i}">${["— none —",...av.filter(n=>o.task!="Baggage Tractor"||LIC.includes(n))].map(n=>`<option ${n==s?"selected":""}>${n}</option>`).join("")}</select>`).join(" ");
   return`<div class="t"><b>${o.task}${o.task=="GPU"?' <small class="lic">(auto)</small>':auto?' <small class="lic">(remaining)</small>':""}</b><span>${cell}</span></div>`}).join("")}</div>`;
- $("out").innerHTML=`<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>`+`<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["",...["I.Rafeeu","H.Amir","Faisal","A.Nabeel","Shah"]].map(n=>`<option value="${n}" ${n==res.off?"selected":""}>${n||"—"}</option>`).join("")}</select></span></div></div>`+sec("1 · Check-In Tasks","a")+sec("2 · Flight Turnaround Tasks ("+$("ac").value+")","b");
+ $("out").innerHTML=`<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>`+`<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["",...OFFS].map(n=>`<option value="${n}" ${n==res.off?"selected":""}>${n||"—"}</option>`).join("")}</select></span></div></div>`+sec("1 · Check-In Tasks","a")+sec("2 · Flight Turnaround Tasks ("+$("ac").value+")","b");
  $("ex").style.display="flex";$("offs").onchange=e=>{res.off=e.target.value;res.saved=0};document.querySelectorAll("#out select[data-p]").forEach(e=>e.onchange=()=>manual(e.dataset.p,e.dataset.t,+e.dataset.i,e.value))}
 $("go").onclick=assign;
 $("save").onclick=()=>{if(!res){alert("Assign first");return}if(res.saved){alert("Already saved");return}res.saved=1;H.log=H.log||[];if(res.sid)H.log=H.log.filter(l=>l.id!=res.sid);res.sid=Date.now();if(res.off)H.last[key(res.off,"OFFICER")]=++H.seq;H.log.push({id:res.sid,date:$("date").value,fno:$("fno").value,ac:$("ac").value,ci:$("ci").value,ar:$("ar").value,dp:$("dp").value,pax:$("pax").value,off:res.off,a:res.a,b:res.b});
@@ -193,9 +197,9 @@ function dash(){
  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this flight record?")){H.log=H.log.filter(l=>l.id!=b.dataset.del);try{localStorage.setItem("ta_h",JSON.stringify(H))}catch(e){}dash()}})}
 
 const svL=()=>{try{localStorage.setItem("ta_lv",JSON.stringify(LV))}catch(e){}};
-$("ls").innerHTML=STAFF.map(n=>`<option>${n}</option>`).join("");$("lf").value=$("lt").value=fd(new Date());
+$("ls").innerHTML=`<optgroup label="Staff">${STAFF.map(n=>`<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map(n=>`<option>${n}</option>`).join("")}</optgroup>`;$("lf").value=$("lt").value=fd(new Date());
 $("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value});$("ln").value="";svL();leaves();drawStaff()};
-function leaves(){const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">Delete</button></span></div>`).join("")||"No leave records";
+function leaves(){cal();const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">Delete</button></span></div>`).join("")||"No leave records";
  document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{LV=LV.filter(l=>l.id!=b.dataset.lv);svL();leaves();drawStaff()})}
 
 function ordFor(ac){return["Baggage Tractor","GPU","Chock / Cabin Cleaning",...(ac.startsWith("ATR")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Unload / Load","Unload / Load Help"])]}
@@ -205,4 +209,16 @@ function editFlight(id){const l=H.log.find(x=>x.id==id);if(!l)return;
  tab("A");render();window.scrollTo(0,0);alert("Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.")}
 $("dc").onclick=e=>{const b=e.target.closest("[data-ed]");if(b)editFlight(b.dataset.ed)};
 $("ci").onchange=()=>{const v=$("ci").value;if(!v)return;const [h,m]=v.split(":").map(Number),f=d=>{const t=(h*60+m+d)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};$("ar").value=f(90);$("dp").value=f(120)};
+
+const PAL=["#e6194b","#3cb44b","#4363d8","#f58231","#911eb4","#2aa6a6","#f032e6","#9a6324","#a0a000","#00798c","#b03030","#2a2a9a","#e0a800","#6a7fdb","#2e8b57","#cc5500"];
+const colr=n=>PAL[[...STAFF,...OFFS].indexOf(n)%PAL.length];let cm=new Date(),sel=fd(new Date());cm.setDate(1);
+function cal(){const y=cm.getFullYear(),mo=cm.getMonth(),first=(new Date(y,mo,1).getDay()+6)%7,dim=new Date(y,mo+1,0).getDate(),td=fd(new Date());
+ let h=`<div class="row" style="align-items:center"><button class="s" id="cp" style="flex:0 0 52px">‹</button><b style="flex:3;text-align:center">${cm.toLocaleString("en",{month:"long"})} ${y}</b><button class="s" id="cn" style="flex:0 0 52px">›</button></div><div class="cal">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<small class="lic">${d}</small>`).join("")}`;
+ for(let i=0;i<first;i++)h+="<div></div>";
+ for(let d=1;d<=dim;d++){const ds=y+"-"+pad(mo+1)+"-"+pad(d),ls=LV.filter(l=>l.f<=ds&&ds<=l.t);
+  h+=`<div class="cd ${ds==td?"td":""} ${ds==sel?"sl":""}" data-d="${ds}"><span>${d}</span>${ls.length?`<em>${ls.length}</em>`:""}<div class="dots">${ls.slice(0,9).map(l=>`<i style="background:${colr(l.n)}"></i>`).join("")}</div></div>`}
+ const sl=LV.filter(l=>l.f<=sel&&sel<=l.t);
+ h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
+ $("lc").innerHTML=h;$("cp").onclick=()=>{cm=new Date(y,mo-1,1);cal()};$("cn").onclick=()=>{cm=new Date(y,mo+1,1);cal()};
+ document.querySelectorAll("[data-d]").forEach(e=>e.onclick=()=>{sel=e.dataset.d;$("lf").value=$("lt").value=sel;cal()})}
 </script></body></html>
