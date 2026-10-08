@@ -30,9 +30,9 @@ details{border-bottom:1px solid var(--bd);padding:6px 0}summary{cursor:pointer;f
 .cd.td{border-color:var(--ac);border-width:2px}.cd.sl{background:var(--ok)}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);overflow:auto;padding:14px;z-index:9}
 #modal img{width:100%;max-width:480px;display:block;margin:10px auto;border-radius:8px}
-</style></head><body><aside id="sb"><h2 style="padding:0 6px">✈️ Ops Menu</h2><button id="nD">📊 Dashboard</button><button id="nA" class="on">📋 Task Assign</button><button id="nL">🏖️ Leave Management</button></aside><main>
+</style></head><body><aside id="sb"><h2 style="padding:0 6px">✈️ Ops Menu</h2><button id="nD">📊 Dashboard</button><button id="nA" class="on">📋 Task Assign</button><button id="nL">🏖️ Leave Management</button><button id="nB">💾 Data Backup</button><p id="sbw" class="lic" style="padding:0 6px"></p></aside><main>
 <h1>✈️ Flight Turnaround Task Assign</h1>
-<button id="mb" class="s" style="margin-bottom:10px">☰ Menu</button><div id="pA">
+<div id="wipe" class="card" style="display:none"><b>No saved data found in this browser.</b> If your browser data was cleared, restore your latest backup file. <button class="del" id="wgo">Open Data Backup</button></div><button id="mb" class="s" style="margin-bottom:10px">☰ Menu</button><div id="pA">
 <div class="card"><h2>Flight details</h2><div class="g">
 <div><label>Date</label><input type="date" id="date"></div>
 <div><label>Flight No:</label><input id="fno" placeholder="e.g. Q2 101"></div>
@@ -53,6 +53,10 @@ details{border-bottom:1px solid var(--bd);padding:6px 0}summary{cursor:pointer;f
 <div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px">Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
 <div class="card"><h2>Calendar</h2><div id="lc"></div></div>
 <div class="card"><h2>Leave records</h2><div id="ll"></div></div></div>
+<div id="pB" style="display:none"><div class="card"><h2>Data backup</h2><p id="bkst" class="lic"></p>
+<p>Your flight history, leave records and task rotation are stored in this browser. Clearing browser data erases them, so keep a backup file on your phone or computer and restore it any time.</p>
+<div class="row"><button id="bkb">💾 Save Backup to Device</button><button id="bkr" class="s">📂 Restore from Backup File</button></div><input type="file" id="bkf" accept=".json,application/json" hidden><p id="bkm" class="lic"></p>
+<p class="lic">Restoring merges the file into your current data, so nothing already here is lost. Save a backup after each day's flights.</p></div></div>
 <div id="modal"><div class="row"><button id="shr">Share</button><button class="s" id="dl">Download</button><button class="s" id="cl">Close</button></div>
 <img id="img" alt="Roster"><p class="lic" style="color:#fff;text-align:center">If Share/Download doesn't work, long-press the image to save.</p></div>
 </main>
@@ -113,7 +117,7 @@ function render(){
 $("go").onclick=assign;
 $("save").onclick=()=>{if(!res){alert("Assign first");return}if(res.saved){alert("Already saved");return}res.saved=1;H.log=H.log||[];if(res.sid)H.log=H.log.filter(l=>l.id!=res.sid);res.sid=Date.now();if(res.off)H.last[key(res.off,"OFFICER")]=++H.seq;H.log.push({id:res.sid,date:$("date").value,fno:$("fno").value,ac:$("ac").value,ci:$("ci").value,ar:$("ar").value,dp:$("dp").value,pax:$("pax").value,off:res.off,a:res.a,b:res.b});
  [...res.a.map(o=>o),...res.b].forEach(o=>o.staff.forEach(s=>{if(STAFF.includes(s))H.last[key(s,o.task)]=++H.seq}));
- try{localStorage.setItem("ta_h",JSON.stringify(H))}catch(e){}alert("Saved. Next assignment will favour staff who haven't done each task for longest.")};
+ persist("ta_h",H);alert("Saved. Next assignment will favour staff who haven't done each task for longest.")};
 $("rst").onclick=()=>{if(confirm("Clear task history?")){H={seq:0,last:{},log:[]};try{localStorage.removeItem("ta_h")}catch(e){}dash()}};
 function wrap(c,t,w){const ws=t.split(" "),ls=[];let l="";for(const x of ws){if(c.measureText(l+" "+x).width>w&&l){ls.push(l);l=x}else l=l?l+" "+x:x}ls.push(l);return ls}
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
@@ -159,7 +163,8 @@ let cv=null;
 $("jpg").onclick=()=>{cv=jpg();$("img").src=cv.toDataURL("image/jpeg",.92);$("modal").style.display="block"};
 $("cl").onclick=()=>$("modal").style.display="none";
 const fname=()=>"roster-"+($("fno").value||"flight").replace(/\W+/g,"")+"-"+$("date").value+".jpg";
-$("dl").onclick=()=>{const a=document.createElement("a");a.href=$("img").src;a.download=fname();a.click()};
+$("dl").onclick=async()=>{try{const d=window.claude?await claude.use("downloads"):null;if(d){const b=await new Promise(r=>cv.toBlob(r,"image/jpeg",.92));await d.save({filename:fname(),data:b});return}}catch(e){if(e&&e.code=="declined")return}
+ const a=document.createElement("a");a.href=$("img").src;a.download=fname();a.click()};
 $("shr").onclick=()=>cv.toBlob(async b=>{const f=new File([b],fname(),{type:"image/jpeg"});
  try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else alert("Sharing not supported here — long-press the image to save.")}catch(e){}},"image/jpeg",.92);
 
@@ -172,8 +177,8 @@ function rng(p,r){const d=new Date(r+"T00:00:00");let s=d,e=d;
  else if(p=="all")return["0000","9999"];return[fd(s),fd(e)]}
 $("fr").value=fd(new Date());$("fs").innerHTML+=STAFF.map(n=>`<option>${n}</option>`).join("");
 ["fp","fr","fs"].forEach(i=>$(i).onchange=dash);
-function tab(t){["A","D","L"].forEach(k=>{$("p"+k).style.display=k==t?"":"none";$("n"+k).className=k==t?"on":""});$("sb").classList.remove("o");if(t=="D")dash();if(t=="L")leaves()}
-["A","D","L"].forEach(k=>$("n"+k).onclick=()=>tab(k));$("mb").onclick=()=>$("sb").classList.toggle("o");
+function tab(t){["A","D","L","B"].forEach(k=>{$("p"+k).style.display=k==t?"":"none";$("n"+k).className=k==t?"on":""});$("sb").classList.remove("o");if(t=="D")dash();if(t=="L")leaves()}
+["A","D","L","B"].forEach(k=>$("n"+k).onclick=()=>tab(k));$("mb").onclick=()=>$("sb").classList.toggle("o");
 const bar=(l,v,m)=>`<div class="bar"><span>${esc(l)}</span><i><u style="width:${v/m*100}%"></u></i><b>${v}</b></div>`;
 function dash(){
  const [s,e]=rng($("fp").value,$("fr").value||fd(new Date())),who=$("fs").value;
@@ -195,9 +200,9 @@ function dash(){
  const oc={};L.forEach(l=>{if(l.off)oc[l.off]=(oc[l.off]||0)+1});const om=Math.max(1,...Object.values(oc));if(who=="all"&&Object.keys(oc).length)h+=`<div class="card"><h2>Officer duty</h2>${Object.keys(oc).map(n=>bar(n,oc[n],om)).join("")}</div>`;
  h+=`<div class="card"><h2>Saved flights (${L.length})</h2>${L.map(l=>`<details><summary>${l.date} · ${esc(l.fno||"—")} · ${l.ac}</summary>${[...l.a,...l.b].map(o=>`<div class="t"><b>${esc(o.task)}</b><span>${esc(o.staff.join(", "))}</span></div>`).join("")}<button class="del" data-ed="${l.id}">Edit</button> <button class="del" data-del="${l.id}">Delete</button></details>`).join("")||"No saved flights"}</div>`;
  $("dc").innerHTML=h;
- document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this flight record?")){H.log=H.log.filter(l=>l.id!=b.dataset.del);try{localStorage.setItem("ta_h",JSON.stringify(H))}catch(e){}dash()}})}
+ document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this flight record?")){H.log=H.log.filter(l=>l.id!=b.dataset.del);persist("ta_h",H);dash()}})}
 
-const svL=()=>{try{localStorage.setItem("ta_lv",JSON.stringify(LV))}catch(e){}};
+const svL=()=>{persist("ta_lv",LV);};
 $("ls").innerHTML=`<optgroup label="Staff">${STAFF.map(n=>`<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map(n=>`<option>${n}</option>`).join("")}</optgroup>`;$("lf").value=$("lt").value=fd(new Date());
 $("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value});$("ln").value="";svL();leaves();drawStaff()};
 function leaves(){cal();const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">Delete</button></span></div>`).join("")||"No leave records";
@@ -222,4 +227,26 @@ function cal(){const y=cm.getFullYear(),mo=cm.getMonth(),first=(new Date(y,mo,1)
  h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
  $("lc").innerHTML=h;$("cp").onclick=()=>{cm=new Date(y,mo-1,1);cal()};$("cn").onclick=()=>{cm=new Date(y,mo+1,1);cal()};
  document.querySelectorAll("[data-d]").forEach(e=>e.onclick=()=>{sel=e.dataset.d;$("lf").value=$("lt").value=sel;cal()})}
+
+let META={last:"",changes:0};try{META=JSON.parse(localStorage.getItem("ta_meta"))||META}catch(e){}
+const svM=()=>{try{localStorage.setItem("ta_meta",JSON.stringify(META))}catch(e){}};
+function persist(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}META.changes++;svM();bk()}
+function bk(){const t=META.changes?`⚠ ${META.changes} change(s) not backed up`:(META.last?"✓ Backed up":"");$("sbw").textContent=t;$("sbw").style.color=META.changes?"#d97706":"";
+ $("bkst").textContent=(META.last?"Last backup: "+META.last:"No backup saved yet")+" · Changes since last backup: "+META.changes;
+ $("wipe").style.display=(!H.log.length&&!LV.length)?"":"none"}
+$("wgo").onclick=()=>tab("B");
+$("bkb").onclick=async()=>{const data={app:"ta",v:1,saved:new Date().toISOString(),H,S,LV},name="turnaround-backup-"+fd(new Date())+".json";
+ try{const d=window.claude?await claude.use("downloads"):null;if(!d){$("bkm").textContent="Saving files isn't available in this view.";return}
+  await d.save({filename:name,data:JSON.stringify(data)});META.last=new Date().toLocaleString();META.changes=0;svM();bk();$("bkm").textContent="Backup saved: "+name}
+ catch(e){$("bkm").textContent=e&&e.code=="declined"?"Backup cancelled.":"Could not save backup ("+(e&&e.code||"error")+")."}};
+$("bkr").onclick=()=>$("bkf").click();
+$("bkf").onchange=async e=>{const f=e.target.files[0];if(!f)return;
+ try{const d=JSON.parse(await f.text());if(d.app!="ta"||!d.H)throw 0;
+  const ids=new Set(H.log.map(l=>l.id));let n=0;(d.H.log||[]).forEach(l=>{if(!ids.has(l.id)){H.log.push(l);n++}});
+  Object.entries(d.H.last||{}).forEach(([k,v])=>{if(!(k in H.last)||H.last[k]<v)H.last[k]=v});H.seq=Math.max(H.seq||0,d.H.seq||0);
+  const li=new Set(LV.map(l=>l.id));let m2=0;(d.LV||[]).forEach(l=>{if(!li.has(l.id)){LV.push(l);m2++}});
+  persist("ta_h",H);persist("ta_lv",LV);META.changes=0;svM();bk();drawStaff();
+  $("bkm").textContent=`Restored ${n} flight(s) and ${m2} leave record(s) from ${f.name}.`}
+ catch(x){$("bkm").textContent="That file isn't a valid backup."}e.target.value=""};
+bk();
 </script></body></html>
