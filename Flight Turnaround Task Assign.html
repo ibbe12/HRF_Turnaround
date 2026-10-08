@@ -70,7 +70,7 @@ details{border-bottom:1px solid var(--bd);padding:10px 0}summary{cursor:pointer;
 <div><label>Reference date</label><input type="date" id="fr"></div><div><label>Staff</label><select id="fs"><option value="all">All staff</option></select></div></div><p class="lic" id="fl"></p></div>
 <div id="dc"></div></div>
 <div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Leave type</label><select id="lty"><option>Annual Leave</option><option>FRL</option><option>SL</option><option>SLM</option></select></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px"><span data-ic="calendar-outline"></span> Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
-<div class="card"><h2>Leave balance</h2><p class="lic">Annual Leave 30 days, FRL 10, SL 15, SLM 15 per leave year. Each person's leave year starts on the anniversary of their join date, so enter join dates below. Days are counted as calendar days (weekends included). Leave records saved before this update count as Annual Leave.</p><div id="lbal" class="sc"></div></div>
+<div class="card"><h2>Leave balance</h2><p class="lic">Annual Leave 30 days, FRL 10, SL 15, SLM 15 per leave year. Each person's leave year starts on the anniversary of their join date, so enter join dates below. Fridays are not deducted from Annual Leave; all other days are counted as calendar days. Leave records saved before this update count as Annual Leave.</p><div id="lbal" class="sc"></div></div>
 <div class="card"><h2>Calendar</h2><div id="lc"></div></div>
 <div class="card"><h2>Leave records</h2><div id="ll"></div></div></div>
 <div id="pB" style="display:none"><div class="card"><h2>Data backup</h2><p id="bkst" class="lic"></p>
@@ -105,7 +105,7 @@ function build(avail,slots,rest){ // slots: {task,lic}; order = priority order
  for(const sl of slots){const c=pool.filter(s=>!sl.lic||LIC.includes(s)).map(s=>[s,H.last[key(s,sl.task)]??-1,Math.random()]).sort((a,b)=>a[1]-b[1]||a[2]-b[2])[0];
   const who=c?c[0]:null;if(who)pool=pool.filter(s=>s!=who);
   let e=out.find(o=>o.task==sl.task);if(!e){e={task:sl.task,staff:[],ord:out.length};out.push(e)}
-  e.staff.push(who||"— none —")}
+  e.staff.push(who||"-NONE-")}
  if(pool.length)out.push({task:rest,staff:pool});return out}
 function assign(){
  const av=STAFF.filter(n=>!isL(n));if(!av.length){alert("No staff available");return}
@@ -129,13 +129,13 @@ function fixGPU(){const b=res.b,g=b.find(o=>o.task=="GPU");if(!g)return;const sr
  g.staff=src.flatMap(t=>(b.find(o=>o.task==t)||{staff:[]}).staff).filter(n=>STAFF.includes(n))}
 function manual(part,task,i,val){
  const arr=res[part],o=arr.find(x=>x.task==task),old=o.staff[i];if(val==old)return;
- let h=null;if(val!="— none —")for(const x of arr){if(x.task=="GPU"||x.task==RESTS[part])continue;const k=x.staff.indexOf(val);if(k>=0){h=[x,k];break}}
- if(h){if(h[0].task=="Baggage Tractor"&&old!="— none —"&&!LIC.includes(old)){alert("Only licensed staff (Naufal, Nabeel, Falaah) can take Baggage Tractor");render();return}h[0].staff[h[1]]=old}
+ let h=null;if(val!="-NONE-")for(const x of arr){if(x.task=="GPU"||x.task==RESTS[part])continue;const k=x.staff.indexOf(val);if(k>=0){h=[x,k];break}}
+ if(h){if(h[0].task=="Baggage Tractor"&&old!="-NONE-"&&!LIC.includes(old)){alert("Only licensed staff (Naufal, Nabeel, Falaah) can take Baggage Tractor");render();return}h[0].staff[h[1]]=old}
  o.staff[i]=val;fixRest(part);fixGPU();res.saved=0;render()}
 function render(){
  const av=STAFF.filter(n=>!isL(n));
- const sec=(t,part)=>`<div class="card"><div class="sec">${t}</div>${res[part].map(o=>{const auto=o.task==RESTS[part]||o.task=="GPU";
-  const cell=auto?o.staff.join(", "):o.staff.map((s,i)=>`<select data-p="${part}" data-t="${o.task}" data-i="${i}">${["— none —",...av.filter(n=>o.task!="Baggage Tractor"||LIC.includes(n))].map(n=>`<option ${n==s?"selected":""}>${n}</option>`).join("")}</select>`).join(" ");
+ const sec=(t,part)=>`<div class="card"><div class="sec">${t}</div>${(part=="b"&&!res.b.some(o=>o.task=="Arrival")?[...res.b,{task:"Arrival",staff:[]}]:res[part]).map(o=>{const auto=o.task==RESTS[part]||o.task=="GPU";
+  const cell=auto?(o.staff.join(", ")||"-NONE-"):o.staff.map((s,i)=>`<select data-p="${part}" data-t="${o.task}" data-i="${i}">${["-NONE-",...av.filter(n=>o.task!="Baggage Tractor"||LIC.includes(n))].map(n=>`<option ${n==s?"selected":""}>${n}</option>`).join("")}</select>`).join(" ");
   return`<div class="t"><b>${o.task}${o.task=="GPU"?' <small class="lic">(auto)</small>':auto?' <small class="lic">(remaining)</small>':""}</b><span>${cell}</span></div>`}).join("")}</div>`;
  $("out").innerHTML=`<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>`+`<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["",...OFFS].map(n=>`<option value="${n}" ${n==res.off?"selected":""}>${n||"—"}</option>`).join("")}</select></span></div></div>`+sec("1 · Check-In Tasks","a")+sec("2 · Flight Turnaround Tasks ("+$("ac").value+")","b");
  $("ex").style.display="flex";$("offs").onchange=e=>{res.off=e.target.value;res.saved=0};document.querySelectorAll("#out select[data-p]").forEach(e=>e.onchange=()=>manual(e.dataset.p,e.dataset.t,+e.dataset.i,e.value))}
@@ -148,7 +148,7 @@ function wrap(c,t,w){const ws=t.split(" "),ls=[];let l="";for(const x of ws){if(
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 function jpg(){
  const W=1080,M=45,PD=36,IW=W-2*M-2*PD,m=document.createElement("canvas").getContext("2d"),c=document.createElement("canvas"),x=c.getContext("2d");
- const U=t=>String(t).toUpperCase(),blocks=[["CHECK-IN TASKS",res.a],["TURNAROUND TASKS",res.b]];
+ const U=t=>{t=String(t);return t=="-NONE-"||t=="— none —"?"-NONE-":t.toUpperCase()},blocks=[["CHECK-IN TASKS",res.a],["TURNAROUND TASKS",res.b.some(o=>o.task=="Arrival")?res.b:[...res.b,{task:"Arrival",staff:["-NONE-"]}]]];
  const av=STAFF.filter(n=>!isL(n)).length,lv=STAFF.filter(isL).length;
  m.font="700 30px sans-serif";const lw=Math.max(...blocks.flatMap(b=>b[1].map(o=>m.measureText(U(o.task)).width)))+30,CH=54,GAP=14;
  const layout=o=>{const L=[[]];let cx=0;o.staff.forEach(n=>{const w=m.measureText(U(n)).width+44;if(cx+w>IW-lw&&L[L.length-1].length){L.push([]);cx=0}L[L.length-1].push([n,w]);cx+=w+GAP});return L};
@@ -236,7 +236,7 @@ function leaves(){cal();bal();const td=fd(new Date());$("ll").innerHTML=LV.slice
 function ordFor(ac){return["Baggage Tractor","GPU","Chock / Cabin Cleaning",...(ac.startsWith("ATR")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Unload / Load","Unload / Load Help"])]}
 function editFlight(id){const l=H.log.find(x=>x.id==id);if(!l)return;
  $("date").value=l.date;$("fno").value=l.fno||"";$("ac").value=({ATR:"ATR-72",Dash:"DH-300"})[l.ac]||l.ac;$("ci").value=l.ci||"";$("ar").value=l.ar||"";$("dp").value=l.dp||"";$("pax").value=l.pax||"";
- drawStaff();res={a:JSON.parse(JSON.stringify(l.a)),b:JSON.parse(JSON.stringify(l.b)),saved:0,sid:l.id,off:l.off||"",ord:ordFor($("ac").value)};
+ drawStaff();res={a:JSON.parse(JSON.stringify(l.a).replace(/— none —/g,"-NONE-")),b:JSON.parse(JSON.stringify(l.b).replace(/— none —/g,"-NONE-")),saved:0,sid:l.id,off:l.off||"",ord:ordFor($("ac").value)};
  tab("A");render();window.scrollTo(0,0);alert("Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.")}
 $("dc").onclick=e=>{const b=e.target.closest("[data-ed]");if(b)editFlight(b.dataset.ed)};
 $("ci").onchange=()=>{const v=$("ci").value;if(!v)return;const [h,m]=v.split(":").map(Number),f=d=>{const t=(h*60+m+d)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};$("ar").value=f(90);$("dp").value=f(120)};
@@ -291,7 +291,7 @@ let JD={};try{JD=JSON.parse(localStorage.getItem("ta_jd"))||{}}catch(e){}
 const LT={"Annual Leave":30,"FRL":10,"SL":15,"SLM":15};
 function cyc(jd,ref){const j=new Date(jd+"T00:00:00"),r=new Date(ref+"T00:00:00");let st=new Date(r.getFullYear(),j.getMonth(),j.getDate());if(st>r)st=new Date(r.getFullYear()-1,j.getMonth(),j.getDate());if(r<j)st=j;
  return[fd(st),fd(new Date(st.getFullYear()+1,st.getMonth(),st.getDate()-1))]}
-function used(n,t,cs,ce){return LV.filter(l=>l.n==n&&(l.type||"Annual Leave")==t).reduce((a,l)=>{const s0=l.f>cs?l.f:cs,e0=l.t<ce?l.t:ce;if(s0>e0)return a;return a+Math.round((new Date(e0+"T00:00:00")-new Date(s0+"T00:00:00"))/864e5)+1},0)}
+function used(n,t,cs,ce){return LV.filter(l=>l.n==n&&(l.type||"Annual Leave")==t).reduce((a,l)=>{const s0=l.f>cs?l.f:cs,e0=l.t<ce?l.t:ce;if(s0>e0)return a;let c=0;for(let d=new Date(s0+"T00:00:00"),end=new Date(e0+"T00:00:00");d<=end;d.setDate(d.getDate()+1)){if(t=="Annual Leave"&&d.getDay()==5)continue;c++}return a+c},0)}
 function bal(){const ref=fd(new Date()),ks=Object.keys(LT);
  $("lbal").innerHTML=`<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map(k=>`<th>${k}<br><small class="lic">${LT[k]} days</small></th>`).join("")}</tr>`+[...STAFF,...OFFS].map(n=>{const jd=JD[n]||"";let c="",cells;
   if(jd){const [cs,ce]=cyc(jd,ref);c=cs+" → "+ce;cells=ks.map(k=>{const u=used(n,k,cs,ce),r=LT[k]-u;return`<td style="font-weight:600;${r<0?"color:hsl(0 84% 60%)":""}">${r}<br><small class="lic">${u} used</small></td>`}).join("")}
