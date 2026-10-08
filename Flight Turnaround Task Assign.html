@@ -25,7 +25,7 @@ details{border-bottom:1px solid var(--bd);padding:6px 0}summary{cursor:pointer;f
 .sb0{}#sb{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--card);border-right:1px solid var(--bd);padding:calc(16px + env(safe-area-inset-top,0px)) 10px 16px;z-index:8;transform:translateX(-100%);transition:transform .2s}
 #sb.o{transform:none;box-shadow:4px 0 20px rgba(0,0,0,.3)}#sb button{display:block;width:100%;text-align:left;background:transparent;color:var(--tx);margin-bottom:6px}#sb button.on{background:var(--ok);color:var(--ac)}
 @media(min-width:900px){#sb{transform:none;box-shadow:none}main{margin-left:230px!important;max-width:900px!important}#mb{display:none}}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px;text-align:center}.cd{min-height:54px;border:1px solid var(--bd);border-radius:8px;padding:3px;position:relative;cursor:pointer;text-align:left}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px;text-align:center}.nm{font-size:9px;color:#fff;border-radius:4px;padding:1px 3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cd{min-height:78px;border:1px solid var(--bd);border-radius:8px;padding:3px;position:relative;cursor:pointer;text-align:left}
 .cd span{font-size:12px;font-weight:600}.cd em{position:absolute;top:3px;right:5px;font-size:10px;font-style:normal;color:var(--mu)}.dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}.dots i,.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
 .cd.td{border-color:var(--ac);border-width:2px}.cd.sl{background:var(--ok)}
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);overflow:auto;padding:14px;z-index:9}
@@ -80,11 +80,12 @@ function build(avail,slots,rest){ // slots: {task,lic}; order = priority order
  if(pool.length)out.push({task:rest,staff:pool});return out}
 function assign(){
  const av=STAFF.filter(n=>!isL(n));if(!av.length){alert("No staff available");return}
- const ci=[{task:"Counter"},{task:"Sticker"},{task:"Machine-In"},{task:"Machine-Out"},{task:"Trolley"},{task:"Cart Load"}];
- if(av.length>=11)ci.push({task:"Cart Load"});
+ const ci=["Counter","Sticker","Machine-In","Cart Load",...(av.length>=11?["Cart Load"]:[]),"Machine-Out","Trolley"].map(t=>({task:t}));
+ 
  const atr=$("ac").value.startsWith("ATR");
  const tt=atr?["Chock / Cabin Cleaning","Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Chock / Cabin Cleaning","Unload / Load","Unload / Load Help"];
- const tr=[{task:"Baggage Tractor",lic:1},...tt.map(t=>({task:t}))];if(!atr&&av.length>=7)tr.push({task:"Unload / Load Help"});
+ const pri=atr?["Unload / Load CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 1-2","Unload / Load Help CP 3-4","Chock / Cabin Cleaning"]:["Unload / Load","Unload / Load Help",...(av.length>=7?["Unload / Load Help"]:[]),"Chock / Cabin Cleaning"];
+ const tr=[{task:"Baggage Tractor",lic:1},...pri.map(t=>({task:t}))];
  const a=build(av,ci,"Tag"),b=build(av,tr,"Arrival");const co=["Counter","Tag","Machine-In","Machine-Out","Trolley","Sticker","Cart Load"];a.sort((x,y)=>co.indexOf(x.task)-co.indexOf(y.task));
  const order=["Baggage Tractor","GPU",...tt];if(atr){const g=["Unload / Load CP 1-2","Unload / Load Help CP 1-2"].flatMap(t=>(b.find(o=>o.task==t)||{staff:[]}).staff).filter(n=>STAFF.includes(n));b.push({task:"GPU",staff:g})}else{const u=b.find(o=>o.task=="Unload / Load");b.push({task:"GPU",staff:u?u.staff.filter(n=>STAFF.includes(n)):[]})}
  // keep tractor first, then listed order, Arrival last
@@ -216,7 +217,7 @@ function cal(){const y=cm.getFullYear(),mo=cm.getMonth(),first=(new Date(y,mo,1)
  let h=`<div class="row" style="align-items:center"><button class="s" id="cp" style="flex:0 0 52px">‹</button><b style="flex:3;text-align:center">${cm.toLocaleString("en",{month:"long"})} ${y}</b><button class="s" id="cn" style="flex:0 0 52px">›</button></div><div class="cal">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<small class="lic">${d}</small>`).join("")}`;
  for(let i=0;i<first;i++)h+="<div></div>";
  for(let d=1;d<=dim;d++){const ds=y+"-"+pad(mo+1)+"-"+pad(d),ls=LV.filter(l=>l.f<=ds&&ds<=l.t);
-  h+=`<div class="cd ${ds==td?"td":""} ${ds==sel?"sl":""}" data-d="${ds}"><span>${d}</span>${ls.length?`<em>${ls.length}</em>`:""}<div class="dots">${ls.slice(0,9).map(l=>`<i style="background:${colr(l.n)}"></i>`).join("")}</div></div>`}
+  h+=`<div class="cd ${ds==td?"td":""} ${ds==sel?"sl":""}" data-d="${ds}"><span>${d}</span>${ls.length?`<em>${ls.length}</em>`:""}${ls.slice(0,3).map(l=>`<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`).join("")}${ls.length>3?`<div class="lic" style="font-size:9px">+${ls.length-3} more</div>`:""}</div>`}
  const sl=LV.filter(l=>l.f<=sel&&sel<=l.t);
  h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
  $("lc").innerHTML=h;$("cp").onclick=()=>{cm=new Date(y,mo-1,1);cal()};$("cn").onclick=()=>{cm=new Date(y,mo+1,1);cal()};
