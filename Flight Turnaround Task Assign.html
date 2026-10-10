@@ -15,19 +15,20 @@
     <style>
       /* shadcn/ui design tokens (zinc theme) re-created in plain CSS */
       :root {
-        --background: 0 0% 100%;
-        --foreground: 240 10% 3.9%;
-        --card: 0 0% 100%;
-        --primary: 240 5.9% 10%;
-        --primary-foreground: 0 0% 98%;
-        --secondary: 240 4.8% 95.9%;
-        --secondary-foreground: 240 5.9% 10%;
-        --muted: 240 4.8% 95.9%;
-        --muted-foreground: 240 3.8% 46.1%;
-        --accent: 240 4.8% 95.9%;
-        --border: 240 5.9% 90%;
-        --ring: 240 10% 3.9%;
-        --sidebar: 0 0% 98%;
+        --page: 37 26% 94%;
+        --background: 37 30% 98%;
+        --foreground: 240 60% 17%;
+        --card: 37 30% 98%;
+        --primary: 229 59% 32%;
+        --primary-foreground: 37 26% 94%;
+        --secondary: 30 20% 89%;
+        --secondary-foreground: 240 60% 17%;
+        --muted: 30 20% 89%;
+        --muted-foreground: 232 22% 38%;
+        --accent: 221 45% 90%;
+        --border: 30 19% 82%;
+        --ring: 30 95% 53%;
+        --sidebar: 240 60% 17%;
         --radius: 0.5rem;
         --bg: hsl(var(--background));
         --tx: hsl(var(--foreground));
@@ -41,35 +42,37 @@
       }
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
-          --background: 240 10% 3.9%;
-          --foreground: 0 0% 98%;
-          --card: 240 10% 3.9%;
-          --primary: 0 0% 98%;
-          --primary-foreground: 240 5.9% 10%;
-          --secondary: 240 3.7% 15.9%;
-          --secondary-foreground: 0 0% 98%;
-          --muted: 240 3.7% 15.9%;
-          --muted-foreground: 240 5% 64.9%;
-          --accent: 240 3.7% 15.9%;
-          --border: 240 3.7% 15.9%;
-          --ring: 240 4.9% 83.9%;
-          --sidebar: 240 5.9% 10%;
+          --page: 240 60% 17%;
+          --background: 240 58% 14%;
+          --foreground: 37 26% 94%;
+          --card: 233 56% 23%;
+          --primary: 30 95% 53%;
+          --primary-foreground: 240 60% 17%;
+          --secondary: 229 59% 32%;
+          --secondary-foreground: 37 26% 94%;
+          --muted: 229 45% 28%;
+          --muted-foreground: 221 45% 72%;
+          --accent: 229 59% 32%;
+          --border: 229 45% 30%;
+          --ring: 30 95% 53%;
+          --sidebar: 240 60% 12%;
         }
       }
       :root[data-theme="dark"] {
-        --background: 240 10% 3.9%;
-        --foreground: 0 0% 98%;
-        --card: 240 10% 3.9%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 240 5.9% 10%;
-        --secondary: 240 3.7% 15.9%;
-        --secondary-foreground: 0 0% 98%;
-        --muted: 240 3.7% 15.9%;
-        --muted-foreground: 240 5% 64.9%;
-        --accent: 240 3.7% 15.9%;
-        --border: 240 3.7% 15.9%;
-        --ring: 240 4.9% 83.9%;
-        --sidebar: 240 5.9% 10%;
+        --page: 240 60% 17%;
+        --background: 240 58% 14%;
+        --foreground: 37 26% 94%;
+        --card: 233 56% 23%;
+        --primary: 30 95% 53%;
+        --primary-foreground: 240 60% 17%;
+        --secondary: 229 59% 32%;
+        --secondary-foreground: 37 26% 94%;
+        --muted: 229 45% 28%;
+        --muted-foreground: 221 45% 72%;
+        --accent: 229 59% 32%;
+        --border: 229 45% 30%;
+        --ring: 30 95% 53%;
+        --sidebar: 240 60% 12%;
       }
       * {
         box-sizing: border-box;
@@ -83,7 +86,7 @@
           "Segoe UI",
           Arial,
           sans-serif;
-        background: hsl(var(--muted) / 0.4);
+        background: hsl(var(--page));
         color: var(--tx);
         -webkit-font-smoothing: antialiased;
       }
@@ -257,18 +260,25 @@
         border-bottom: 0;
       }
       .t b {
-        flex: 0 0 46%;
+        flex: 0 0 38%;
         font-weight: 500;
       }
       .t span {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
         text-align: right;
       }
       .t select {
         width: auto;
-        max-width: 48%;
+        min-width: 140px;
+        max-width: 100%;
         height: 32px;
         padding: 0 8px;
-        margin: 2px 0 2px 4px;
+        margin: 0;
         font-size: 13px;
       }
       .lic {
@@ -296,7 +306,7 @@
       .bar u {
         display: block;
         height: 100%;
-        background: hsl(var(--primary));
+        background: #f98513;
         border-radius: 999px;
       }
       .bar b {
@@ -416,12 +426,12 @@
         border-radius: 999px;
       }
       .cd.td > span {
-        background: hsl(var(--primary));
-        color: hsl(var(--primary-foreground));
+        background: #f98513;
+        color: #111144;
       }
       .cd.sl {
-        border-color: hsl(var(--primary));
-        box-shadow: 0 0 0 1px hsl(var(--primary));
+        border-color: #f98513;
+        box-shadow: 0 0 0 1px #f98513;
       }
       .cd em {
         position: absolute;
@@ -602,6 +612,50 @@
           padding: 14px;
         }
       }
+      #sb {
+        border-right-color: rgba(255, 255, 255, 0.1);
+        color: #f4f1ec;
+      }
+      #sb h2 {
+        color: #f4f1ec;
+      }
+      #sb .lic {
+        color: #98acd8;
+      }
+      #sb h2 .i {
+        background: #f98513;
+        color: #111144;
+      }
+      #sb button {
+        color: #f4f1ec;
+      }
+      #sb button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      #sb button.on {
+        background: #223382;
+        box-shadow: inset 3px 0 0 #f98513;
+      }
+      #go {
+        background: #f98513;
+        color: #111144;
+        font-weight: 600;
+      }
+      #pL > .card {
+        grid-column: 1/-1;
+      }
+      @media (min-width: 900px) {
+        .cd {
+          min-height: 104px;
+        }
+        .nm {
+          font-size: 11px;
+          padding: 2px 5px;
+        }
+        .cd > span {
+          font-size: 13px;
+        }
+      }
       #modal {
         display: none;
         position: fixed;
@@ -747,6 +801,8 @@
                 <option>FRL</option>
                 <option>SL</option>
                 <option>SLM</option>
+                <option>Off Day</option>
+                <option>Release</option>
               </select>
             </div>
             <div><label>Note (optional)</label><input id="ln" /></div>
@@ -762,11 +818,13 @@
         <div class="card">
           <h2>Leave balance</h2>
           <p class="lic">
-            Annual Leave 30 days, FRL 10, SL 15, SLM 15 per leave year. Each
-            person's leave year starts on the anniversary of their join date, so
-            enter join dates below. Fridays are not deducted from Annual Leave;
-            all other days are counted as calendar days. Leave records saved
-            before this update count as Annual Leave.
+            Annual Leave 30 days (32 days once the person has 5 or more years of
+            service), FRL 10, SL 15 and SLM 15 per leave year. Off Day (one per
+            week) and Release (unlimited) are recorded but never deducted from
+            any balance. Each person's leave year starts on the anniversary of
+            their join date, so enter join dates below. Fridays are not deducted
+            from Annual Leave; all other days are counted as calendar days.
+            Leave records saved before this update count as Annual Leave.
           </p>
           <div id="lbal" class="sc"></div>
         </div>
@@ -1650,7 +1708,7 @@
               (n) =>
                 `<tr><td>${n}</td>${T.map((t) => {
                   const c = M[n + "|" + t] || 0;
-                  return `<td style="background:hsla(142,71%,45%,${(c / cm) * 0.6})">${c || ""}</td>`;
+                  return `<td style="background:hsla(30,95%,53%,${(c / cm) * 0.6})">${c || ""}</td>`;
                 }).join("")}</tr>`,
             ).join("")}</table></div></div>`;
         } else {
@@ -2101,20 +2159,26 @@
         const ref = fd(new Date()),
           ks = Object.keys(LT);
         $("lbal").innerHTML =
-          `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${LT[k]} days</small></th>`).join("")}</tr>` +
+          `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${k == "Annual Leave" ? "30 days · 32 after 5 yrs" : LT[k] + " days"}</small></th>`).join("")}</tr>` +
           [...STAFF, ...OFFS]
             .map((n) => {
               const jd = JD[n] || "";
               let c = "",
                 cells;
               if (jd) {
-                const [cs, ce] = cyc(jd, ref);
-                c = cs + " → " + ce;
+                const [cs, ce] = cyc(jd, ref),
+                  yrs = Math.max(0, +cs.slice(0, 4) - +jd.slice(0, 4));
+                c =
+                  cs +
+                  " → " +
+                  ce +
+                  `<br>Service: ${yrs} yr${yrs == 1 ? "" : "s"}`;
                 cells = ks
                   .map((k) => {
-                    const u = used(n, k, cs, ce),
-                      r = LT[k] - u;
-                    return `<td style="font-weight:600;${r < 0 ? "color:hsl(0 84% 60%)" : ""}">${r}<br><small class="lic">${u} used</small></td>`;
+                    const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
+                      u = used(n, k, cs, ce),
+                      r = tot - u;
+                    return `<td style="font-weight:600;${r < 0 ? "color:hsl(0 84% 60%)" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
                   })
                   .join("");
               } else cells = ks.map(() => `<td class="lic">—</td>`).join("");
