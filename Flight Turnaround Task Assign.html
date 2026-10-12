@@ -1,388 +1,3026 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"><title>Flight Turnaround Task Assign</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>/* shadcn/ui design tokens (zinc theme) re-created in plain CSS */
-:root{--page:37 26% 94%;--background:37 30% 98%;--foreground:240 60% 17%;--card:37 30% 98%;--primary:229 59% 32%;--primary-foreground:37 26% 94%;--secondary:30 20% 89%;--secondary-foreground:240 60% 17%;--muted:30 20% 89%;--muted-foreground:232 22% 38%;--accent:221 45% 90%;--border:30 19% 82%;--ring:30 95% 53%;--sidebar:240 60% 17%;--radius:.5rem;--bg:hsl(var(--background));--tx:hsl(var(--foreground));--mu:hsl(var(--muted-foreground));--bd:hsl(var(--border));--ac:hsl(var(--primary));--ok:hsl(var(--accent));box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:240 60% 17%;--background:240 58% 14%;--foreground:37 26% 94%;--card:233 56% 23%;--primary:30 95% 53%;--primary-foreground:240 60% 17%;--secondary:229 59% 32%;--secondary-foreground:37 26% 94%;--muted:229 45% 28%;--muted-foreground:221 45% 72%;--accent:229 59% 32%;--border:229 45% 30%;--ring:30 95% 53%;--sidebar:240 60% 12%;}}
-:root[data-theme="dark"]{--page:240 60% 17%;--background:240 58% 14%;--foreground:37 26% 94%;--card:233 56% 23%;--primary:30 95% 53%;--primary-foreground:240 60% 17%;--secondary:229 59% 32%;--secondary-foreground:37 26% 94%;--muted:229 45% 28%;--muted-foreground:221 45% 72%;--accent:229 59% 32%;--border:229 45% 30%;--ring:30 95% 53%;--sidebar:240 60% 12%;}
-*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:hsl(var(--page));color:var(--tx);-webkit-font-smoothing:antialiased}
-main{max-width:none;padding:16px}
-h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:4px 0 14px;display:flex;align-items:center;gap:8px}
-.card{background:hsl(var(--card));border:1px solid var(--bd);border-radius:calc(var(--radius) + 2px);padding:20px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-h2{font-size:16px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px;color:var(--tx)}
-.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-label{font-size:13px;font-weight:500;display:block;margin-bottom:6px;color:var(--tx)}
-input,select{width:100%;height:40px;padding:0 12px;border:1px solid var(--bd);border-radius:calc(var(--radius) - 2px);background:var(--bg);color:var(--tx);font:inherit;font-size:14px}
-textarea{font-family:inherit}
-input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:none;box-shadow:0 0 0 2px hsl(var(--background)),0 0 0 4px hsl(var(--ring))}
-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:calc(var(--radius) - 2px);background:hsl(var(--primary));color:hsl(var(--primary-foreground));font:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s,opacity .15s;white-space:nowrap}
-button:hover{opacity:.9}button.s{background:hsl(var(--secondary));color:hsl(var(--secondary-foreground))}button.s:hover{background:hsl(var(--secondary)/.8);opacity:1}
-button.del{height:32px;padding:0 12px;font-size:12px;background:transparent;color:var(--tx);border:1px solid var(--bd);margin-top:6px}button.del:hover{background:hsl(var(--accent));opacity:1}
-button[data-del],button[data-lv]{color:hsl(0 84% 60%)}
-.row{display:flex;gap:8px;flex-wrap:wrap}.row button{flex:1}
-.st{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid var(--bd);border-radius:calc(var(--radius) - 2px);background:var(--bg);font-weight:500}
-.st select{width:auto;height:30px;padding:0 8px;font-size:12px}.st.lv{background:hsl(var(--muted));opacity:.7}
-.badge{display:inline-flex;align-items:center;border-radius:999px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));padding:1px 10px;font-size:12px;font-weight:600}
-.sec{font-size:16px;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--bd);margin-bottom:2px}
-.t{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}.t:last-child{border-bottom:0}.t b{flex:0 0 38%;font-weight:500}.t span{flex:1;min-width:0;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;text-align:right}
-.t select{width:auto;min-width:140px;max-width:100%;height:32px;padding:0 8px;margin:0;font-size:13px}
-.lic{font-size:12px;color:var(--mu);font-weight:400}
-.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px}.bar span{flex:0 0 42%}.bar i{flex:1;height:8px;background:hsl(var(--secondary));border-radius:999px;overflow:hidden}.bar u{display:block;height:100%;background:#F98513;border-radius:999px}.bar b{width:28px;text-align:right;font-weight:600}
-table{border-collapse:collapse;width:100%;font-size:13px}th{height:38px;padding:0 8px;text-align:center;font-weight:500;color:var(--mu);border-bottom:1px solid var(--bd);white-space:nowrap}td{padding:8px;border-bottom:1px solid var(--bd);text-align:center}td:first-child,th:first-child{text-align:left}tr:hover td{background:hsl(var(--muted)/.5)}.sc{overflow-x:auto}
-details{border-bottom:1px solid var(--bd);padding:10px 0}summary{cursor:pointer;font-weight:500}
-.kp .card{margin-bottom:0;padding:16px}.kp label{color:var(--mu);margin:0 0 4px}.kp b{font-size:24px;font-weight:700;letter-spacing:-.02em;display:block}
-.tabs{display:inline-flex;background:hsl(var(--muted));padding:4px;border-radius:calc(var(--radius) - 2px);gap:2px;flex-wrap:wrap}.tabs button{height:30px;padding:0 12px;font-size:13px;background:transparent;color:var(--mu);border-radius:calc(var(--radius) - 4px)}.tabs button.on{background:hsl(var(--background));color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.12)}.tabs button:hover{opacity:1;color:var(--tx)}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px;text-align:center}.cal small{font-size:12px;color:var(--mu);padding:4px 0}
-.cd{min-height:78px;border:1px solid var(--bd);border-radius:calc(var(--radius) - 2px);padding:4px;position:relative;cursor:pointer;text-align:left;background:var(--bg)}.cd:hover{background:hsl(var(--accent))}
-.cd>span{font-size:12px;font-weight:500;display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center;border-radius:999px}.cd.td>span{background:#F98513;color:#111144}.cd.sl{border-color:#F98513;box-shadow:0 0 0 1px #F98513}
-.cd em{position:absolute;top:4px;right:6px;font-size:10px;font-style:normal;color:var(--mu)}.nm{font-size:9px;color:#fff;border-radius:4px;padding:1px 3px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.i{width:1.1em;height:1.1em;flex:none;fill:currentColor;vertical-align:-.15em;margin-right:.35em}button .i{width:16px;height:16px;margin:0}
-#sb{position:fixed;top:0;left:0;bottom:0;width:240px;background:hsl(var(--sidebar));border-right:1px solid var(--bd);padding:calc(16px + env(safe-area-inset-top,0px)) 12px 16px;z-index:8;transform:translateX(-100%);transition:transform .2s}
-#sb.o{transform:none;box-shadow:4px 0 24px rgba(0,0,0,.25)}#sb h2{display:flex;align-items:center;gap:10px;font-size:15px;padding:4px 8px 16px;margin:0}
-#sb h2 .i{background:hsl(var(--primary));color:hsl(var(--primary-foreground));padding:6px;width:30px;height:30px;border-radius:8px;margin:0}
-#sb button{width:100%;justify-content:flex-start;background:transparent;color:var(--tx);height:36px;margin-bottom:2px}#sb button:hover{background:hsl(var(--accent));opacity:1}#sb button.on{background:hsl(var(--accent));font-weight:600}
-@media(min-width:900px){#sb{transform:none;box-shadow:none}main{margin-left:250px!important;max-width:none!important}#mb{display:none}}
-#pL>.card:has(#lbal){grid-column:1/-1}
-.mx{table-layout:fixed}.mx th:first-child{width:76px}.mx th:not(:first-child){writing-mode:vertical-rl;transform:rotate(180deg);height:128px;white-space:nowrap;font-size:11px;padding:6px 0;vertical-align:middle}.mx td{padding:6px 0;font-size:12px}.mx td:first-child{font-size:12px;padding-left:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#dc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#dc>.card{margin-bottom:0}#dc>.kp,#dc>.card:has(.mx),#dc>.card:last-child{grid-column:1/-1}
-#out{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#out>p{grid-column:1/-1;margin:0}#out>.card{margin-bottom:0}#out>div:first-of-type{grid-column:1/-1}
-#pL{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:14px;align-items:start}#pL>.card{margin-bottom:0}#pL>.card:first-child{grid-column:1/-1}#pB .card{max-width:760px}
-@media(max-width:600px){.card{padding:14px}}
-#sb{border-right-color:rgba(255,255,255,.1);color:#F4F1EC}#sb h2{color:#F4F1EC}#sb .lic{color:#98ACD8}#sb h2 .i{background:#F98513;color:#111144}
-#sb button{color:#F4F1EC}#sb button:hover{background:rgba(255,255,255,.08)}#sb button.on{background:#223382;box-shadow:inset 3px 0 0 #F98513}
-#go{background:#F98513;color:#111144;font-weight:600}
-#pL>.card{grid-column:1/-1}@media(min-width:900px){.cd{min-height:104px}.nm{font-size:11px;padding:2px 5px}.cd>span{font-size:13px}}
-.du{background:#111144;color:#F4F1EC;border:1px solid #223382;border-radius:18px;padding:12px;max-width:480px;margin:0 auto;display:grid;gap:10px}.du .i{margin-right:4px}
-.du h3{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#98ACD8;margin:0 0 6px;display:flex;align-items:center;gap:4px}.du h3 small{margin-left:auto;background:#223382;border-radius:6px;padding:2px 6px;font-size:9px}
-.du-h{display:flex;justify-content:space-between;align-items:center}.du-h b{font-size:13px;letter-spacing:.04em}.du-d{display:flex;align-items:center;gap:6px;background:#0c0c33;border:1px solid #223382;border-radius:10px;padding:2px;font-size:15px;font-weight:600}.du-d button{height:26px;width:26px;padding:0;background:transparent;color:#98ACD8}
-.du-n{background:rgba(249,133,19,.12);border:1px solid rgba(249,133,19,.3);color:#F98513;border-radius:8px;padding:3px 8px;font-size:11px;text-align:center;font-weight:600}
-.du-hero,.du-sec{background:#1a2060;border:1px solid #223382;border-radius:14px;padding:10px}.du-fl{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #223382;padding-bottom:8px;margin-bottom:8px}.du-fl b{font:800 16px ui-monospace,monospace}.du-fl small{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);padding:2px 8px;border-radius:99px;font-weight:700}
-.du-t3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.du-t3>div{background:#0c0c33;border:1px solid #223382;border-radius:10px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center}.du-t3 small{font-size:10px;font-weight:800;color:#98ACD8}.du-t3 b{font:800 15px ui-monospace,monospace}.du-t3 .am{background:#F98513;color:#111144;border:0}.du-t3 .am small{color:#111144}
-.du-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}.du-tile{background:#1a2060;border:1px solid #223382;border-radius:12px;padding:10px 6px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center}.du-tile b{font-size:12px;letter-spacing:.03em}
-.du-tile span,.du-time{font:800 12px ui-monospace,monospace;color:#F98513;background:#0c0c33;border:1px solid rgba(249,133,19,.35);border-radius:6px;padding:3px 8px}.du-tile.bl{border-color:#98ACD8}.du-tile.bl span{color:#98ACD8;border-color:#98ACD8}
-.du-s{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#0c0c33;border:1px solid #223382;border-radius:10px;padding:6px 8px;margin-bottom:6px}.du-s.on{border-color:#98ACD8}.du-s b{font-size:12px}.du-s em{font-style:normal;font-size:12px;font-weight:600;flex:1;min-width:120px}.du-s i{font-style:normal;font-size:10px;font-weight:700;background:rgba(34,197,94,.2);color:#4ade80;padding:2px 6px;border-radius:6px}.du-o{font-size:11px;color:#98ACD8;margin:4px 0 0}
-@media(min-width:900px){.du{max-width:none;grid-template-columns:3fr 2fr;padding:18px;gap:14px}.du .full{grid-column:1/-1}.du-tile b{font-size:14px}.du-tile span{font-size:14px}}
-.rs{border-collapse:collapse;font-size:11px;width:100%}.rs th,.rs td{border:1px solid var(--bd);padding:3px;text-align:center}.rc{cursor:pointer;font-weight:700;min-width:22px}.rc.M{background:#f59e0b;color:#111}.rc.E{background:#22c55e;color:#111}.rc.N{background:#9ca3af;color:#111}.rc.O{background:#ef4444;color:#fff}.rc.AL{background:#fff;color:#111}.rs td:first-child{text-align:left;white-space:nowrap;font-weight:600;position:sticky;left:0;background:hsl(var(--card))}
-.du-r{font:700 13px ui-monospace,monospace;color:#98ACD8;font-style:normal;flex:1;text-align:center}.du-tile.nb{border-color:transparent}.du-s .du-time{font-size:15px}
-#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);overflow:auto;padding:16px;z-index:9}#modal img{width:100%;max-width:480px;display:block;margin:12px auto;border-radius:var(--radius)}
-</style></head><body><aside id="sb"><h2 style="padding:0 6px"><span data-ic="airplane"></span> Ops Menu</h2><button id="nD"><span data-ic="stats-chart-outline"></span> Dashboard</button><button id="nA" class="on"><span data-ic="clipboard-outline"></span> Task Assign</button><button id="nU"><span data-ic="time-outline"></span> Duty Time</button><button id="nL"><span data-ic="calendar-outline"></span> Leave Management</button><button id="nB"><span data-ic="save-outline"></span> Data Backup</button><p id="sbw" class="lic" style="padding:0 6px"></p></aside><main>
-<h1><span data-ic="airplane"></span> Flight Turnaround Task Assign</h1>
-<div id="wipe" class="card" style="display:none"><b>No saved data found in this browser.</b> If your browser data was cleared, restore your latest backup file. <button class="del" id="wgo">Open Data Backup</button></div><button id="mb" class="s" style="margin-bottom:10px"><span data-ic="menu-outline"></span> Menu</button><div id="pA">
-<div class="card"><h2>Flight details</h2><div class="g">
-<div><label>Date</label><input type="date" id="date"></div>
-<div><label>Flight No:</label><input id="fno" placeholder="e.g. Q2 101"></div>
-<div><label>Aircraft Type</label><select id="ac"><option>ATR-72</option><option>ATR-42</option><option>DH-300</option><option>DH-200</option></select></div>
-<div><label>Check-In Time</label><input type="time" id="ci"></div>
-<div><label>Arrival Time</label><input type="time" id="ar"></div>
-<div><label>Departure Time</label><input type="time" id="dp"></div>
-<div><label>Pax</label><input type="number" id="pax" min="0" inputmode="numeric"></div></div></div>
-<div class="card"><h2>Staff · <span id="cnt" class="badge"></span> available</h2><div class="g" id="staff"></div>
-<p class="lic">★ = licensed for Baggage Tractor</p></div>
-<div class="row"><button id="go"><span data-ic="flash-outline"></span> Auto Assign</button><button class="s" id="save"><span data-ic="checkmark-circle-outline"></span> Confirm &amp; Save History</button></div>
-<div id="out" style="margin-top:12px"></div>
-<div class="row" id="ex" style="display:none"><button id="jpg"><span data-ic="image-outline"></span> Export JPG</button><button class="s" id="rst"><span data-ic="trash-bin-outline"></span> Reset History</button></div>
-</div><div id="pD" style="display:none">
-<div class="card"><h2>Filter</h2><div class="tabs" id="ptabs" style="margin-bottom:12px"><button data-p="day">Daily</button><button data-p="week">Weekly</button><button data-p="month" class="on">Monthly</button><button data-p="year">Yearly</button><button data-p="all">All time</button></div><div class="g"><div style="display:none"><label>Period</label><select id="fp"><option value="day">Daily</option><option value="week">Weekly</option><option value="month" selected>Monthly</option><option value="year">Yearly</option><option value="all">All time</option></select></div>
-<div><label>Reference date</label><input type="date" id="fr"></div><div><label>Staff</label><select id="fs"><option value="all">All staff</option></select></div></div><p class="lic" id="fl"></p></div>
-<div id="dc"></div></div>
-<div id="pU" style="display:none"><div class="card"><h2>Duty Time</h2><div class="g"><div><label>Date</label><input type="date" id="ud"></div><div><label>Flight No:</label><input id="uf"></div><div><label>Check-In Time</label><input type="time" id="uc"></div><div><label>Arrival Time (STA)</label><input type="time" id="ua"></div><div><label>Departure Time (STD)</label><input type="time" id="us"></div><div><label>Route</label><input id="ur" placeholder="HRF/MLE/HRF"></div><div><label>Flight</label><label style="display:flex;align-items:center;gap:8px;height:40px;font-weight:500"><input type="checkbox" id="un" style="width:18px;height:18px"> No flight today</label></div></div></div>
-<div class="du" id="du"></div>
-<div class="row" style="margin-top:12px"><button id="ujpg"><span data-ic="image-outline"></span> Export JPG (phone screen)</button></div>
-<div class="card" style="margin-top:14px"><h2>Manual duty time</h2><p class="lic">Leave blank to use the automatic time. Changes apply to the selected date only.</p><div class="sc" id="mt"></div><button class="s" id="mr" style="margin-top:8px">Reset manual times for this date</button></div>
-<div class="card" style="margin-top:14px"><h2>Security roster editor</h2><p class="lic">Tap a day to change it: M morning, E evening, N night, O off, AL annual leave. The October roster was typed in from your picture, so please check it and fix any mistakes.</p><div class="sc" id="rt"></div></div></div>
-<div id="pL" style="display:none"><div class="card"><h2>Add leave</h2><div class="g"><div><label>Staff</label><select id="ls"></select></div><div><label>From</label><input type="date" id="lf"></div><div><label>To</label><input type="date" id="lt"></div><div><label>Leave type</label><select id="lty"><option>Annual Leave</option><option>FRL</option><option>SL</option><option>SLM</option><option>Off Day</option><option>Release</option></select></div><div><label>Note (optional)</label><input id="ln"></div></div><button id="la" style="margin-top:10px"><span data-ic="calendar-outline"></span> Add Leave</button><p class="lic">Staff on leave are automatically excluded when the flight date falls in their leave period.</p></div>
-<div class="card"><h2>Leave balance</h2><p class="lic">Annual Leave 30 days (32 days once the person has 5 or more years of service), FRL 10, SL 15 and SLM 15 per leave year. Off Day (one per week) and Release (unlimited) are recorded but never deducted from any balance. Each person's leave year starts on the anniversary of their join date, so enter join dates below. Fridays are not deducted from Annual Leave; all other days are counted as calendar days. Leave records saved before this update count as Annual Leave.</p><div id="lbal" class="sc"></div></div>
-<div class="card"><h2>Calendar</h2><div id="lc"></div></div>
-<div class="card"><h2>Leave records</h2><div id="ll"></div></div></div>
-<div id="pB" style="display:none"><div class="card"><h2>Data backup</h2><p id="bkst" class="lic"></p>
-<p>Your flight history, leave records and task rotation are stored in this browser. Clearing browser data erases them, so keep a backup file on your phone or computer and restore it any time.</p>
-<div class="row"><button id="bkb"><span data-ic="save-outline"></span> Save Backup to Device</button><button id="bkr" class="s"><span data-ic="folder-open-outline"></span> Restore from Backup File</button></div><input type="file" id="bkf" accept=".json,application/json" hidden><p id="bkm" class="lic"></p>
-<h2 style="margin-top:14px">If saving a file doesn't work</h2><div class="row"><button id="bkc" class="s"><span data-ic="copy-outline"></span> Copy Backup Text</button></div><textarea id="bkt" readonly style="display:none;width:100%;height:90px;margin-top:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:11px"></textarea>
-<label style="margin-top:12px">Restore from pasted backup text</label><textarea id="bkpaste" style="width:100%;height:70px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:11px" placeholder="Paste backup text here"></textarea><button id="bkp" class="s" style="margin-top:6px"><span data-ic="document-text-outline"></span> Restore from Text</button>
-<p class="lic">Restoring merges the file into your current data, so nothing already here is lost. Save a backup after each day's flights.</p></div></div>
-<div id="modal"><div class="row"><button id="shr"><span data-ic="share-social-outline"></span> Share</button><button class="s" id="dl"><span data-ic="download-outline"></span> Download</button><button class="s" id="cl"><span data-ic="close-outline"></span> Close</button></div>
-<img id="img" alt="Roster"><p class="lic" style="color:#fff;text-align:center">If Share/Download doesn't work, long-press the image to save.</p></div>
-</main>
-<!-- Icons: Ionicons (MIT) https://ionic.io/ionicons -->
-<script>
-const ICONS={"airplane": "<path d=\"M186.62 464H160a16 16 0 01-14.57-22.6l64.46-142.25L113.1 297l-35.3 42.77C71.07 348.23 65.7 352 52 352H34.08a17.66 17.66 0 01-14.7-7.06c-2.38-3.21-4.72-8.65-2.44-16.41l19.82-71c.15-.53.33-1.06.53-1.58a.38.38 0 000-.15 14.82 14.82 0 01-.53-1.59l-19.84-71.45c-2.15-7.61.2-12.93 2.56-16.06a16.83 16.83 0 0113.6-6.7H52c10.23 0 20.16 4.59 26 12l34.57 42.05 97.32-1.44-64.44-142A16 16 0 01160 48h26.91a25 25 0 0119.35 9.8l125.05 152 57.77-1.52c4.23-.23 15.95-.31 18.66-.31C463 208 496 225.94 496 256c0 9.46-3.78 27-29.07 38.16-14.93 6.6-34.85 9.94-59.21 9.94-2.68 0-14.37-.08-18.66-.31l-57.76-1.54-125.36 152a25 25 0 01-19.32 9.75z\"/>", "stats-chart-outline": "<rect x=\"64\" y=\"320\" width=\"48\" height=\"160\" rx=\"8\" ry=\"8\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"288\" y=\"224\" width=\"48\" height=\"256\" rx=\"8\" ry=\"8\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"400\" y=\"112\" width=\"48\" height=\"368\" rx=\"8\" ry=\"8\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"176\" y=\"32\" width=\"48\" height=\"448\" rx=\"8\" ry=\"8\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "clipboard-outline": "<path d=\"M336 64h32a48 48 0 0148 48v320a48 48 0 01-48 48H144a48 48 0 01-48-48V112a48 48 0 0148-48h32\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"176\" y=\"32\" width=\"160\" height=\"64\" rx=\"26.13\" ry=\"26.13\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "calendar-outline": "<rect fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\" x=\"48\" y=\"80\" width=\"416\" height=\"384\" rx=\"48\"/><circle cx=\"296\" cy=\"232\" r=\"24\"/><circle cx=\"376\" cy=\"232\" r=\"24\"/><circle cx=\"296\" cy=\"312\" r=\"24\"/><circle cx=\"376\" cy=\"312\" r=\"24\"/><circle cx=\"136\" cy=\"312\" r=\"24\"/><circle cx=\"216\" cy=\"312\" r=\"24\"/><circle cx=\"136\" cy=\"392\" r=\"24\"/><circle cx=\"216\" cy=\"392\" r=\"24\"/><circle cx=\"296\" cy=\"392\" r=\"24\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\" stroke-linecap=\"round\" d=\"M128 48v32M384 48v32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M464 160H48\"/>", "save-outline": "<path d=\"M380.93 57.37A32 32 0 00358.3 48H94.22A46.21 46.21 0 0048 94.22v323.56A46.21 46.21 0 0094.22 464h323.56A46.36 46.36 0 00464 417.78V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 63.92 63.92 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "menu-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" stroke-width=\"32\" d=\"M80 160h352M80 256h352M80 352h352\"/>", "flash-outline": "<path d=\"M315.27 33L96 304h128l-31.51 173.23a2.36 2.36 0 002.33 2.77h0a2.36 2.36 0 001.89-.95L416 208H288l31.66-173.25a2.45 2.45 0 00-2.44-2.75h0a2.42 2.42 0 00-1.95 1z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "checkmark-circle-outline": "<path d=\"M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z\" fill=\"none\" stroke=\"currentColor\" stroke-miterlimit=\"10\" stroke-width=\"32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M352 176L217.6 336 160 272\"/>", "image-outline": "<rect x=\"48\" y=\"80\" width=\"416\" height=\"352\" rx=\"48\" ry=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/><circle cx=\"336\" cy=\"176\" r=\"32\" fill=\"none\" stroke=\"currentColor\" stroke-miterlimit=\"10\" stroke-width=\"32\"/><path d=\"M304 335.79l-90.66-90.49a32 32 0 00-43.87-1.3L48 352M224 432l123.34-123.34a32 32 0 0143.11-2L464 368\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "trash-outline": "<path d=\"M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" stroke-width=\"32\" d=\"M80 112h352\"/><path d=\"M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "trash-bin-outline": "<path d=\"M432 144l-28.67 275.74A32 32 0 01371.55 448H140.46a32 32 0 01-31.78-28.26L80 144\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"32\" y=\"64\" width=\"448\" height=\"80\" rx=\"16\" ry=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M312 240L200 352M312 352L200 240\"/>", "create-outline": "<path d=\"M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z\"/>", "share-social-outline": "<circle cx=\"128\" cy=\"256\" r=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><circle cx=\"384\" cy=\"112\" r=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><circle cx=\"384\" cy=\"400\" r=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M169.83 279.53l172.34 96.94M342.17 135.53l-172.34 96.94\"/>", "download-outline": "<path d=\"M336 176h40a40 40 0 0140 40v208a40 40 0 01-40 40H136a40 40 0 01-40-40V216a40 40 0 0140-40h40\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M176 272l80 80 80-80M256 48v288\"/>", "close-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M368 368L144 144M368 144L144 368\"/>", "chevron-back-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"48\" d=\"M328 112L184 256l144 144\"/>", "chevron-forward-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"48\" d=\"M184 112l144 144-144 144\"/>", "folder-open-outline": "<path d=\"M64 192v-72a40 40 0 0140-40h75.89a40 40 0 0122.19 6.72l27.84 18.56a40 40 0 0022.19 6.72H408a40 40 0 0140 40v40\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M479.9 226.55L463.68 392a40 40 0 01-39.93 40H88.25a40 40 0 01-39.93-40L32.1 226.55A32 32 0 0164 192h384.1a32 32 0 0131.8 34.55z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "copy-outline": "<rect x=\"128\" y=\"128\" width=\"336\" height=\"336\" rx=\"57\" ry=\"57\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M383.5 128l.5-24a56.16 56.16 0 00-56-56H112a64.19 64.19 0 00-64 64v216a56.16 56.16 0 0056 56h24\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "document-text-outline": "<path d=\"M416 221.25V416a48 48 0 01-48 48H144a48 48 0 01-48-48V96a48 48 0 0148-48h98.75a32 32 0 0122.62 9.37l141.26 141.26a32 32 0 019.37 22.62z\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M256 56v120a32 32 0 0032 32h120M176 288h160M176 368h160\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "warning-outline": "<path d=\"M85.57 446.25h340.86a32 32 0 0028.17-47.17L284.18 82.58c-12.09-22.44-44.27-22.44-56.36 0L57.4 399.08a32 32 0 0028.17 47.17z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M250.26 195.39l5.74 122 5.73-121.95a5.74 5.74 0 00-5.79-6h0a5.74 5.74 0 00-5.68 5.95z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M256 397.25a20 20 0 1120-20 20 20 0 01-20 20z\"/>", "checkmark-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M416 128L192 384l-96-96\"/>", "time-outline": "<path d=\"M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64z\" fill=\"none\" stroke=\"currentColor\" stroke-miterlimit=\"10\" stroke-width=\"32\"/><path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M256 128v144h96\"/>", "shield-checkmark-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\" d=\"M336 176L225.2 304 176 255.8\"/><path d=\"M463.1 112.37C373.68 96.33 336.71 84.45 256 48c-80.71 36.45-117.68 48.33-207.1 64.37C32.7 369.13 240.58 457.79 256 464c15.42-6.21 223.3-94.87 207.1-351.63z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "grid-outline": "<rect x=\"48\" y=\"48\" width=\"176\" height=\"176\" rx=\"20\" ry=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"288\" y=\"48\" width=\"176\" height=\"176\" rx=\"20\" ry=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"48\" y=\"288\" width=\"176\" height=\"176\" rx=\"20\" ry=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/><rect x=\"288\" y=\"288\" width=\"176\" height=\"176\" rx=\"20\" ry=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "moon-outline": "<path d=\"M160 136c0-30.62 4.51-61.61 16-88C99.57 81.27 48 159.32 48 248c0 119.29 96.71 216 216 216 88.68 0 166.73-51.57 200-128-26.39 11.49-57.38 16-88 16-119.29 0-216-96.71-216-216z\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>", "sunny-outline": "<path fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" stroke-width=\"32\" d=\"M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94\"/><circle cx=\"256\" cy=\"256\" r=\"80\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" stroke-width=\"32\"/>", "partly-sunny-outline": "<path d=\"M90.61 306.85A16.07 16.07 0 00104 293.6C116.09 220.17 169.63 176 232 176c57.93 0 96.62 37.75 112.2 77.74a15.84 15.84 0 0012.2 9.87c50 8.15 91.6 41.54 91.6 99.59 0 59.4-48.6 100.8-108 100.8H106c-49.5 0-90-24.7-90-79.2 0-48.47 38.67-72.22 74.61-77.95z\" fill=\"none\" stroke=\"currentColor\" stroke-linejoin=\"round\" stroke-width=\"32\"/><path d=\"M384.8 271.4a80 80 0 10-123.55-92M464 208h32M336 48v32M222.86 94.86l22.63 22.63M449.14 94.86l-22.63 22.63\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"32\"/>"};
-const ic=n=>`<svg class="i" viewBox="0 0 512 512" aria-hidden="true">${ICONS[n]||""}</svg>`;
-const STAFF=["Nabeel","Naufal","Falaah","Rilwan","Salim","A.shareef","Moosa","Arushan","Abdulla","Sharaf","Ashfaq"],LIC=["Naufal","Nabeel","Falaah"];
-const $=i=>document.getElementById(i);let H={seq:0,last:{}},S={},res=null;
-try{H=JSON.parse(localStorage.getItem("ta_h"))||H;S=JSON.parse(localStorage.getItem("ta_s"))||{}}catch(e){}
-$("date").value=new Date().toISOString().slice(0,10);
-let LV=[];try{LV=JSON.parse(localStorage.getItem("ta_lv"))||[]}catch(e){}
-const lr=n=>LV.some(l=>l.n==n&&l.f<=$("date").value&&$("date").value<=l.t),isL=n=>lr(n)||S[n]=="L";
-$("date").onchange=()=>drawStaff();
-function drawStaff(){$("staff").innerHTML=STAFF.map(n=>`<div class="st ${isL(n)?"lv":""}"><span>${n}${LIC.includes(n)?" ★":""}</span><select data-n="${n}" ${lr(n)?"disabled":""}><option value="A">Available</option><option value="L" ${isL(n)?"selected":""}>On leave</option></select></div>`).join("");
-$("cnt").textContent=STAFF.filter(n=>!isL(n)).length;
-document.querySelectorAll("[data-n]").forEach(s=>s.onchange=()=>{S[s.dataset.n]=s.value;try{localStorage.setItem("ta_s",JSON.stringify(S))}catch(e){}drawStaff()})}
-drawStaff();
-const key=(s,t)=>s+"|"+t,OFFS=["I.Rafeeu","H.Amir","Faisal","A.Nabeel","Shah"];
-function offOrder(excl){const li={},cn={};H.log.filter(l=>l.off&&l.id!=excl).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.id-b.id).forEach((l,i)=>{li[l.off]=i;cn[l.off]=(cn[l.off]||0)+1});
- return OFFS.filter(n=>!lr(n)).sort((p,q)=>(li[p]??-1)-(li[q]??-1)||(cn[p]||0)-(cn[q]||0)||OFFS.indexOf(p)-OFFS.indexOf(q))}
-function build(avail,slots,rest){ // slots: {task,lic}; order = priority order
- let pool=[...avail],out=[];
- for(const sl of slots){const c=pool.filter(s=>!sl.lic||LIC.includes(s)).map(s=>[s,H.last[key(s,sl.task)]??-1,Math.random()]).sort((a,b)=>a[1]-b[1]||a[2]-b[2])[0];
-  const who=c?c[0]:null;if(who)pool=pool.filter(s=>s!=who);
-  let e=out.find(o=>o.task==sl.task);if(!e){e={task:sl.task,staff:[],ord:out.length};out.push(e)}
-  e.staff.push(who||"-NONE-")}
- if(pool.length)out.push({task:rest,staff:pool});return out}
-function assign(){
- const av=STAFF.filter(n=>!isL(n));if(!av.length){alert("No staff available");return}
- const ci=["Counter","Sticker","Machine-In","Cart Load",...(av.length>=11?["Cart Load"]:[]),"Machine-Out","Trolley"].map(t=>({task:t}));
- 
- const atr=$("ac").value.startsWith("ATR");
- const tt=atr?["Chock / Cabin Cleaning","Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Chock / Cabin Cleaning","Unload / Load","Unload / Load Help"];
- const pri=atr?["Unload / Load CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 1-2","Unload / Load Help CP 3-4","Chock / Cabin Cleaning"]:["Unload / Load","Unload / Load Help",...(av.length>=7?["Unload / Load Help"]:[]),"Chock / Cabin Cleaning"];
- const tr=[{task:"Baggage Tractor",lic:1},...pri.map(t=>({task:t}))];
- const a=build(av,ci,"Tag"),b=build(av,tr,"Arrival");const co=["Counter","Tag","Machine-In","Machine-Out","Trolley","Sticker","Cart Load"];a.sort((x,y)=>co.indexOf(x.task)-co.indexOf(y.task));
- const order=["Baggage Tractor","GPU",...tt];if(atr){const g=["Unload / Load CP 1-2","Unload / Load Help CP 1-2"].flatMap(t=>(b.find(o=>o.task==t)||{staff:[]}).staff).filter(n=>STAFF.includes(n));b.push({task:"GPU",staff:g})}else{const u=b.find(o=>o.task=="Unload / Load");b.push({task:"GPU",staff:u?u.staff.filter(n=>STAFF.includes(n)):[]})}
- // keep tractor first, then listed order, Arrival last
- b.sort((x,y)=>{const f=t=>t=="Arrival"?99:order.indexOf(t);return f(x.task)-f(y.task)});
- res={a,b,saved:0,ord:order,off:offOrder(0)[0]||""};render()}
-function brief(){const v=$("ci").value;if(!v)return"—";const [h,m]=v.split(":").map(Number),t=(h*60+m-20+1440)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")}
-const RESTS={a:"Tag",b:"Arrival"},CO=["Counter","Tag","Machine-In","Machine-Out","Trolley","Sticker","Cart Load"];
-function fixRest(part){const arr=res[part],Rt=RESTS[part],used=new Set(arr.filter(o=>o.task!=Rt&&o.task!="GPU").flatMap(o=>o.staff));
- const left=STAFF.filter(n=>!isL(n)&&!used.has(n)),r=arr.find(o=>o.task==Rt);if(r)arr.splice(arr.indexOf(r),1);if(left.length)arr.push({task:Rt,staff:left});
- if(part=="a")arr.sort((x,y)=>CO.indexOf(x.task)-CO.indexOf(y.task));else{const f=t=>t==Rt?99:res.ord.indexOf(t);arr.sort((x,y)=>f(x.task)-f(y.task))}}
-function fixGPU(){const b=res.b,g=b.find(o=>o.task=="GPU");if(!g)return;const src=b.some(o=>o.task=="Unload / Load CP 1-2")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2"]:["Unload / Load"];
- g.staff=src.flatMap(t=>(b.find(o=>o.task==t)||{staff:[]}).staff).filter(n=>STAFF.includes(n))}
-function manual(part,task,i,val){
- const arr=res[part],o=arr.find(x=>x.task==task),old=o.staff[i];if(val==old)return;
- let h=null;if(val!="-NONE-")for(const x of arr){if(x.task=="GPU"||x.task==RESTS[part])continue;const k=x.staff.indexOf(val);if(k>=0){h=[x,k];break}}
- if(h){if(h[0].task=="Baggage Tractor"&&old!="-NONE-"&&!LIC.includes(old)){alert("Only licensed staff (Naufal, Nabeel, Falaah) can take Baggage Tractor");render();return}h[0].staff[h[1]]=old}
- o.staff[i]=val;fixRest(part);fixGPU();res.saved=0;render()}
-function render(){
- const av=STAFF.filter(n=>!isL(n));
- const sec=(t,part)=>`<div class="card"><div class="sec">${t}</div>${(part=="b"&&!res.b.some(o=>o.task=="Arrival")?[...res.b,{task:"Arrival",staff:[]}]:res[part]).map(o=>{const auto=o.task==RESTS[part]||o.task=="GPU";
-  const cell=auto?(o.staff.join(", ")||"-NONE-"):o.staff.map((s,i)=>`<select data-p="${part}" data-t="${o.task}" data-i="${i}">${["-NONE-",...av.filter(n=>o.task!="Baggage Tractor"||LIC.includes(n))].map(n=>`<option ${n==s?"selected":""}>${n}</option>`).join("")}</select>`).join(" ");
-  return`<div class="t"><b>${o.task}${o.task=="GPU"?' <small class="lic">(auto)</small>':auto?' <small class="lic">(remaining)</small>':""}</b><span>${cell}</span></div>`}).join("")}</div>`;
- $("out").innerHTML=`<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>`+`<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["",...OFFS].map(n=>`<option value="${n}" ${n==res.off?"selected":""}>${n||"—"}</option>`).join("")}</select></span></div></div>`+sec("1 · Check-In Tasks","a")+sec("2 · Flight Turnaround Tasks ("+$("ac").value+")","b");
- $("ex").style.display="flex";$("offs").onchange=e=>{res.off=e.target.value;res.saved=0};document.querySelectorAll("#out select[data-p]").forEach(e=>e.onchange=()=>manual(e.dataset.p,e.dataset.t,+e.dataset.i,e.value))}
-$("go").onclick=assign;
-$("save").onclick=()=>{if(!res){alert("Assign first");return}if(res.saved){alert("Already saved");return}res.saved=1;H.log=H.log||[];if(res.sid)H.log=H.log.filter(l=>l.id!=res.sid);res.sid=Date.now();if(res.off)H.last[key(res.off,"OFFICER")]=++H.seq;H.log.push({id:res.sid,date:$("date").value,fno:$("fno").value,ac:$("ac").value,ci:$("ci").value,ar:$("ar").value,dp:$("dp").value,pax:$("pax").value,off:res.off,a:res.a,b:res.b});
- [...res.a.map(o=>o),...res.b].forEach(o=>o.staff.forEach(s=>{if(STAFF.includes(s))H.last[key(s,o.task)]=++H.seq}));
- persist("ta_h",H);alert("Saved. Next assignment will favour staff who haven't done each task for longest.")};
-$("rst").onclick=()=>{if(confirm("Clear task history?")){H={seq:0,last:{},log:[]};try{localStorage.removeItem("ta_h")}catch(e){}dash()}};
-function wrap(c,t,w){const ws=t.split(" "),ls=[];let l="";for(const x of ws){if(c.measureText(l+" "+x).width>w&&l){ls.push(l);l=x}else l=l?l+" "+x:x}ls.push(l);return ls}
-function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
-function jpg(){
- const W=1080,M=45,PD=36,IW=W-2*M-2*PD,m=document.createElement("canvas").getContext("2d"),c=document.createElement("canvas"),x=c.getContext("2d");
- const U=t=>{t=String(t);return t=="-NONE-"||t=="— none —"?"-NONE-":t.toUpperCase()},blocks=[["CHECK-IN TASKS",res.a],["TURNAROUND TASKS",res.b.some(o=>o.task=="Arrival")?res.b:[...res.b,{task:"Arrival",staff:["-NONE-"]}]]];
- const av=STAFF.filter(n=>!isL(n)).length,lv=STAFF.filter(isL).length;
- m.font="700 30px sans-serif";const lw=Math.max(...blocks.flatMap(b=>b[1].map(o=>m.measureText(U(o.task)).width)))+30,CH=54,GAP=14;
- const layout=o=>{const L=[[]];let cx=0;o.staff.forEach(n=>{const w=m.measureText(U(n)).width+44;if(cx+w>IW-lw&&L[L.length-1].length){L.push([]);cx=0}L[L.length-1].push([n,w]);cx+=w+GAP});return L};
- const rh=o=>Math.max(84,layout(o).length*(CH+GAP)+GAP+10);
- const hc=[0,0].map((_,k)=>95+blocks[k][1].reduce((t,o)=>t+rh(o),0)+30);
- const HH=400,H2=40+HH+30+hc[0]+30+hc[1]+30+140;
- c.width=W;c.height=H2;
- const g=x.createLinearGradient(0,0,0,H2);g.addColorStop(0,"#0f1535");g.addColorStop(1,"#1f2750");x.fillStyle=g;x.fillRect(0,0,W,H2);
- const card=(y,h)=>{rr(x,M,y,W-2*M,h,44);x.fillStyle="rgba(255,255,255,0.07)";x.fill();x.strokeStyle="rgba(255,255,255,0.18)";x.lineWidth=2;x.stroke()};
- let y=40;card(y,HH);const L0=M+PD,R0=W-M-PD;
- x.textAlign="left";x.fillStyle="#fff";x.font="800 68px sans-serif";x.fillText(U($("fno").value.trim()||"—"),L0,y+100);
- x.font="700 30px sans-serif";const ac=U($("ac").value),pw=x.measureText(ac).width+50;
- rr(x,W/2-pw/2+30,y+48,pw,56,14);x.fillStyle="rgba(79,195,160,0.25)";x.fill();x.strokeStyle="#4fc3a0";x.stroke();x.fillStyle="#8fe3c4";x.textAlign="center";x.fillText(ac,W/2+30,y+87);
- x.textAlign="right";x.fillStyle="#fff";x.font="600 34px sans-serif";x.fillText($("date").value.split("-").reverse().join("-"),R0,y+90);
- x.textAlign="center";x.fillStyle="#cfd6ea";x.font="600 28px sans-serif";x.fillText("TURNAROUND TASK DETAILS",W/2,y+150);
- const bx=L0,by=y+175,bw=IW,bh=150;rr(x,bx,by,bw,bh,28);x.fillStyle="rgba(8,12,35,0.7)";x.fill();x.strokeStyle="rgba(255,255,255,0.15)";x.stroke();
- [["CHECK-IN",$("ci").value,"#7f9cff"],["STA",$("ar").value,"#f0983a"],["STD",$("dp").value,"#4ccf6a"],["PAX",$("pax").value,"#f5e62e"]].forEach((q,k)=>{const cx=bx+bw/8+k*bw/4;
-  x.fillStyle="#d0d6ea";x.font="600 26px sans-serif";x.fillText(q[0],cx,by+52);x.fillStyle=q[2];x.font="800 46px sans-serif";x.fillText(q[1]||"—",cx,by+112);
-  if(k){x.strokeStyle="rgba(255,255,255,0.15)";x.beginPath();x.moveTo(bx+k*bw/4,by+25);x.lineTo(bx+k*bw/4,by+bh-25);x.stroke()}});
- const iy=y+HH-35;x.textAlign="left";x.font="600 26px sans-serif";let cx=L0;
- const item=(col,t,v)=>{x.fillStyle=col;x.beginPath();x.arc(cx+8,iy-9,8,0,7);x.fill();x.fillStyle="#fff";x.font="600 26px sans-serif";x.fillText(t,cx+26,iy);cx+=26+x.measureText(t).width+10;
-  if(v!=null){const w=x.measureText(String(v)).width+22;rr(x,cx,iy-30,w,40,10);x.fillStyle="rgba(255,255,255,0.18)";x.fill();x.fillStyle="#fff";x.fillText(String(v),cx+11,iy);cx+=w}cx+=26};
- x.fillStyle="#2fd4c0";x.beginPath();x.arc(cx+8,iy-9,8,0,7);x.fill();x.fillStyle="#fff";x.font="600 26px sans-serif";x.fillText("OFFICER: ",cx+26,iy);cx+=26+x.measureText("OFFICER: ").width;
- const on=U(res.off||"—");x.fillStyle="#3fdc6a";x.font="700 26px sans-serif";x.fillText(on,cx,iy);cx+=x.measureText(on).width+26;item("#3fdc6a","STAFF AVAILABLE",av);item("#ff4d4d","STAFF ON LEAVE",lv);
- y+=HH+30;
- blocks.forEach((b,k)=>{card(y,hc[k]);x.textAlign="center";x.fillStyle="#fff";x.font="800 34px sans-serif";x.fillText(b[0],W/2,y+60);
-  x.strokeStyle="rgba(255,255,255,0.2)";x.lineWidth=2;x.beginPath();x.moveTo(L0,y+82);x.lineTo(R0,y+82);x.stroke();
-  let ry=y+95;b[1].forEach(o=>{const h=rh(o);x.textAlign="left";x.fillStyle="#fff";x.font="700 30px sans-serif";x.fillText(U(o.task),L0,ry+10+37);
-   layout(o).forEach((ln,li)=>{let px=L0+lw;ln.forEach(([n,w])=>{const py=ry+10+li*(CH+GAP);rr(x,px,py,w,CH,14);x.fillStyle="#5d6d96";x.fill();x.fillStyle="#fff";x.font="700 30px sans-serif";x.textAlign="center";x.fillText(U(n),px+w/2,py+37);x.textAlign="left";px+=w+GAP})});
-   x.strokeStyle="rgba(255,255,255,0.12)";x.beginPath();x.moveTo(L0,ry+h);x.lineTo(R0,ry+h);x.stroke();ry+=h});
-  y+=hc[k]+30});
- x.textAlign="center";x.font="800 40px sans-serif";const t1="PRE-FLIGHT BRIEFING : ",t2=brief(),w1=x.measureText(t1).width,w2=x.measureText(t2).width,sx=W/2-(w1+w2)/2;
- x.textAlign="left";x.fillStyle="#fff";x.fillText(t1,sx,y+45);x.fillStyle="#ff8a8a";x.fillText(t2,sx+w1,y+45);
- x.textAlign="center";x.fillStyle="#ff3b3b";x.font="700 26px sans-serif";x.fillText("MANDATORY ATTENDANCE",W/2,y+90);
- return c}
-let cv=null;
-$("jpg").onclick=()=>{window.FN=0;cv=jpg();$("img").src=cv.toDataURL("image/jpeg",.92);$("modal").style.display="block"};
-$("cl").onclick=()=>$("modal").style.display="none";
-const fname=()=>(window.FN||"roster-"+($("fno").value||"flight").replace(/\W+/g,"")+"-"+$("date").value)+".jpg";
-$("dl").onclick=async()=>{try{const d=window.claude?await claude.use("downloads"):null;if(d){const b=await new Promise(r=>cv.toBlob(r,"image/jpeg",.92));await d.save({filename:fname(),data:b});return}}catch(e){if(e&&e.code=="declined")return}
- const a=document.createElement("a");a.href=$("img").src;a.download=fname();a.click()};
-$("shr").onclick=()=>cv.toBlob(async b=>{const f=new File([b],fname(),{type:"image/jpeg"});
- try{if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});else alert("Sharing not supported here — long-press the image to save.")}catch(e){}},"image/jpeg",.92);
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <title>Flight Turnaround Task Assign</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <style>
+      /* shadcn/ui design tokens (zinc theme) re-created in plain CSS */
+      :root {
+        --page: 37 26% 94%;
+        --background: 37 30% 98%;
+        --foreground: 240 60% 17%;
+        --card: 37 30% 98%;
+        --primary: 229 59% 32%;
+        --primary-foreground: 37 26% 94%;
+        --secondary: 30 20% 89%;
+        --secondary-foreground: 240 60% 17%;
+        --muted: 30 20% 89%;
+        --muted-foreground: 232 22% 38%;
+        --accent: 221 45% 90%;
+        --border: 30 19% 82%;
+        --ring: 30 95% 53%;
+        --sidebar: 240 60% 17%;
+        --radius: 0.5rem;
+        --bg: hsl(var(--background));
+        --tx: hsl(var(--foreground));
+        --mu: hsl(var(--muted-foreground));
+        --bd: hsl(var(--border));
+        --ac: hsl(var(--primary));
+        --ok: hsl(var(--accent));
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --page: 240 60% 17%;
+          --background: 240 58% 14%;
+          --foreground: 37 26% 94%;
+          --card: 233 56% 23%;
+          --primary: 30 95% 53%;
+          --primary-foreground: 240 60% 17%;
+          --secondary: 229 59% 32%;
+          --secondary-foreground: 37 26% 94%;
+          --muted: 229 45% 28%;
+          --muted-foreground: 221 45% 72%;
+          --accent: 229 59% 32%;
+          --border: 229 45% 30%;
+          --ring: 30 95% 53%;
+          --sidebar: 240 60% 12%;
+        }
+      }
+      :root[data-theme="dark"] {
+        --page: 240 60% 17%;
+        --background: 240 58% 14%;
+        --foreground: 37 26% 94%;
+        --card: 233 56% 23%;
+        --primary: 30 95% 53%;
+        --primary-foreground: 240 60% 17%;
+        --secondary: 229 59% 32%;
+        --secondary-foreground: 37 26% 94%;
+        --muted: 229 45% 28%;
+        --muted-foreground: 221 45% 72%;
+        --accent: 229 59% 32%;
+        --border: 229 45% 30%;
+        --ring: 30 95% 53%;
+        --sidebar: 240 60% 12%;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          14px/1.5 Inter,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Arial,
+          sans-serif;
+        background: hsl(var(--page));
+        color: var(--tx);
+        -webkit-font-smoothing: antialiased;
+      }
+      main {
+        max-width: none;
+        padding: 16px;
+      }
+      h1 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 4px 0 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card {
+        background: hsl(var(--card));
+        border: 1px solid var(--bd);
+        border-radius: calc(var(--radius) + 2px);
+        padding: 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin: 0 0 12px;
+        color: var(--tx);
+      }
+      .g {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 6px;
+        color: var(--tx);
+      }
+      input,
+      select {
+        width: 100%;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--bd);
+        border-radius: calc(var(--radius) - 2px);
+        background: var(--bg);
+        color: var(--tx);
+        font: inherit;
+        font-size: 14px;
+      }
+      textarea {
+        font-family: inherit;
+      }
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      button:focus-visible {
+        outline: none;
+        box-shadow:
+          0 0 0 2px hsl(var(--background)),
+          0 0 0 4px hsl(var(--ring));
+      }
+      button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: calc(var(--radius) - 2px);
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        font: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          opacity 0.15s;
+        white-space: nowrap;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+      button.s {
+        background: hsl(var(--secondary));
+        color: hsl(var(--secondary-foreground));
+      }
+      button.s:hover {
+        background: hsl(var(--secondary) / 0.8);
+        opacity: 1;
+      }
+      button.del {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 12px;
+        background: transparent;
+        color: var(--tx);
+        border: 1px solid var(--bd);
+        margin-top: 6px;
+      }
+      button.del:hover {
+        background: hsl(var(--accent));
+        opacity: 1;
+      }
+      button[data-del],
+      button[data-lv] {
+        color: hsl(0 84% 60%);
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .row button {
+        flex: 1;
+      }
+      .st {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border: 1px solid var(--bd);
+        border-radius: calc(var(--radius) - 2px);
+        background: var(--bg);
+        font-weight: 500;
+      }
+      .st select {
+        width: auto;
+        height: 30px;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+      .st.lv {
+        background: hsl(var(--muted));
+        opacity: 0.7;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        padding: 1px 10px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .sec {
+        font-size: 16px;
+        font-weight: 600;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--bd);
+        margin-bottom: 2px;
+      }
+      .t {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--bd);
+      }
+      .t:last-child {
+        border-bottom: 0;
+      }
+      .t b {
+        flex: 0 0 38%;
+        font-weight: 500;
+      }
+      .t span {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
+        text-align: right;
+      }
+      .t select {
+        width: auto;
+        min-width: 140px;
+        max-width: 100%;
+        height: 32px;
+        padding: 0 8px;
+        margin: 0;
+        font-size: 13px;
+      }
+      .lic {
+        font-size: 12px;
+        color: var(--mu);
+        font-weight: 400;
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .bar span {
+        flex: 0 0 42%;
+      }
+      .bar i {
+        flex: 1;
+        height: 8px;
+        background: hsl(var(--secondary));
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .bar u {
+        display: block;
+        height: 100%;
+        background: #f98513;
+        border-radius: 999px;
+      }
+      .bar b {
+        width: 28px;
+        text-align: right;
+        font-weight: 600;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+      }
+      th {
+        height: 38px;
+        padding: 0 8px;
+        text-align: center;
+        font-weight: 500;
+        color: var(--mu);
+        border-bottom: 1px solid var(--bd);
+        white-space: nowrap;
+      }
+      td {
+        padding: 8px;
+        border-bottom: 1px solid var(--bd);
+        text-align: center;
+      }
+      td:first-child,
+      th:first-child {
+        text-align: left;
+      }
+      tr:hover td {
+        background: hsl(var(--muted) / 0.5);
+      }
+      .sc {
+        overflow-x: auto;
+      }
+      details {
+        border-bottom: 1px solid var(--bd);
+        padding: 10px 0;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .kp .card {
+        margin-bottom: 0;
+        padding: 16px;
+      }
+      .kp label {
+        color: var(--mu);
+        margin: 0 0 4px;
+      }
+      .kp b {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        display: block;
+      }
+      .tabs {
+        display: inline-flex;
+        background: hsl(var(--muted));
+        padding: 4px;
+        border-radius: calc(var(--radius) - 2px);
+        gap: 2px;
+        flex-wrap: wrap;
+      }
+      .tabs button {
+        height: 30px;
+        padding: 0 12px;
+        font-size: 13px;
+        background: transparent;
+        color: var(--mu);
+        border-radius: calc(var(--radius) - 4px);
+      }
+      .tabs button.on {
+        background: hsl(var(--background));
+        color: var(--tx);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      .tabs button:hover {
+        opacity: 1;
+        color: var(--tx);
+      }
+      .cal {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-top: 10px;
+        text-align: center;
+      }
+      .cal small {
+        font-size: 12px;
+        color: var(--mu);
+        padding: 4px 0;
+      }
+      .cd {
+        min-height: 78px;
+        border: 1px solid var(--bd);
+        border-radius: calc(var(--radius) - 2px);
+        padding: 4px;
+        position: relative;
+        cursor: pointer;
+        text-align: left;
+        background: var(--bg);
+      }
+      .cd:hover {
+        background: hsl(var(--accent));
+      }
+      .cd > span {
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        width: 22px;
+        height: 22px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+      }
+      .cd.td > span {
+        background: #f98513;
+        color: #111144;
+      }
+      .cd.sl {
+        border-color: #f98513;
+        box-shadow: 0 0 0 1px #f98513;
+      }
+      .cd em {
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        font-size: 10px;
+        font-style: normal;
+        color: var(--mu);
+      }
+      .nm {
+        font-size: 9px;
+        color: #fff;
+        border-radius: 4px;
+        padding: 1px 3px;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .i {
+        width: 1.1em;
+        height: 1.1em;
+        flex: none;
+        fill: currentColor;
+        vertical-align: -0.15em;
+        margin-right: 0.35em;
+      }
+      button .i {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+      }
+      #sb {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 240px;
+        background: hsl(var(--sidebar));
+        border-right: 1px solid var(--bd);
+        padding: calc(16px + env(safe-area-inset-top, 0px)) 12px 16px;
+        z-index: 8;
+        transform: translateX(-100%);
+        transition: transform 0.2s;
+      }
+      #sb.o {
+        transform: none;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+      }
+      #sb h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 15px;
+        padding: 4px 8px 16px;
+        margin: 0;
+      }
+      #sb h2 .i {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        padding: 6px;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        margin: 0;
+      }
+      #sb button {
+        width: 100%;
+        justify-content: flex-start;
+        background: transparent;
+        color: var(--tx);
+        height: 36px;
+        margin-bottom: 2px;
+      }
+      #sb button:hover {
+        background: hsl(var(--accent));
+        opacity: 1;
+      }
+      #sb button.on {
+        background: hsl(var(--accent));
+        font-weight: 600;
+      }
+      @media (min-width: 900px) {
+        #sb {
+          transform: none;
+          box-shadow: none;
+        }
+        main {
+          margin-left: 250px !important;
+          max-width: none !important;
+        }
+        #mb {
+          display: none;
+        }
+      }
+      #pL > .card:has(#lbal) {
+        grid-column: 1/-1;
+      }
+      .mx {
+        table-layout: fixed;
+      }
+      .mx th:first-child {
+        width: 76px;
+      }
+      .mx th:not(:first-child) {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        height: 128px;
+        white-space: nowrap;
+        font-size: 11px;
+        padding: 6px 0;
+        vertical-align: middle;
+      }
+      .mx td {
+        padding: 6px 0;
+        font-size: 12px;
+      }
+      .mx td:first-child {
+        font-size: 12px;
+        padding-left: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #dc {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      #dc > .card {
+        margin-bottom: 0;
+      }
+      #dc > .kp,
+      #dc > .card:has(.mx),
+      #dc > .card:last-child {
+        grid-column: 1/-1;
+      }
+      #out {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      #out > p {
+        grid-column: 1/-1;
+        margin: 0;
+      }
+      #out > .card {
+        margin-bottom: 0;
+      }
+      #out > div:first-of-type {
+        grid-column: 1/-1;
+      }
+      #pL {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      #pL > .card {
+        margin-bottom: 0;
+      }
+      #pL > .card:first-child {
+        grid-column: 1/-1;
+      }
+      #pB .card {
+        max-width: 760px;
+      }
+      @media (max-width: 600px) {
+        .card {
+          padding: 14px;
+        }
+      }
+      #sb {
+        border-right-color: rgba(255, 255, 255, 0.1);
+        color: #f4f1ec;
+      }
+      #sb h2 {
+        color: #f4f1ec;
+      }
+      #sb .lic {
+        color: #98acd8;
+      }
+      #sb h2 .i {
+        background: #f98513;
+        color: #111144;
+      }
+      #sb button {
+        color: #f4f1ec;
+      }
+      #sb button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      #sb button.on {
+        background: #223382;
+        box-shadow: inset 3px 0 0 #f98513;
+      }
+      #go {
+        background: #f98513;
+        color: #111144;
+        font-weight: 600;
+      }
+      #pL > .card {
+        grid-column: 1/-1;
+      }
+      @media (min-width: 900px) {
+        .cd {
+          min-height: 104px;
+        }
+        .nm {
+          font-size: 11px;
+          padding: 2px 5px;
+        }
+        .cd > span {
+          font-size: 13px;
+        }
+      }
+      .du {
+        background: #111144;
+        color: #f4f1ec;
+        border: 1px solid #223382;
+        border-radius: 18px;
+        padding: 12px;
+        max-width: 480px;
+        margin: 0 auto;
+        display: grid;
+        gap: 10px;
+      }
+      .du .i {
+        margin-right: 4px;
+      }
+      .du h3 {
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #98acd8;
+        margin: 0 0 6px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .du h3 small {
+        margin-left: auto;
+        background: #223382;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 9px;
+      }
+      .du-h {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .du-h b {
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+      .du-d {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #0c0c33;
+        border: 1px solid #223382;
+        border-radius: 10px;
+        padding: 2px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .du-d button {
+        height: 26px;
+        width: 26px;
+        padding: 0;
+        background: transparent;
+        color: #98acd8;
+      }
+      .du-n {
+        background: rgba(249, 133, 19, 0.12);
+        border: 1px solid rgba(249, 133, 19, 0.3);
+        color: #f98513;
+        border-radius: 8px;
+        padding: 3px 8px;
+        font-size: 11px;
+        text-align: center;
+        font-weight: 600;
+      }
+      .du-hero,
+      .du-sec {
+        background: #1a2060;
+        border: 1px solid #223382;
+        border-radius: 14px;
+        padding: 10px;
+      }
+      .du-fl {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #223382;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+      }
+      .du-fl b {
+        font:
+          800 16px ui-monospace,
+          monospace;
+      }
+      .du-fl small {
+        background: rgba(34, 197, 94, 0.15);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        padding: 2px 8px;
+        border-radius: 99px;
+        font-weight: 700;
+      }
+      .du-t3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .du-t3 > div {
+        background: #0c0c33;
+        border: 1px solid #223382;
+        border-radius: 10px;
+        padding: 6px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .du-t3 small {
+        font-size: 10px;
+        font-weight: 800;
+        color: #98acd8;
+      }
+      .du-t3 b {
+        font:
+          800 15px ui-monospace,
+          monospace;
+      }
+      .du-t3 .am {
+        background: #f98513;
+        color: #111144;
+        border: 0;
+      }
+      .du-t3 .am small {
+        color: #111144;
+      }
+      .du-tiles {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .du-tile {
+        background: #1a2060;
+        border: 1px solid #223382;
+        border-radius: 12px;
+        padding: 10px 6px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+      }
+      .du-tile b {
+        font-size: 12px;
+        letter-spacing: 0.03em;
+      }
+      .du-tile span,
+      .du-time {
+        font:
+          800 12px ui-monospace,
+          monospace;
+        color: #f98513;
+        background: #0c0c33;
+        border: 1px solid rgba(249, 133, 19, 0.35);
+        border-radius: 6px;
+        padding: 3px 8px;
+      }
+      .du-tile.bl {
+        border-color: #98acd8;
+      }
+      .du-tile.bl span {
+        color: #98acd8;
+        border-color: #98acd8;
+      }
+      .du-s {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        background: #0c0c33;
+        border: 1px solid #223382;
+        border-radius: 10px;
+        padding: 6px 8px;
+        margin-bottom: 6px;
+      }
+      .du-s.on {
+        border-color: #98acd8;
+      }
+      .du-s b {
+        font-size: 12px;
+      }
+      .du-s em {
+        font-style: normal;
+        font-size: 12px;
+        font-weight: 600;
+        flex: 1;
+        min-width: 120px;
+      }
+      .du-s i {
+        font-style: normal;
+        font-size: 10px;
+        font-weight: 700;
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        padding: 2px 6px;
+        border-radius: 6px;
+      }
+      .du-o {
+        font-size: 11px;
+        color: #98acd8;
+        margin: 4px 0 0;
+      }
+      @media (min-width: 900px) {
+        .du {
+          max-width: none;
+          grid-template-columns: 3fr 2fr;
+          padding: 18px;
+          gap: 14px;
+        }
+        .du .full {
+          grid-column: 1/-1;
+        }
+        .du-tile b {
+          font-size: 14px;
+        }
+        .du-tile span {
+          font-size: 14px;
+        }
+      }
+      .rs {
+        border-collapse: collapse;
+        font-size: 11px;
+        width: 100%;
+      }
+      .rs th,
+      .rs td {
+        border: 1px solid var(--bd);
+        padding: 3px;
+        text-align: center;
+      }
+      .rc {
+        cursor: pointer;
+        font-weight: 700;
+        min-width: 22px;
+      }
+      .rc.M {
+        background: #f59e0b;
+        color: #111;
+      }
+      .rc.E {
+        background: #22c55e;
+        color: #111;
+      }
+      .rc.N {
+        background: #9ca3af;
+        color: #111;
+      }
+      .rc.O {
+        background: #ef4444;
+        color: #fff;
+      }
+      .rc.AL {
+        background: #fff;
+        color: #111;
+      }
+      .rs td:first-child {
+        text-align: left;
+        white-space: nowrap;
+        font-weight: 600;
+        position: sticky;
+        left: 0;
+        background: hsl(var(--card));
+      }
+      .du-r {
+        font:
+          700 13px ui-monospace,
+          monospace;
+        color: #98acd8;
+        font-style: normal;
+        flex: 1;
+        text-align: center;
+      }
+      .du-tile.nb {
+        border-color: transparent;
+      }
+      .du-s .du-time {
+        font-size: 15px;
+      }
+      #modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        overflow: auto;
+        padding: 16px;
+        z-index: 9;
+      }
+      #modal img {
+        width: 100%;
+        max-width: 480px;
+        display: block;
+        margin: 12px auto;
+        border-radius: var(--radius);
+      }
+    </style>
+  </head>
+  <body>
+    <aside id="sb">
+      <h2 style="padding: 0 6px"><span data-ic="airplane"></span> Ops Menu</h2>
+      <button id="nD">
+        <span data-ic="stats-chart-outline"></span> Dashboard</button
+      ><button id="nA" class="on">
+        <span data-ic="clipboard-outline"></span> Task Assign</button
+      ><button id="nU"><span data-ic="time-outline"></span> Duty Time</button
+      ><button id="nL">
+        <span data-ic="calendar-outline"></span> Leave Management</button
+      ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
+      <p id="sbw" class="lic" style="padding: 0 6px"></p>
+    </aside>
+    <main>
+      <h1><span data-ic="airplane"></span> Flight Turnaround Task Assign</h1>
+      <div id="wipe" class="card" style="display: none">
+        <b>No saved data found in this browser.</b> If your browser data was
+        cleared, restore your latest backup file.
+        <button class="del" id="wgo">Open Data Backup</button>
+      </div>
+      <button id="mb" class="s" style="margin-bottom: 10px">
+        <span data-ic="menu-outline"></span> Menu
+      </button>
+      <div id="pA">
+        <div class="card">
+          <h2>Flight details</h2>
+          <div class="g">
+            <div><label>Date</label><input type="date" id="date" /></div>
+            <div>
+              <label>Flight No:</label
+              ><input id="fno" placeholder="e.g. Q2 101" />
+            </div>
+            <div>
+              <label>Aircraft Type</label
+              ><select id="ac">
+                <option>ATR-72</option>
+                <option>ATR-42</option>
+                <option>DH-300</option>
+                <option>DH-200</option>
+              </select>
+            </div>
+            <div><label>Check-In Time</label><input type="time" id="ci" /></div>
+            <div><label>Arrival Time</label><input type="time" id="ar" /></div>
+            <div>
+              <label>Departure Time</label><input type="time" id="dp" />
+            </div>
+            <div>
+              <label>Pax</label
+              ><input type="number" id="pax" min="0" inputmode="numeric" />
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Staff · <span id="cnt" class="badge"></span> available</h2>
+          <div class="g" id="staff"></div>
+          <p class="lic">★ = licensed for Baggage Tractor</p>
+        </div>
+        <div class="row">
+          <button id="go">
+            <span data-ic="flash-outline"></span> Auto Assign</button
+          ><button class="s" id="save">
+            <span data-ic="checkmark-circle-outline"></span> Confirm &amp; Save
+            History
+          </button>
+        </div>
+        <div id="out" style="margin-top: 12px"></div>
+        <div class="row" id="ex" style="display: none">
+          <button id="jpg">
+            <span data-ic="image-outline"></span> Export JPG</button
+          ><button class="s" id="rst">
+            <span data-ic="trash-bin-outline"></span> Reset History
+          </button>
+        </div>
+      </div>
+      <div id="pD" style="display: none">
+        <div class="card">
+          <h2>Filter</h2>
+          <div class="tabs" id="ptabs" style="margin-bottom: 12px">
+            <button data-p="day">Daily</button
+            ><button data-p="week">Weekly</button
+            ><button data-p="month" class="on">Monthly</button
+            ><button data-p="year">Yearly</button
+            ><button data-p="all">All time</button>
+          </div>
+          <div class="g">
+            <div style="display: none">
+              <label>Period</label
+              ><select id="fp">
+                <option value="day">Daily</option>
+                <option value="week">Weekly</option>
+                <option value="month" selected>Monthly</option>
+                <option value="year">Yearly</option>
+                <option value="all">All time</option>
+              </select>
+            </div>
+            <div>
+              <label>Reference date</label><input type="date" id="fr" />
+            </div>
+            <div>
+              <label>Staff</label
+              ><select id="fs">
+                <option value="all">All staff</option>
+              </select>
+            </div>
+          </div>
+          <p class="lic" id="fl"></p>
+        </div>
+        <div id="dc"></div>
+      </div>
+      <div id="pU" style="display: none">
+        <div class="card">
+          <h2>Duty Time</h2>
+          <div class="g">
+            <div><label>Date</label><input type="date" id="ud" /></div>
+            <div><label>Flight No:</label><input id="uf" /></div>
+            <div><label>Check-In Time</label><input type="time" id="uc" /></div>
+            <div>
+              <label>Arrival Time (STA)</label><input type="time" id="ua" />
+            </div>
+            <div>
+              <label>Departure Time (STD)</label><input type="time" id="us" />
+            </div>
+            <div>
+              <label>Route</label><input id="ur" placeholder="HRF/MLE/HRF" />
+            </div>
+            <div>
+              <label>Flight</label
+              ><label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  height: 40px;
+                  font-weight: 500;
+                "
+                ><input
+                  type="checkbox"
+                  id="un"
+                  style="width: 18px; height: 18px"
+                />
+                No flight today</label
+              >
+            </div>
+          </div>
+        </div>
+        <div class="du" id="du"></div>
+        <div class="row" style="margin-top: 12px">
+          <button id="ujpg">
+            <span data-ic="image-outline"></span> Export JPG (phone screen)
+          </button>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <h2>Manual duty time</h2>
+          <p class="lic">
+            Leave blank to use the automatic time. Changes apply to the selected
+            date only.
+          </p>
+          <div class="sc" id="mt"></div>
+          <button class="s" id="mr" style="margin-top: 8px">
+            Reset manual times for this date
+          </button>
+        </div>
+        <div class="card" style="margin-top: 14px">
+          <h2>Security roster editor</h2>
+          <p class="lic">
+            Tap a day to change it: M morning, E evening, N night, O off, AL
+            annual leave. The October roster was typed in from your picture, so
+            please check it and fix any mistakes.
+          </p>
+          <div class="sc" id="rt"></div>
+        </div>
+      </div>
+      <div id="pL" style="display: none">
+        <div class="card">
+          <h2>Add leave</h2>
+          <div class="g">
+            <div>
+              <label>Staff</label
+              ><select id="ls"></select>
+            </div>
+            <div><label>From</label><input type="date" id="lf" /></div>
+            <div><label>To</label><input type="date" id="lt" /></div>
+            <div>
+              <label>Leave type</label
+              ><select id="lty">
+                <option>Annual Leave</option>
+                <option>FRL</option>
+                <option>SL</option>
+                <option>SLM</option>
+                <option>Off Day</option>
+                <option>Release</option>
+              </select>
+            </div>
+            <div><label>Note (optional)</label><input id="ln" /></div>
+          </div>
+          <button id="la" style="margin-top: 10px">
+            <span data-ic="calendar-outline"></span> Add Leave
+          </button>
+          <p class="lic">
+            Staff on leave are automatically excluded when the flight date falls
+            in their leave period.
+          </p>
+        </div>
+        <div class="card">
+          <h2>Leave balance</h2>
+          <p class="lic">
+            Annual Leave 30 days (32 days once the person has 5 or more years of
+            service), FRL 10, SL 15 and SLM 15 per leave year. Off Day (one per
+            week) and Release (unlimited) are recorded but never deducted from
+            any balance. Each person's leave year starts on the anniversary of
+            their join date, so enter join dates below. Fridays are not deducted
+            from Annual Leave; all other days are counted as calendar days.
+            Leave records saved before this update count as Annual Leave.
+          </p>
+          <div id="lbal" class="sc"></div>
+        </div>
+        <div class="card">
+          <h2>Calendar</h2>
+          <div id="lc"></div>
+        </div>
+        <div class="card">
+          <h2>Leave records</h2>
+          <div id="ll"></div>
+        </div>
+      </div>
+      <div id="pB" style="display: none">
+        <div class="card">
+          <h2>Data backup</h2>
+          <p id="bkst" class="lic"></p>
+          <p>
+            Your flight history, leave records and task rotation are stored in
+            this browser. Clearing browser data erases them, so keep a backup
+            file on your phone or computer and restore it any time.
+          </p>
+          <div class="row">
+            <button id="bkb">
+              <span data-ic="save-outline"></span> Save Backup to Device</button
+            ><button id="bkr" class="s">
+              <span data-ic="folder-open-outline"></span> Restore from Backup
+              File
+            </button>
+          </div>
+          <input type="file" id="bkf" accept=".json,application/json" hidden />
+          <p id="bkm" class="lic"></p>
+          <h2 style="margin-top: 14px">If saving a file doesn't work</h2>
+          <div class="row">
+            <button id="bkc" class="s">
+              <span data-ic="copy-outline"></span> Copy Backup Text
+            </button>
+          </div>
+          <textarea
+            id="bkt"
+            readonly
+            style="
+              display: none;
+              width: 100%;
+              height: 90px;
+              margin-top: 8px;
+              border: 1px solid var(--bd);
+              border-radius: 8px;
+              background: var(--bg);
+              color: var(--tx);
+              font-size: 11px;
+            "
+          ></textarea>
+          <label style="margin-top: 12px">Restore from pasted backup text</label
+          ><textarea
+            id="bkpaste"
+            style="
+              width: 100%;
+              height: 70px;
+              border: 1px solid var(--bd);
+              border-radius: 8px;
+              background: var(--bg);
+              color: var(--tx);
+              font-size: 11px;
+            "
+            placeholder="Paste backup text here"
+          ></textarea
+          ><button id="bkp" class="s" style="margin-top: 6px">
+            <span data-ic="document-text-outline"></span> Restore from Text
+          </button>
+          <p class="lic">
+            Restoring merges the file into your current data, so nothing already
+            here is lost. Save a backup after each day's flights.
+          </p>
+        </div>
+      </div>
+      <div id="modal">
+        <div class="row">
+          <button id="shr">
+            <span data-ic="share-social-outline"></span> Share</button
+          ><button class="s" id="dl">
+            <span data-ic="download-outline"></span> Download</button
+          ><button class="s" id="cl">
+            <span data-ic="close-outline"></span> Close
+          </button>
+        </div>
+        <img id="img" alt="Roster" />
+        <p class="lic" style="color: #fff; text-align: center">
+          If Share/Download doesn't work, long-press the image to save.
+        </p>
+      </div>
+    </main>
+    <!-- Icons: Ionicons (MIT) https://ionic.io/ionicons -->
+    <script>
+      const ICONS = {
+        airplane:
+          '<path d="M186.62 464H160a16 16 0 01-14.57-22.6l64.46-142.25L113.1 297l-35.3 42.77C71.07 348.23 65.7 352 52 352H34.08a17.66 17.66 0 01-14.7-7.06c-2.38-3.21-4.72-8.65-2.44-16.41l19.82-71c.15-.53.33-1.06.53-1.58a.38.38 0 000-.15 14.82 14.82 0 01-.53-1.59l-19.84-71.45c-2.15-7.61.2-12.93 2.56-16.06a16.83 16.83 0 0113.6-6.7H52c10.23 0 20.16 4.59 26 12l34.57 42.05 97.32-1.44-64.44-142A16 16 0 01160 48h26.91a25 25 0 0119.35 9.8l125.05 152 57.77-1.52c4.23-.23 15.95-.31 18.66-.31C463 208 496 225.94 496 256c0 9.46-3.78 27-29.07 38.16-14.93 6.6-34.85 9.94-59.21 9.94-2.68 0-14.37-.08-18.66-.31l-57.76-1.54-125.36 152a25 25 0 01-19.32 9.75z"/>',
+        "stats-chart-outline":
+          '<rect x="64" y="320" width="48" height="160" rx="8" ry="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="288" y="224" width="48" height="256" rx="8" ry="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="400" y="112" width="48" height="368" rx="8" ry="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="176" y="32" width="48" height="448" rx="8" ry="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "clipboard-outline":
+          '<path d="M336 64h32a48 48 0 0148 48v320a48 48 0 01-48 48H144a48 48 0 01-48-48V112a48 48 0 0148-48h32" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><rect x="176" y="32" width="160" height="64" rx="26.13" ry="26.13" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/>',
+        "calendar-outline":
+          '<rect fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" x="48" y="80" width="416" height="384" rx="48"/><circle cx="296" cy="232" r="24"/><circle cx="376" cy="232" r="24"/><circle cx="296" cy="312" r="24"/><circle cx="376" cy="312" r="24"/><circle cx="136" cy="312" r="24"/><circle cx="216" cy="312" r="24"/><circle cx="136" cy="392" r="24"/><circle cx="216" cy="392" r="24"/><circle cx="296" cy="392" r="24"/><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" stroke-linecap="round" d="M128 48v32M384 48v32"/><path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32" d="M464 160H48"/>',
+        "save-outline":
+          '<path d="M380.93 57.37A32 32 0 00358.3 48H94.22A46.21 46.21 0 0048 94.22v323.56A46.21 46.21 0 0094.22 464h323.56A46.36 46.36 0 00464 417.78V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 63.92 63.92 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "menu-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M80 160h352M80 256h352M80 352h352"/>',
+        "flash-outline":
+          '<path d="M315.27 33L96 304h128l-31.51 173.23a2.36 2.36 0 002.33 2.77h0a2.36 2.36 0 001.89-.95L416 208H288l31.66-173.25a2.45 2.45 0 00-2.44-2.75h0a2.42 2.42 0 00-1.95 1z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "checkmark-circle-outline":
+          '<path d="M448 256c0-106-86-192-192-192S64 150 64 256s86 192 192 192 192-86 192-192z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M352 176L217.6 336 160 272"/>',
+        "image-outline":
+          '<rect x="48" y="80" width="416" height="352" rx="48" ry="48" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><circle cx="336" cy="176" r="32" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M304 335.79l-90.66-90.49a32 32 0 00-43.87-1.3L48 352M224 432l123.34-123.34a32 32 0 0143.11-2L464 368" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "trash-outline":
+          '<path d="M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M80 112h352"/><path d="M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "trash-bin-outline":
+          '<path d="M432 144l-28.67 275.74A32 32 0 01371.55 448H140.46a32 32 0 01-31.78-28.26L80 144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="32" y="64" width="448" height="80" rx="16" ry="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M312 240L200 352M312 352L200 240"/>',
+        "create-outline":
+          '<path d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"/>',
+        "share-social-outline":
+          '<circle cx="128" cy="256" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="112" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="384" cy="400" r="48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M169.83 279.53l172.34 96.94M342.17 135.53l-172.34 96.94"/>',
+        "download-outline":
+          '<path d="M336 176h40a40 40 0 0140 40v208a40 40 0 01-40 40H136a40 40 0 01-40-40V216a40 40 0 0140-40h40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M176 272l80 80 80-80M256 48v288"/>',
+        "close-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/>',
+        "chevron-back-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M328 112L184 256l144 144"/>',
+        "chevron-forward-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M184 112l144 144-144 144"/>',
+        "folder-open-outline":
+          '<path d="M64 192v-72a40 40 0 0140-40h75.89a40 40 0 0122.19 6.72l27.84 18.56a40 40 0 0022.19 6.72H408a40 40 0 0140 40v40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M479.9 226.55L463.68 392a40 40 0 01-39.93 40H88.25a40 40 0 01-39.93-40L32.1 226.55A32 32 0 0164 192h384.1a32 32 0 0131.8 34.55z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "copy-outline":
+          '<rect x="128" y="128" width="336" height="336" rx="57" ry="57" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path d="M383.5 128l.5-24a56.16 56.16 0 00-56-56H112a64.19 64.19 0 00-64 64v216a56.16 56.16 0 0056 56h24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "document-text-outline":
+          '<path d="M416 221.25V416a48 48 0 01-48 48H144a48 48 0 01-48-48V96a48 48 0 0148-48h98.75a32 32 0 0122.62 9.37l141.26 141.26a32 32 0 019.37 22.62z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path d="M256 56v120a32 32 0 0032 32h120M176 288h160M176 368h160" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "warning-outline":
+          '<path d="M85.57 446.25h340.86a32 32 0 0028.17-47.17L284.18 82.58c-12.09-22.44-44.27-22.44-56.36 0L57.4 399.08a32 32 0 0028.17 47.17z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M250.26 195.39l5.74 122 5.73-121.95a5.74 5.74 0 00-5.79-6h0a5.74 5.74 0 00-5.68 5.95z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M256 397.25a20 20 0 1120-20 20 20 0 01-20 20z"/>',
+        "checkmark-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M416 128L192 384l-96-96"/>',
+        "time-outline":
+          '<path d="M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M256 128v144h96"/>',
+        "shield-checkmark-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336 176L225.2 304 176 255.8"/><path d="M463.1 112.37C373.68 96.33 336.71 84.45 256 48c-80.71 36.45-117.68 48.33-207.1 64.37C32.7 369.13 240.58 457.79 256 464c15.42-6.21 223.3-94.87 207.1-351.63z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "grid-outline":
+          '<rect x="48" y="48" width="176" height="176" rx="20" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="288" y="48" width="176" height="176" rx="20" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="48" y="288" width="176" height="176" rx="20" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><rect x="288" y="288" width="176" height="176" rx="20" ry="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "moon-outline":
+          '<path d="M160 136c0-30.62 4.51-61.61 16-88C99.57 81.27 48 159.32 48 248c0 119.29 96.71 216 216 216 88.68 0 166.73-51.57 200-128-26.39 11.49-57.38 16-88 16-119.29 0-216-96.71-216-216z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "sunny-outline":
+          '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94"/><circle cx="256" cy="256" r="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
+        "partly-sunny-outline":
+          '<path d="M90.61 306.85A16.07 16.07 0 00104 293.6C116.09 220.17 169.63 176 232 176c57.93 0 96.62 37.75 112.2 77.74a15.84 15.84 0 0012.2 9.87c50 8.15 91.6 41.54 91.6 99.59 0 59.4-48.6 100.8-108 100.8H106c-49.5 0-90-24.7-90-79.2 0-48.47 38.67-72.22 74.61-77.95z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path d="M384.8 271.4a80 80 0 10-123.55-92M464 208h32M336 48v32M222.86 94.86l22.63 22.63M449.14 94.86l-22.63 22.63" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+      };
+      const ic = (n) =>
+        `<svg class="i" viewBox="0 0 512 512" aria-hidden="true">${ICONS[n] || ""}</svg>`;
+      const STAFF = [
+          "Nabeel",
+          "Naufal",
+          "Falaah",
+          "Rilwan",
+          "Salim",
+          "A.shareef",
+          "Moosa",
+          "Arushan",
+          "Abdulla",
+          "Sharaf",
+          "Ashfaq",
+        ],
+        LIC = ["Naufal", "Nabeel", "Falaah"];
+      const $ = (i) => document.getElementById(i);
+      let H = { seq: 0, last: {} },
+        S = {},
+        res = null;
+      try {
+        H = JSON.parse(localStorage.getItem("ta_h")) || H;
+        S = JSON.parse(localStorage.getItem("ta_s")) || {};
+      } catch (e) {}
+      $("date").value = new Date().toISOString().slice(0, 10);
+      let LV = [];
+      try {
+        LV = JSON.parse(localStorage.getItem("ta_lv")) || [];
+      } catch (e) {}
+      const lr = (n) =>
+          LV.some(
+            (l) => l.n == n && l.f <= $("date").value && $("date").value <= l.t,
+          ),
+        isL = (n) => lr(n) || S[n] == "L";
+      $("date").onchange = () => drawStaff();
+      function drawStaff() {
+        $("staff").innerHTML = STAFF.map(
+          (n) =>
+            `<div class="st ${isL(n) ? "lv" : ""}"><span>${n}${LIC.includes(n) ? " ★" : ""}</span><select data-n="${n}" ${lr(n) ? "disabled" : ""}><option value="A">Available</option><option value="L" ${isL(n) ? "selected" : ""}>On leave</option></select></div>`,
+        ).join("");
+        $("cnt").textContent = STAFF.filter((n) => !isL(n)).length;
+        document.querySelectorAll("[data-n]").forEach(
+          (s) =>
+            (s.onchange = () => {
+              S[s.dataset.n] = s.value;
+              try {
+                localStorage.setItem("ta_s", JSON.stringify(S));
+              } catch (e) {}
+              drawStaff();
+            }),
+        );
+      }
+      drawStaff();
+      const key = (s, t) => s + "|" + t,
+        OFFS = ["I.Rafeeu", "H.Amir", "Faisal", "A.Nabeel", "Shah"];
+      function offOrder(excl) {
+        const li = {},
+          cn = {};
+        H.log
+          .filter((l) => l.off && l.id != excl)
+          .sort((a, b) =>
+            a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id,
+          )
+          .forEach((l, i) => {
+            li[l.off] = i;
+            cn[l.off] = (cn[l.off] || 0) + 1;
+          });
+        return OFFS.filter((n) => !lr(n)).sort(
+          (p, q) =>
+            (li[p] ?? -1) - (li[q] ?? -1) ||
+            (cn[p] || 0) - (cn[q] || 0) ||
+            OFFS.indexOf(p) - OFFS.indexOf(q),
+        );
+      }
+      function build(avail, slots, rest) {
+        // slots: {task,lic}; order = priority order
+        let pool = [...avail],
+          out = [];
+        for (const sl of slots) {
+          const c = pool
+            .filter((s) => !sl.lic || LIC.includes(s))
+            .map((s) => [s, H.last[key(s, sl.task)] ?? -1, Math.random()])
+            .sort((a, b) => a[1] - b[1] || a[2] - b[2])[0];
+          const who = c ? c[0] : null;
+          if (who) pool = pool.filter((s) => s != who);
+          let e = out.find((o) => o.task == sl.task);
+          if (!e) {
+            e = { task: sl.task, staff: [], ord: out.length };
+            out.push(e);
+          }
+          e.staff.push(who || "-NONE-");
+        }
+        if (pool.length) out.push({ task: rest, staff: pool });
+        return out;
+      }
+      function assign() {
+        const av = STAFF.filter((n) => !isL(n));
+        if (!av.length) {
+          alert("No staff available");
+          return;
+        }
+        const ci = [
+          "Counter",
+          "Sticker",
+          "Machine-In",
+          "Cart Load",
+          ...(av.length >= 11 ? ["Cart Load"] : []),
+          "Machine-Out",
+          "Trolley",
+        ].map((t) => ({ task: t }));
 
-H.log=H.log||[];
-const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),pad=n=>String(n).padStart(2,"0"),fd=x=>x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate());
-function rng(p,r){const d=new Date(r+"T00:00:00");let s=d,e=d;
- if(p=="week"){s=new Date(d);s.setDate(d.getDate()-(d.getDay()+6)%7);e=new Date(s);e.setDate(s.getDate()+6)}
- else if(p=="month"){s=new Date(d.getFullYear(),d.getMonth(),1);e=new Date(d.getFullYear(),d.getMonth()+1,0)}
- else if(p=="year"){s=new Date(d.getFullYear(),0,1);e=new Date(d.getFullYear(),11,31)}
- else if(p=="all")return["0000","9999"];return[fd(s),fd(e)]}
-$("fr").value=fd(new Date());$("fs").innerHTML+=STAFF.map(n=>`<option>${n}</option>`).join("");
-["fp","fr","fs"].forEach(i=>$(i).onchange=dash);
-function tab(t){["A","D","U","L","B"].forEach(k=>{$("p"+k).style.display=k==t?"":"none";$("n"+k).className=k==t?"on":""});$("sb").classList.remove("o");if(t=="D")dash();if(t=="L")leaves();if(t=="U")uOpen()}
-["A","D","U","L","B"].forEach(k=>$("n"+k).onclick=()=>tab(k));$("mb").onclick=()=>$("sb").classList.toggle("o");
-const bar=(l,v,m)=>`<div class="bar"><span>${esc(l)}</span><i><u style="width:${v/m*100}%"></u></i><b>${v}</b></div>`;
-function dash(){
- const [s,e]=rng($("fp").value,$("fr").value||fd(new Date())),who=$("fs").value;
- const L=H.log.filter(l=>l.date>=s&&l.date<=e).sort((a,b)=>a.date<b.date?1:-1);
- $("fl").textContent=$("fp").value=="all"?"All records":s+" → "+e;
- const E=[];L.forEach(l=>[["Check-In",l.a],["Turnaround",l.b]].forEach(([part,arr])=>arr.forEach(o=>o.staff.forEach(n=>{if(STAFF.includes(n))E.push({d:l.date,f:l.fno,part,t:o.task,n})}))));
- const F=who=="all"?E:E.filter(x=>x.n==who),cnt={};STAFF.forEach(n=>cnt[n]=0);F.forEach(x=>cnt[x.n]++);
- const mx=Math.max(1,...Object.values(cnt)),top=STAFF.slice().sort((a,b)=>cnt[b]-cnt[a])[0];
- let h=`<div class="g kp">${[["Flights",L.length],["Assignments",F.length],["Tractor jobs",F.filter(x=>x.t=="Baggage Tractor").length],["Most active",F.length?top+" ("+cnt[top]+")":"—"]].map(k=>`<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`).join("")}</div>`;
- if(who=="all"){
-  h+=`<div class="card"><h2>Assignments per staff</h2>${STAFF.map(n=>bar(n,cnt[n],mx)).join("")}</div>`;
-  const T=[...new Set(F.map(x=>x.t))],M={};let cm=1;F.forEach(x=>{const k=x.n+"|"+x.t;M[k]=(M[k]||0)+1;cm=Math.max(cm,M[k])});
-  if(T.length)h+=`<div class="card"><h2>Staff × task</h2><div class="sc"><table class="mx"><tr><th>Staff</th>${T.map(t=>`<th>${esc(t)}</th>`).join("")}</tr>${STAFF.map(n=>`<tr><td>${n}</td>${T.map(t=>{const c=M[n+"|"+t]||0;return`<td style="background:hsla(30,95%,53%,${c/cm*.6})">${c||""}</td>`}).join("")}</tr>`).join("")}</table></div></div>`;
- }else{
-  const tc={};F.forEach(x=>tc[x.t]=(tc[x.t]||0)+1);const m=Math.max(1,...Object.values(tc));
-  h+=`<div class="card"><h2>${who} · task breakdown</h2>${Object.keys(tc).map(t=>bar(t,tc[t],m)).join("")||"No records in this period"}</div>`;
-  if(F.length)h+=`<div class="card"><h2>${who} · task details</h2><div class="sc"><table><tr><th>Date</th><th>Flight</th><th>Part</th><th>Task</th></tr>${F.sort((a,b)=>a.d<b.d?1:-1).map(x=>`<tr><td>${x.d}</td><td>${esc(x.f||"—")}</td><td>${x.part}</td><td>${esc(x.t)}</td></tr>`).join("")}</table></div></div>`;
- }
- const oc={};L.forEach(l=>{if(l.off)oc[l.off]=(oc[l.off]||0)+1});const om=Math.max(1,...Object.values(oc));if(who=="all"&&Object.keys(oc).length)h+=`<div class="card"><h2>Officer duty</h2>${Object.keys(oc).map(n=>bar(n,oc[n],om)).join("")}</div>`;
- h+=`<div class="card"><h2>Saved flights (${L.length})</h2>${L.map(l=>`<details><summary>${l.date} · ${esc(l.fno||"—")} · ${l.ac}</summary>${[...l.a,...l.b].map(o=>`<div class="t"><b>${esc(o.task)}</b><span>${esc(o.staff.join(", "))}</span></div>`).join("")}<button class="del" data-ed="${l.id}">${ic("create-outline")} Edit</button> <button class="del" data-del="${l.id}">${ic("trash-outline")} Delete</button></details>`).join("")||"No saved flights"}</div>`;
- $("dc").innerHTML=h;
- document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this flight record?")){H.log=H.log.filter(l=>l.id!=b.dataset.del);persist("ta_h",H);dash()}})}
+        const atr = $("ac").value.startsWith("ATR");
+        const tt = atr
+          ? [
+              "Chock / Cabin Cleaning",
+              "Unload / Load CP 1-2",
+              "Unload / Load Help CP 1-2",
+              "Unload / Load CP 3-4",
+              "Unload / Load Help CP 3-4",
+            ]
+          : ["Chock / Cabin Cleaning", "Unload / Load", "Unload / Load Help"];
+        const pri = atr
+          ? [
+              "Unload / Load CP 1-2",
+              "Unload / Load CP 3-4",
+              "Unload / Load Help CP 1-2",
+              "Unload / Load Help CP 3-4",
+              "Chock / Cabin Cleaning",
+            ]
+          : [
+              "Unload / Load",
+              "Unload / Load Help",
+              ...(av.length >= 7 ? ["Unload / Load Help"] : []),
+              "Chock / Cabin Cleaning",
+            ];
+        const tr = [
+          { task: "Baggage Tractor", lic: 1 },
+          ...pri.map((t) => ({ task: t })),
+        ];
+        const a = build(av, ci, "Tag"),
+          b = build(av, tr, "Arrival");
+        const co = [
+          "Counter",
+          "Tag",
+          "Machine-In",
+          "Machine-Out",
+          "Trolley",
+          "Sticker",
+          "Cart Load",
+        ];
+        a.sort((x, y) => co.indexOf(x.task) - co.indexOf(y.task));
+        const order = ["Baggage Tractor", "GPU", ...tt];
+        if (atr) {
+          const g = ["Unload / Load CP 1-2", "Unload / Load Help CP 1-2"]
+            .flatMap((t) => (b.find((o) => o.task == t) || { staff: [] }).staff)
+            .filter((n) => STAFF.includes(n));
+          b.push({ task: "GPU", staff: g });
+        } else {
+          const u = b.find((o) => o.task == "Unload / Load");
+          b.push({
+            task: "GPU",
+            staff: u ? u.staff.filter((n) => STAFF.includes(n)) : [],
+          });
+        }
+        // keep tractor first, then listed order, Arrival last
+        b.sort((x, y) => {
+          const f = (t) => (t == "Arrival" ? 99 : order.indexOf(t));
+          return f(x.task) - f(y.task);
+        });
+        res = { a, b, saved: 0, ord: order, off: offOrder(0)[0] || "" };
+        render();
+      }
+      function brief() {
+        const v = $("ci").value;
+        if (!v) return "—";
+        const [h, m] = v.split(":").map(Number),
+          t = (h * 60 + m - 20 + 1440) % 1440;
+        return (
+          String(Math.floor(t / 60)).padStart(2, "0") +
+          ":" +
+          String(t % 60).padStart(2, "0")
+        );
+      }
+      const RESTS = { a: "Tag", b: "Arrival" },
+        CO = [
+          "Counter",
+          "Tag",
+          "Machine-In",
+          "Machine-Out",
+          "Trolley",
+          "Sticker",
+          "Cart Load",
+        ];
+      function fixRest(part) {
+        const arr = res[part],
+          Rt = RESTS[part],
+          used = new Set(
+            arr
+              .filter((o) => o.task != Rt && o.task != "GPU")
+              .flatMap((o) => o.staff),
+          );
+        const left = STAFF.filter((n) => !isL(n) && !used.has(n)),
+          r = arr.find((o) => o.task == Rt);
+        if (r) arr.splice(arr.indexOf(r), 1);
+        if (left.length) arr.push({ task: Rt, staff: left });
+        if (part == "a")
+          arr.sort((x, y) => CO.indexOf(x.task) - CO.indexOf(y.task));
+        else {
+          const f = (t) => (t == Rt ? 99 : res.ord.indexOf(t));
+          arr.sort((x, y) => f(x.task) - f(y.task));
+        }
+      }
+      function fixGPU() {
+        const b = res.b,
+          g = b.find((o) => o.task == "GPU");
+        if (!g) return;
+        const src = b.some((o) => o.task == "Unload / Load CP 1-2")
+          ? ["Unload / Load CP 1-2", "Unload / Load Help CP 1-2"]
+          : ["Unload / Load"];
+        g.staff = src
+          .flatMap((t) => (b.find((o) => o.task == t) || { staff: [] }).staff)
+          .filter((n) => STAFF.includes(n));
+      }
+      function manual(part, task, i, val) {
+        const arr = res[part],
+          o = arr.find((x) => x.task == task),
+          old = o.staff[i];
+        if (val == old) return;
+        let h = null;
+        if (val != "-NONE-")
+          for (const x of arr) {
+            if (x.task == "GPU" || x.task == RESTS[part]) continue;
+            const k = x.staff.indexOf(val);
+            if (k >= 0) {
+              h = [x, k];
+              break;
+            }
+          }
+        if (h) {
+          if (
+            h[0].task == "Baggage Tractor" &&
+            old != "-NONE-" &&
+            !LIC.includes(old)
+          ) {
+            alert(
+              "Only licensed staff (Naufal, Nabeel, Falaah) can take Baggage Tractor",
+            );
+            render();
+            return;
+          }
+          h[0].staff[h[1]] = old;
+        }
+        o.staff[i] = val;
+        fixRest(part);
+        fixGPU();
+        res.saved = 0;
+        render();
+      }
+      function render() {
+        const av = STAFF.filter((n) => !isL(n));
+        const sec = (t, part) =>
+          `<div class="card"><div class="sec">${t}</div>${(part == "b" &&
+          !res.b.some((o) => o.task == "Arrival")
+            ? [...res.b, { task: "Arrival", staff: [] }]
+            : res[part]
+          )
+            .map((o) => {
+              const auto = o.task == RESTS[part] || o.task == "GPU";
+              const cell = auto
+                ? o.staff.join(", ") || "-NONE-"
+                : o.staff
+                    .map(
+                      (s, i) =>
+                        `<select data-p="${part}" data-t="${o.task}" data-i="${i}">${["-NONE-", ...av.filter((n) => o.task != "Baggage Tractor" || LIC.includes(n))].map((n) => `<option ${n == s ? "selected" : ""}>${n}</option>`).join("")}</select>`,
+                    )
+                    .join(" ");
+              return `<div class="t"><b>${o.task}${o.task == "GPU" ? ' <small class="lic">(auto)</small>' : auto ? ' <small class="lic">(remaining)</small>' : ""}</b><span>${cell}</span></div>`;
+            })
+            .join("")}</div>`;
+        $("out").innerHTML =
+          `<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>` +
+          `<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["", ...OFFS].map((n) => `<option value="${n}" ${n == res.off ? "selected" : ""}>${n || "—"}</option>`).join("")}</select></span></div></div>` +
+          sec("1 · Check-In Tasks", "a") +
+          sec("2 · Flight Turnaround Tasks (" + $("ac").value + ")", "b");
+        $("ex").style.display = "flex";
+        $("offs").onchange = (e) => {
+          res.off = e.target.value;
+          res.saved = 0;
+        };
+        document
+          .querySelectorAll("#out select[data-p]")
+          .forEach(
+            (e) =>
+              (e.onchange = () =>
+                manual(e.dataset.p, e.dataset.t, +e.dataset.i, e.value)),
+          );
+      }
+      $("go").onclick = assign;
+      $("save").onclick = () => {
+        if (!res) {
+          alert("Assign first");
+          return;
+        }
+        if (res.saved) {
+          alert("Already saved");
+          return;
+        }
+        res.saved = 1;
+        H.log = H.log || [];
+        if (res.sid) H.log = H.log.filter((l) => l.id != res.sid);
+        res.sid = Date.now();
+        if (res.off) H.last[key(res.off, "OFFICER")] = ++H.seq;
+        H.log.push({
+          id: res.sid,
+          date: $("date").value,
+          fno: $("fno").value,
+          ac: $("ac").value,
+          ci: $("ci").value,
+          ar: $("ar").value,
+          dp: $("dp").value,
+          pax: $("pax").value,
+          off: res.off,
+          a: res.a,
+          b: res.b,
+        });
+        [...res.a.map((o) => o), ...res.b].forEach((o) =>
+          o.staff.forEach((s) => {
+            if (STAFF.includes(s)) H.last[key(s, o.task)] = ++H.seq;
+          }),
+        );
+        persist("ta_h", H);
+        alert(
+          "Saved. Next assignment will favour staff who haven't done each task for longest.",
+        );
+      };
+      $("rst").onclick = () => {
+        if (confirm("Clear task history?")) {
+          H = { seq: 0, last: {}, log: [] };
+          try {
+            localStorage.removeItem("ta_h");
+          } catch (e) {}
+          dash();
+        }
+      };
+      function wrap(c, t, w) {
+        const ws = t.split(" "),
+          ls = [];
+        let l = "";
+        for (const x of ws) {
+          if (c.measureText(l + " " + x).width > w && l) {
+            ls.push(l);
+            l = x;
+          } else l = l ? l + " " + x : x;
+        }
+        ls.push(l);
+        return ls;
+      }
+      function rr(x, a, b, w, h, r) {
+        x.beginPath();
+        x.moveTo(a + r, b);
+        x.arcTo(a + w, b, a + w, b + h, r);
+        x.arcTo(a + w, b + h, a, b + h, r);
+        x.arcTo(a, b + h, a, b, r);
+        x.arcTo(a, b, a + w, b, r);
+        x.closePath();
+      }
+      function jpg() {
+        const W = 1080,
+          M = 45,
+          PD = 36,
+          IW = W - 2 * M - 2 * PD,
+          m = document.createElement("canvas").getContext("2d"),
+          c = document.createElement("canvas"),
+          x = c.getContext("2d");
+        const U = (t) => {
+            t = String(t);
+            return t == "-NONE-" || t == "— none —"
+              ? "-NONE-"
+              : t.toUpperCase();
+          },
+          blocks = [
+            ["CHECK-IN TASKS", res.a],
+            [
+              "TURNAROUND TASKS",
+              res.b.some((o) => o.task == "Arrival")
+                ? res.b
+                : [...res.b, { task: "Arrival", staff: ["-NONE-"] }],
+            ],
+          ];
+        const av = STAFF.filter((n) => !isL(n)).length,
+          lv = STAFF.filter(isL).length;
+        m.font = "700 30px sans-serif";
+        const lw =
+            Math.max(
+              ...blocks.flatMap((b) =>
+                b[1].map((o) => m.measureText(U(o.task)).width),
+              ),
+            ) + 30,
+          CH = 54,
+          GAP = 14;
+        const layout = (o) => {
+          const L = [[]];
+          let cx = 0;
+          o.staff.forEach((n) => {
+            const w = m.measureText(U(n)).width + 44;
+            if (cx + w > IW - lw && L[L.length - 1].length) {
+              L.push([]);
+              cx = 0;
+            }
+            L[L.length - 1].push([n, w]);
+            cx += w + GAP;
+          });
+          return L;
+        };
+        const rh = (o) =>
+          Math.max(84, layout(o).length * (CH + GAP) + GAP + 10);
+        const hc = [0, 0].map(
+          (_, k) => 95 + blocks[k][1].reduce((t, o) => t + rh(o), 0) + 30,
+        );
+        const HH = 400,
+          H2 = 40 + HH + 30 + hc[0] + 30 + hc[1] + 30 + 140;
+        c.width = W;
+        c.height = H2;
+        const g = x.createLinearGradient(0, 0, 0, H2);
+        g.addColorStop(0, "#0f1535");
+        g.addColorStop(1, "#1f2750");
+        x.fillStyle = g;
+        x.fillRect(0, 0, W, H2);
+        const card = (y, h) => {
+          rr(x, M, y, W - 2 * M, h, 44);
+          x.fillStyle = "rgba(255,255,255,0.07)";
+          x.fill();
+          x.strokeStyle = "rgba(255,255,255,0.18)";
+          x.lineWidth = 2;
+          x.stroke();
+        };
+        let y = 40;
+        card(y, HH);
+        const L0 = M + PD,
+          R0 = W - M - PD;
+        x.textAlign = "left";
+        x.fillStyle = "#fff";
+        x.font = "800 68px sans-serif";
+        x.fillText(U($("fno").value.trim() || "—"), L0, y + 100);
+        x.font = "700 30px sans-serif";
+        const ac = U($("ac").value),
+          pw = x.measureText(ac).width + 50;
+        rr(x, W / 2 - pw / 2 + 30, y + 48, pw, 56, 14);
+        x.fillStyle = "rgba(79,195,160,0.25)";
+        x.fill();
+        x.strokeStyle = "#4fc3a0";
+        x.stroke();
+        x.fillStyle = "#8fe3c4";
+        x.textAlign = "center";
+        x.fillText(ac, W / 2 + 30, y + 87);
+        x.textAlign = "right";
+        x.fillStyle = "#fff";
+        x.font = "600 34px sans-serif";
+        x.fillText($("date").value.split("-").reverse().join("-"), R0, y + 90);
+        x.textAlign = "center";
+        x.fillStyle = "#cfd6ea";
+        x.font = "600 28px sans-serif";
+        x.fillText("TURNAROUND TASK DETAILS", W / 2, y + 150);
+        const bx = L0,
+          by = y + 175,
+          bw = IW,
+          bh = 150;
+        rr(x, bx, by, bw, bh, 28);
+        x.fillStyle = "rgba(8,12,35,0.7)";
+        x.fill();
+        x.strokeStyle = "rgba(255,255,255,0.15)";
+        x.stroke();
+        [
+          ["CHECK-IN", $("ci").value, "#7f9cff"],
+          ["STA", $("ar").value, "#f0983a"],
+          ["STD", $("dp").value, "#4ccf6a"],
+          ["PAX", $("pax").value, "#f5e62e"],
+        ].forEach((q, k) => {
+          const cx = bx + bw / 8 + (k * bw) / 4;
+          x.fillStyle = "#d0d6ea";
+          x.font = "600 26px sans-serif";
+          x.fillText(q[0], cx, by + 52);
+          x.fillStyle = q[2];
+          x.font = "800 46px sans-serif";
+          x.fillText(q[1] || "—", cx, by + 112);
+          if (k) {
+            x.strokeStyle = "rgba(255,255,255,0.15)";
+            x.beginPath();
+            x.moveTo(bx + (k * bw) / 4, by + 25);
+            x.lineTo(bx + (k * bw) / 4, by + bh - 25);
+            x.stroke();
+          }
+        });
+        const iy = y + HH - 35;
+        x.textAlign = "left";
+        x.font = "600 26px sans-serif";
+        let cx = L0;
+        const item = (col, t, v) => {
+          x.fillStyle = col;
+          x.beginPath();
+          x.arc(cx + 8, iy - 9, 8, 0, 7);
+          x.fill();
+          x.fillStyle = "#fff";
+          x.font = "600 26px sans-serif";
+          x.fillText(t, cx + 26, iy);
+          cx += 26 + x.measureText(t).width + 10;
+          if (v != null) {
+            const w = x.measureText(String(v)).width + 22;
+            rr(x, cx, iy - 30, w, 40, 10);
+            x.fillStyle = "rgba(255,255,255,0.18)";
+            x.fill();
+            x.fillStyle = "#fff";
+            x.fillText(String(v), cx + 11, iy);
+            cx += w;
+          }
+          cx += 26;
+        };
+        x.fillStyle = "#2fd4c0";
+        x.beginPath();
+        x.arc(cx + 8, iy - 9, 8, 0, 7);
+        x.fill();
+        x.fillStyle = "#fff";
+        x.font = "600 26px sans-serif";
+        x.fillText("OFFICER: ", cx + 26, iy);
+        cx += 26 + x.measureText("OFFICER: ").width;
+        const on = U(res.off || "—");
+        x.fillStyle = "#3fdc6a";
+        x.font = "700 26px sans-serif";
+        x.fillText(on, cx, iy);
+        cx += x.measureText(on).width + 26;
+        item("#3fdc6a", "STAFF AVAILABLE", av);
+        item("#ff4d4d", "STAFF ON LEAVE", lv);
+        y += HH + 30;
+        blocks.forEach((b, k) => {
+          card(y, hc[k]);
+          x.textAlign = "center";
+          x.fillStyle = "#fff";
+          x.font = "800 34px sans-serif";
+          x.fillText(b[0], W / 2, y + 60);
+          x.strokeStyle = "rgba(255,255,255,0.2)";
+          x.lineWidth = 2;
+          x.beginPath();
+          x.moveTo(L0, y + 82);
+          x.lineTo(R0, y + 82);
+          x.stroke();
+          let ry = y + 95;
+          b[1].forEach((o) => {
+            const h = rh(o);
+            x.textAlign = "left";
+            x.fillStyle = "#fff";
+            x.font = "700 30px sans-serif";
+            x.fillText(U(o.task), L0, ry + 10 + 37);
+            layout(o).forEach((ln, li) => {
+              let px = L0 + lw;
+              ln.forEach(([n, w]) => {
+                const py = ry + 10 + li * (CH + GAP);
+                rr(x, px, py, w, CH, 14);
+                x.fillStyle = "#5d6d96";
+                x.fill();
+                x.fillStyle = "#fff";
+                x.font = "700 30px sans-serif";
+                x.textAlign = "center";
+                x.fillText(U(n), px + w / 2, py + 37);
+                x.textAlign = "left";
+                px += w + GAP;
+              });
+            });
+            x.strokeStyle = "rgba(255,255,255,0.12)";
+            x.beginPath();
+            x.moveTo(L0, ry + h);
+            x.lineTo(R0, ry + h);
+            x.stroke();
+            ry += h;
+          });
+          y += hc[k] + 30;
+        });
+        x.textAlign = "center";
+        x.font = "800 40px sans-serif";
+        const t1 = "PRE-FLIGHT BRIEFING : ",
+          t2 = brief(),
+          w1 = x.measureText(t1).width,
+          w2 = x.measureText(t2).width,
+          sx = W / 2 - (w1 + w2) / 2;
+        x.textAlign = "left";
+        x.fillStyle = "#fff";
+        x.fillText(t1, sx, y + 45);
+        x.fillStyle = "#ff8a8a";
+        x.fillText(t2, sx + w1, y + 45);
+        x.textAlign = "center";
+        x.fillStyle = "#ff3b3b";
+        x.font = "700 26px sans-serif";
+        x.fillText("MANDATORY ATTENDANCE", W / 2, y + 90);
+        return c;
+      }
+      let cv = null;
+      $("jpg").onclick = () => {
+        window.FN = 0;
+        cv = jpg();
+        $("img").src = cv.toDataURL("image/jpeg", 0.92);
+        $("modal").style.display = "block";
+      };
+      $("cl").onclick = () => ($("modal").style.display = "none");
+      const fname = () =>
+        (window.FN ||
+          "roster-" +
+            ($("fno").value || "flight").replace(/\W+/g, "") +
+            "-" +
+            $("date").value) + ".jpg";
+      $("dl").onclick = async () => {
+        try {
+          const d = window.claude ? await claude.use("downloads") : null;
+          if (d) {
+            const b = await new Promise((r) =>
+              cv.toBlob(r, "image/jpeg", 0.92),
+            );
+            await d.save({ filename: fname(), data: b });
+            return;
+          }
+        } catch (e) {
+          if (e && e.code == "declined") return;
+        }
+        const a = document.createElement("a");
+        a.href = $("img").src;
+        a.download = fname();
+        a.click();
+      };
+      $("shr").onclick = () =>
+        cv.toBlob(
+          async (b) => {
+            const f = new File([b], fname(), { type: "image/jpeg" });
+            try {
+              if (navigator.canShare && navigator.canShare({ files: [f] }))
+                await navigator.share({ files: [f] });
+              else
+                alert(
+                  "Sharing not supported here — long-press the image to save.",
+                );
+            } catch (e) {}
+          },
+          "image/jpeg",
+          0.92,
+        );
 
-const svL=()=>{persist("ta_lv",LV);};
-$("ls").innerHTML=`<optgroup label="Staff">${STAFF.map(n=>`<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map(n=>`<option>${n}</option>`).join("")}</optgroup>`;$("lf").value=$("lt").value=fd(new Date());
-$("la").onclick=()=>{if(!$("lf").value||!$("lt").value||$("lt").value<$("lf").value){alert("Please check the dates");return}LV.push({id:Date.now(),n:$("ls").value,f:$("lf").value,t:$("lt").value,note:$("ln").value,type:$("lty").value});$("ln").value="";svL();leaves();drawStaff()};
-function leaves(){cal();bal();const td=fd(new Date());$("ll").innerHTML=LV.slice().sort((a,b)=>a.f<b.f?1:-1).map(l=>`<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type||"Annual Leave")} · ${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}${l.f<=td&&td<=l.t?" · ON LEAVE NOW":""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`).join("")||"No leave records";
- document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{LV=LV.filter(l=>l.id!=b.dataset.lv);svL();leaves();drawStaff()})}
+      H.log = H.log || [];
+      const esc = (x) =>
+          String(x).replace(
+            /[&<>"]/g,
+            (c) =>
+              ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+          ),
+        pad = (n) => String(n).padStart(2, "0"),
+        fd = (x) =>
+          x.getFullYear() +
+          "-" +
+          pad(x.getMonth() + 1) +
+          "-" +
+          pad(x.getDate());
+      function rng(p, r) {
+        const d = new Date(r + "T00:00:00");
+        let s = d,
+          e = d;
+        if (p == "week") {
+          s = new Date(d);
+          s.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+          e = new Date(s);
+          e.setDate(s.getDate() + 6);
+        } else if (p == "month") {
+          s = new Date(d.getFullYear(), d.getMonth(), 1);
+          e = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        } else if (p == "year") {
+          s = new Date(d.getFullYear(), 0, 1);
+          e = new Date(d.getFullYear(), 11, 31);
+        } else if (p == "all") return ["0000", "9999"];
+        return [fd(s), fd(e)];
+      }
+      $("fr").value = fd(new Date());
+      $("fs").innerHTML += STAFF.map((n) => `<option>${n}</option>`).join("");
+      ["fp", "fr", "fs"].forEach((i) => ($(i).onchange = dash));
+      function tab(t) {
+        ["A", "D", "U", "L", "B"].forEach((k) => {
+          $("p" + k).style.display = k == t ? "" : "none";
+          $("n" + k).className = k == t ? "on" : "";
+        });
+        $("sb").classList.remove("o");
+        if (t == "D") dash();
+        if (t == "L") leaves();
+        if (t == "U") uOpen();
+      }
+      ["A", "D", "U", "L", "B"].forEach(
+        (k) => ($("n" + k).onclick = () => tab(k)),
+      );
+      $("mb").onclick = () => $("sb").classList.toggle("o");
+      const bar = (l, v, m) =>
+        `<div class="bar"><span>${esc(l)}</span><i><u style="width:${(v / m) * 100}%"></u></i><b>${v}</b></div>`;
+      function dash() {
+        const [s, e] = rng($("fp").value, $("fr").value || fd(new Date())),
+          who = $("fs").value;
+        const L = H.log
+          .filter((l) => l.date >= s && l.date <= e)
+          .sort((a, b) => (a.date < b.date ? 1 : -1));
+        $("fl").textContent =
+          $("fp").value == "all" ? "All records" : s + " → " + e;
+        const E = [];
+        L.forEach((l) =>
+          [
+            ["Check-In", l.a],
+            ["Turnaround", l.b],
+          ].forEach(([part, arr]) =>
+            arr.forEach((o) =>
+              o.staff.forEach((n) => {
+                if (STAFF.includes(n))
+                  E.push({ d: l.date, f: l.fno, part, t: o.task, n });
+              }),
+            ),
+          ),
+        );
+        const F = who == "all" ? E : E.filter((x) => x.n == who),
+          cnt = {};
+        STAFF.forEach((n) => (cnt[n] = 0));
+        F.forEach((x) => cnt[x.n]++);
+        const mx = Math.max(1, ...Object.values(cnt)),
+          top = STAFF.slice().sort((a, b) => cnt[b] - cnt[a])[0];
+        let h = `<div class="g kp">${[
+          ["Flights", L.length],
+          ["Assignments", F.length],
+          ["Tractor jobs", F.filter((x) => x.t == "Baggage Tractor").length],
+          ["Most active", F.length ? top + " (" + cnt[top] + ")" : "—"],
+        ]
+          .map(
+            (k) =>
+              `<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`,
+          )
+          .join("")}</div>`;
+        if (who == "all") {
+          h += `<div class="card"><h2>Assignments per staff</h2>${STAFF.map((n) => bar(n, cnt[n], mx)).join("")}</div>`;
+          const T = [...new Set(F.map((x) => x.t))],
+            M = {};
+          let cm = 1;
+          F.forEach((x) => {
+            const k = x.n + "|" + x.t;
+            M[k] = (M[k] || 0) + 1;
+            cm = Math.max(cm, M[k]);
+          });
+          if (T.length)
+            h += `<div class="card"><h2>Staff × task</h2><div class="sc"><table class="mx"><tr><th>Staff</th>${T.map((t) => `<th>${esc(t)}</th>`).join("")}</tr>${STAFF.map(
+              (n) =>
+                `<tr><td>${n}</td>${T.map((t) => {
+                  const c = M[n + "|" + t] || 0;
+                  return `<td style="background:hsla(30,95%,53%,${(c / cm) * 0.6})">${c || ""}</td>`;
+                }).join("")}</tr>`,
+            ).join("")}</table></div></div>`;
+        } else {
+          const tc = {};
+          F.forEach((x) => (tc[x.t] = (tc[x.t] || 0) + 1));
+          const m = Math.max(1, ...Object.values(tc));
+          h += `<div class="card"><h2>${who} · task breakdown</h2>${
+            Object.keys(tc)
+              .map((t) => bar(t, tc[t], m))
+              .join("") || "No records in this period"
+          }</div>`;
+          if (F.length)
+            h += `<div class="card"><h2>${who} · task details</h2><div class="sc"><table><tr><th>Date</th><th>Flight</th><th>Part</th><th>Task</th></tr>${F.sort(
+              (a, b) => (a.d < b.d ? 1 : -1),
+            )
+              .map(
+                (x) =>
+                  `<tr><td>${x.d}</td><td>${esc(x.f || "—")}</td><td>${x.part}</td><td>${esc(x.t)}</td></tr>`,
+              )
+              .join("")}</table></div></div>`;
+        }
+        const oc = {};
+        L.forEach((l) => {
+          if (l.off) oc[l.off] = (oc[l.off] || 0) + 1;
+        });
+        const om = Math.max(1, ...Object.values(oc));
+        if (who == "all" && Object.keys(oc).length)
+          h += `<div class="card"><h2>Officer duty</h2>${Object.keys(oc)
+            .map((n) => bar(n, oc[n], om))
+            .join("")}</div>`;
+        h += `<div class="card"><h2>Saved flights (${L.length})</h2>${L.map((l) => `<details><summary>${l.date} · ${esc(l.fno || "—")} · ${l.ac}</summary>${[...l.a, ...l.b].map((o) => `<div class="t"><b>${esc(o.task)}</b><span>${esc(o.staff.join(", "))}</span></div>`).join("")}<button class="del" data-ed="${l.id}">${ic("create-outline")} Edit</button> <button class="del" data-del="${l.id}">${ic("trash-outline")} Delete</button></details>`).join("") || "No saved flights"}</div>`;
+        $("dc").innerHTML = h;
+        document.querySelectorAll("[data-del]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              if (confirm("Delete this flight record?")) {
+                H.log = H.log.filter((l) => l.id != b.dataset.del);
+                persist("ta_h", H);
+                dash();
+              }
+            }),
+        );
+      }
 
-function ordFor(ac){return["Baggage Tractor","GPU","Chock / Cabin Cleaning",...(ac.startsWith("ATR")?["Unload / Load CP 1-2","Unload / Load Help CP 1-2","Unload / Load CP 3-4","Unload / Load Help CP 3-4"]:["Unload / Load","Unload / Load Help"])]}
-function editFlight(id){const l=H.log.find(x=>x.id==id);if(!l)return;
- $("date").value=l.date;$("fno").value=l.fno||"";$("ac").value=({ATR:"ATR-72",Dash:"DH-300"})[l.ac]||l.ac;$("ci").value=l.ci||"";$("ar").value=l.ar||"";$("dp").value=l.dp||"";$("pax").value=l.pax||"";
- drawStaff();res={a:JSON.parse(JSON.stringify(l.a).replace(/— none —/g,"-NONE-")),b:JSON.parse(JSON.stringify(l.b).replace(/— none —/g,"-NONE-")),saved:0,sid:l.id,off:l.off||"",ord:ordFor($("ac").value)};
- tab("A");render();window.scrollTo(0,0);alert("Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.")}
-$("dc").onclick=e=>{const b=e.target.closest("[data-ed]");if(b)editFlight(b.dataset.ed)};
-$("ci").onchange=()=>{const v=$("ci").value;if(!v)return;const [h,m]=v.split(":").map(Number),f=d=>{const t=(h*60+m+d)%1440;return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};$("ar").value=f(90);$("dp").value=f(120)};
+      const svL = () => {
+        persist("ta_lv", LV);
+      };
+      $("ls").innerHTML =
+        `<optgroup label="Staff">${STAFF.map((n) => `<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map((n) => `<option>${n}</option>`).join("")}</optgroup>`;
+      $("lf").value = $("lt").value = fd(new Date());
+      $("la").onclick = () => {
+        if (!$("lf").value || !$("lt").value || $("lt").value < $("lf").value) {
+          alert("Please check the dates");
+          return;
+        }
+        LV.push({
+          id: Date.now(),
+          n: $("ls").value,
+          f: $("lf").value,
+          t: $("lt").value,
+          note: $("ln").value,
+          type: $("lty").value,
+        });
+        $("ln").value = "";
+        svL();
+        leaves();
+        drawStaff();
+      };
+      function leaves() {
+        cal();
+        bal();
+        const td = fd(new Date());
+        $("ll").innerHTML =
+          LV.slice()
+            .sort((a, b) => (a.f < b.f ? 1 : -1))
+            .map(
+              (l) =>
+                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
+            )
+            .join("") || "No leave records";
+        document.querySelectorAll("[data-lv]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              LV = LV.filter((l) => l.id != b.dataset.lv);
+              svL();
+              leaves();
+              drawStaff();
+            }),
+        );
+      }
 
-const PAL=["#e6194b","#3cb44b","#4363d8","#f58231","#911eb4","#2aa6a6","#f032e6","#9a6324","#a0a000","#00798c","#b03030","#2a2a9a","#e0a800","#6a7fdb","#2e8b57","#cc5500"];
-const colr=n=>PAL[[...STAFF,...OFFS].indexOf(n)%PAL.length];let cm=new Date(),sel=fd(new Date());cm.setDate(1);
-function cal(){const y=cm.getFullYear(),mo=cm.getMonth(),first=(new Date(y,mo,1).getDay()+6)%7,dim=new Date(y,mo+1,0).getDate(),td=fd(new Date());
- let h=`<div class="row" style="align-items:center"><button class="s" id="cp" style="flex:0 0 52px">${ic("chevron-back-outline")}</button><b style="flex:3;text-align:center">${cm.toLocaleString("en",{month:"long"})} ${y}</b><button class="s" id="cn" style="flex:0 0 52px">${ic("chevron-forward-outline")}</button></div><div class="cal">${["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(d=>`<small class="lic">${d}</small>`).join("")}`;
- for(let i=0;i<first;i++)h+="<div></div>";
- for(let d=1;d<=dim;d++){const ds=y+"-"+pad(mo+1)+"-"+pad(d),ls=LV.filter(l=>l.f<=ds&&ds<=l.t);
-  h+=`<div class="cd ${ds==td?"td":""} ${ds==sel?"sl":""}" data-d="${ds}"><span>${d}</span>${ls.length?`<em>${ls.length}</em>`:""}${ls.slice(0,3).map(l=>`<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`).join("")}${ls.length>3?`<div class="lic" style="font-size:9px">+${ls.length-3} more</div>`:""}</div>`}
- const sl=LV.filter(l=>l.f<=sel&&sel<=l.t);
- h+=`</div><h2 style="margin-top:14px">On leave · ${sel}</h2>`+(sl.map(l=>`<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${esc(l.type||"Annual Leave")} · ${l.f} → ${l.t}${l.note?" · "+esc(l.note):""}</span></div>`).join("")||"<p class='lic'>Nobody on leave</p>");
- $("lc").innerHTML=h;$("cp").onclick=()=>{cm=new Date(y,mo-1,1);cal()};$("cn").onclick=()=>{cm=new Date(y,mo+1,1);cal()};
- document.querySelectorAll("[data-d]").forEach(e=>e.onclick=()=>{sel=e.dataset.d;$("lf").value=$("lt").value=sel;cal()})}
+      function ordFor(ac) {
+        return [
+          "Baggage Tractor",
+          "GPU",
+          "Chock / Cabin Cleaning",
+          ...(ac.startsWith("ATR")
+            ? [
+                "Unload / Load CP 1-2",
+                "Unload / Load Help CP 1-2",
+                "Unload / Load CP 3-4",
+                "Unload / Load Help CP 3-4",
+              ]
+            : ["Unload / Load", "Unload / Load Help"]),
+        ];
+      }
+      function editFlight(id) {
+        const l = H.log.find((x) => x.id == id);
+        if (!l) return;
+        $("date").value = l.date;
+        $("fno").value = l.fno || "";
+        $("ac").value = { ATR: "ATR-72", Dash: "DH-300" }[l.ac] || l.ac;
+        $("ci").value = l.ci || "";
+        $("ar").value = l.ar || "";
+        $("dp").value = l.dp || "";
+        $("pax").value = l.pax || "";
+        drawStaff();
+        res = {
+          a: JSON.parse(JSON.stringify(l.a).replace(/— none —/g, "-NONE-")),
+          b: JSON.parse(JSON.stringify(l.b).replace(/— none —/g, "-NONE-")),
+          saved: 0,
+          sid: l.id,
+          off: l.off || "",
+          ord: ordFor($("ac").value),
+        };
+        tab("A");
+        render();
+        window.scrollTo(0, 0);
+        alert(
+          "Flight loaded for editing. Change the details or tasks, then press Confirm & Save History to update this record.",
+        );
+      }
+      $("dc").onclick = (e) => {
+        const b = e.target.closest("[data-ed]");
+        if (b) editFlight(b.dataset.ed);
+      };
+      $("ci").onchange = () => {
+        const v = $("ci").value;
+        if (!v) return;
+        const [h, m] = v.split(":").map(Number),
+          f = (d) => {
+            const t = (h * 60 + m + d) % 1440;
+            return (
+              String(Math.floor(t / 60)).padStart(2, "0") +
+              ":" +
+              String(t % 60).padStart(2, "0")
+            );
+          };
+        $("ar").value = f(90);
+        $("dp").value = f(120);
+      };
 
-let META={last:"",changes:0};try{META=JSON.parse(localStorage.getItem("ta_meta"))||META}catch(e){}
-const svM=()=>{try{localStorage.setItem("ta_meta",JSON.stringify(META))}catch(e){}};
-function persist(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}META.changes++;svM();bk()}
-function bk(){const t=META.changes?`${ic("warning-outline")} ${META.changes} change(s) not backed up`:(META.last?`${ic("checkmark-outline")} Backed up`:"");$("sbw").innerHTML=t;$("sbw").style.color=META.changes?"#d97706":"";
- $("bkst").textContent=(META.last?"Last backup: "+META.last:"No backup saved yet")+" · Changes since last backup: "+META.changes;
- $("wipe").style.display=(!H.log.length&&!LV.length)?"":"none"}
-$("wgo").onclick=()=>tab("B");
-async function saveFile(name,text,mime){
- try{const d=window.claude?await claude.use("downloads"):null;if(d){await d.save({filename:name,data:text});return"saved"}}catch(e){if(e&&e.code=="declined")return"declined"}
- try{const f=new File([text],name,{type:mime});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return"shared"}}catch(e){if(e&&e.name=="AbortError")return"declined"}
- try{const u=URL.createObjectURL(new Blob([text],{type:mime})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return"link"}catch(e){}
- return"none"}
-const bkData=()=>JSON.stringify({app:"ta",v:1,saved:new Date().toISOString(),H,S,LV,JD,ROS,MO});
-$("bkb").onclick=async()=>{const name="turnaround-backup-"+fd(new Date())+".json",r=await saveFile(name,bkData(),"application/json");
- if(r=="declined"){$("bkm").textContent="Backup cancelled.";return}
- if(r=="none"||r=="link"){$("bkm").textContent=r=="link"?"Download started. If no file appears on your device, use “Copy Backup Text” below and paste it into a note or message to yourself.":"This view can't save files. Use “Copy Backup Text” below instead.";return}
- META.last=new Date().toLocaleString();META.changes=0;svM();bk();$("bkm").textContent="Backup saved: "+name};
-$("bkc").onclick=async()=>{const t=bkData();$("bkt").style.display="block";$("bkt").value=t;$("bkt").focus();$("bkt").select();
- try{await navigator.clipboard.writeText(t);$("bkm").textContent="Backup text copied. Paste it into a note, email or message to yourself and keep it safe."}catch(e){$("bkm").textContent="Select all the text below, copy it, and keep it safe (note, email or message to yourself)."}
- META.last=new Date().toLocaleString();META.changes=0;svM();bk()};
-function merge(d,label){try{if(d.app!="ta"||!d.H)throw 0;
-  const ids=new Set(H.log.map(l=>l.id));let n=0;(d.H.log||[]).forEach(l=>{if(!ids.has(l.id)){H.log.push(l);n++}});
-  Object.entries(d.H.last||{}).forEach(([k,v])=>{if(!(k in H.last)||H.last[k]<v)H.last[k]=v});H.seq=Math.max(H.seq||0,d.H.seq||0);
-  const li=new Set(LV.map(l=>l.id));let m2=0;(d.LV||[]).forEach(l=>{if(!li.has(l.id)){LV.push(l);m2++}});
-  Object.entries(d.JD||{}).forEach(([k,v])=>{if(!JD[k])JD[k]=v});Object.entries(d.ROS||{}).forEach(([k,v])=>{if(!ROS[k])ROS[k]=v});persist("ta_ros",ROS);Object.entries(d.MO||{}).forEach(([k,v])=>{if(!MO[k])MO[k]=v});persist("ta_mo",MO);persist("ta_jd",JD);persist("ta_h",H);persist("ta_lv",LV);META.changes=0;svM();bk();drawStaff();
-  $("bkm").textContent=`Restored ${n} flight(s) and ${m2} leave record(s) from ${label}.`}
- catch(x){$("bkm").textContent="That isn't a valid backup."}}
-$("bkr").onclick=()=>$("bkf").click();
-$("bkf").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{merge(JSON.parse(await f.text()),f.name)}catch(x){$("bkm").textContent="That isn't a valid backup."}e.target.value=""};
-$("bkp").onclick=()=>{try{merge(JSON.parse($("bkpaste").value.trim()),"pasted text");$("bkpaste").value=""}catch(x){$("bkm").textContent="That isn't a valid backup."}};
-bk();
-$("ptabs").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;$("fp").value=b.dataset.p;[...$("ptabs").children].forEach(x=>x.classList.toggle("on",x==b));dash()};
-document.querySelectorAll("[data-ic]").forEach(e=>{e.innerHTML=ic(e.dataset.ic);e.style.display="contents"});
+      const PAL = [
+        "#e6194b",
+        "#3cb44b",
+        "#4363d8",
+        "#f58231",
+        "#911eb4",
+        "#2aa6a6",
+        "#f032e6",
+        "#9a6324",
+        "#a0a000",
+        "#00798c",
+        "#b03030",
+        "#2a2a9a",
+        "#e0a800",
+        "#6a7fdb",
+        "#2e8b57",
+        "#cc5500",
+      ];
+      const colr = (n) => PAL[[...STAFF, ...OFFS].indexOf(n) % PAL.length];
+      let cm = new Date(),
+        sel = fd(new Date());
+      cm.setDate(1);
+      function cal() {
+        const y = cm.getFullYear(),
+          mo = cm.getMonth(),
+          first = (new Date(y, mo, 1).getDay() + 6) % 7,
+          dim = new Date(y, mo + 1, 0).getDate(),
+          td = fd(new Date());
+        let h = `<div class="row" style="align-items:center"><button class="s" id="cp" style="flex:0 0 52px">${ic("chevron-back-outline")}</button><b style="flex:3;text-align:center">${cm.toLocaleString("en", { month: "long" })} ${y}</b><button class="s" id="cn" style="flex:0 0 52px">${ic("chevron-forward-outline")}</button></div><div class="cal">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => `<small class="lic">${d}</small>`).join("")}`;
+        for (let i = 0; i < first; i++) h += "<div></div>";
+        for (let d = 1; d <= dim; d++) {
+          const ds = y + "-" + pad(mo + 1) + "-" + pad(d),
+            ls = LV.filter((l) => l.f <= ds && ds <= l.t);
+          h += `<div class="cd ${ds == td ? "td" : ""} ${ds == sel ? "sl" : ""}" data-d="${ds}"><span>${d}</span>${ls.length ? `<em>${ls.length}</em>` : ""}${ls
+            .slice(0, 3)
+            .map(
+              (l) =>
+                `<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`,
+            )
+            .join(
+              "",
+            )}${ls.length > 3 ? `<div class="lic" style="font-size:9px">+${ls.length - 3} more</div>` : ""}</div>`;
+        }
+        const sl = LV.filter((l) => l.f <= sel && sel <= l.t);
+        h +=
+          `</div><h2 style="margin-top:14px">On leave · ${sel}</h2>` +
+          (sl
+            .map(
+              (l) =>
+                `<div class="t"><b><i class="dot" style="background:${colr(l.n)}"></i> ${esc(l.n)}</b><span>${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t}${l.note ? " · " + esc(l.note) : ""}</span></div>`,
+            )
+            .join("") || "<p class='lic'>Nobody on leave</p>");
+        $("lc").innerHTML = h;
+        $("cp").onclick = () => {
+          cm = new Date(y, mo - 1, 1);
+          cal();
+        };
+        $("cn").onclick = () => {
+          cm = new Date(y, mo + 1, 1);
+          cal();
+        };
+        document.querySelectorAll("[data-d]").forEach(
+          (e) =>
+            (e.onclick = () => {
+              sel = e.dataset.d;
+              $("lf").value = $("lt").value = sel;
+              cal();
+            }),
+        );
+      }
 
-let JD={};try{JD=JSON.parse(localStorage.getItem("ta_jd"))||{}}catch(e){}
-const LT={"Annual Leave":30,"FRL":10,"SL":15,"SLM":15};
-function cyc(jd,ref){const j=new Date(jd+"T00:00:00"),r=new Date(ref+"T00:00:00");let st=new Date(r.getFullYear(),j.getMonth(),j.getDate());if(st>r)st=new Date(r.getFullYear()-1,j.getMonth(),j.getDate());if(r<j)st=j;
- return[fd(st),fd(new Date(st.getFullYear()+1,st.getMonth(),st.getDate()-1))]}
-function used(n,t,cs,ce){return LV.filter(l=>l.n==n&&(l.type||"Annual Leave")==t).reduce((a,l)=>{const s0=l.f>cs?l.f:cs,e0=l.t<ce?l.t:ce;if(s0>e0)return a;let c=0;for(let d=new Date(s0+"T00:00:00"),end=new Date(e0+"T00:00:00");d<=end;d.setDate(d.getDate()+1)){if(t=="Annual Leave"&&d.getDay()==5)continue;c++}return a+c},0)}
-function bal(){const ref=fd(new Date()),ks=Object.keys(LT);
- $("lbal").innerHTML=`<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map(k=>`<th>${k}<br><small class="lic">${k=="Annual Leave"?"30 days · 32 after 5 yrs":LT[k]+" days"}</small></th>`).join("")}</tr>`+[...STAFF,...OFFS].map(n=>{const jd=JD[n]||"";let c="",cells;
-  if(jd){const [cs,ce]=cyc(jd,ref),yrs=Math.max(0,+cs.slice(0,4)-+jd.slice(0,4));c=cs+" → "+ce+`<br>Service: ${yrs} yr${yrs==1?"":"s"}`;
-   cells=ks.map(k=>{const tot=k=="Annual Leave"&&yrs>=5?32:LT[k],u=used(n,k,cs,ce),r=tot-u;return`<td style="font-weight:600;${r<0?"color:hsl(0 84% 60%)":""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`}).join("")}
-  else cells=ks.map(()=>`<td class="lic">—</td>`).join("");
-  return`<tr><td>${esc(n)}</td><td><input type="date" data-jd="${esc(n)}" value="${jd}" style="height:32px;font-size:12px;min-width:130px"></td><td class="lic">${c||"Set join date"}</td>${cells}</tr>`}).join("")+"</table>";
- document.querySelectorAll("[data-jd]").forEach(i=>i.onchange=()=>{JD[i.dataset.jd]=i.value;persist("ta_jd",JD);bal()})}
+      let META = { last: "", changes: 0 };
+      try {
+        META = JSON.parse(localStorage.getItem("ta_meta")) || META;
+      } catch (e) {}
+      const svM = () => {
+        try {
+          localStorage.setItem("ta_meta", JSON.stringify(META));
+        } catch (e) {}
+      };
+      function persist(k, v) {
+        try {
+          localStorage.setItem(k, JSON.stringify(v));
+        } catch (e) {}
+        META.changes++;
+        svM();
+        bk();
+      }
+      function bk() {
+        const t = META.changes
+          ? `${ic("warning-outline")} ${META.changes} change(s) not backed up`
+          : META.last
+            ? `${ic("checkmark-outline")} Backed up`
+            : "";
+        $("sbw").innerHTML = t;
+        $("sbw").style.color = META.changes ? "#d97706" : "";
+        $("bkst").textContent =
+          (META.last ? "Last backup: " + META.last : "No backup saved yet") +
+          " · Changes since last backup: " +
+          META.changes;
+        $("wipe").style.display = !H.log.length && !LV.length ? "" : "none";
+      }
+      $("wgo").onclick = () => tab("B");
+      async function saveFile(name, text, mime) {
+        try {
+          const d = window.claude ? await claude.use("downloads") : null;
+          if (d) {
+            await d.save({ filename: name, data: text });
+            return "saved";
+          }
+        } catch (e) {
+          if (e && e.code == "declined") return "declined";
+        }
+        try {
+          const f = new File([text], name, { type: mime });
+          if (navigator.canShare && navigator.canShare({ files: [f] })) {
+            await navigator.share({ files: [f] });
+            return "shared";
+          }
+        } catch (e) {
+          if (e && e.name == "AbortError") return "declined";
+        }
+        try {
+          const u = URL.createObjectURL(new Blob([text], { type: mime })),
+            a = document.createElement("a");
+          a.href = u;
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(u), 4000);
+          return "link";
+        } catch (e) {}
+        return "none";
+      }
+      const bkData = () =>
+        JSON.stringify({
+          app: "ta",
+          v: 1,
+          saved: new Date().toISOString(),
+          H,
+          S,
+          LV,
+          JD,
+          ROS,
+          MO,
+        });
+      $("bkb").onclick = async () => {
+        const name = "turnaround-backup-" + fd(new Date()) + ".json",
+          r = await saveFile(name, bkData(), "application/json");
+        if (r == "declined") {
+          $("bkm").textContent = "Backup cancelled.";
+          return;
+        }
+        if (r == "none" || r == "link") {
+          $("bkm").textContent =
+            r == "link"
+              ? "Download started. If no file appears on your device, use “Copy Backup Text” below and paste it into a note or message to yourself."
+              : "This view can't save files. Use “Copy Backup Text” below instead.";
+          return;
+        }
+        META.last = new Date().toLocaleString();
+        META.changes = 0;
+        svM();
+        bk();
+        $("bkm").textContent = "Backup saved: " + name;
+      };
+      $("bkc").onclick = async () => {
+        const t = bkData();
+        $("bkt").style.display = "block";
+        $("bkt").value = t;
+        $("bkt").focus();
+        $("bkt").select();
+        try {
+          await navigator.clipboard.writeText(t);
+          $("bkm").textContent =
+            "Backup text copied. Paste it into a note, email or message to yourself and keep it safe.";
+        } catch (e) {
+          $("bkm").textContent =
+            "Select all the text below, copy it, and keep it safe (note, email or message to yourself).";
+        }
+        META.last = new Date().toLocaleString();
+        META.changes = 0;
+        svM();
+        bk();
+      };
+      function merge(d, label) {
+        try {
+          if (d.app != "ta" || !d.H) throw 0;
+          const ids = new Set(H.log.map((l) => l.id));
+          let n = 0;
+          (d.H.log || []).forEach((l) => {
+            if (!ids.has(l.id)) {
+              H.log.push(l);
+              n++;
+            }
+          });
+          Object.entries(d.H.last || {}).forEach(([k, v]) => {
+            if (!(k in H.last) || H.last[k] < v) H.last[k] = v;
+          });
+          H.seq = Math.max(H.seq || 0, d.H.seq || 0);
+          const li = new Set(LV.map((l) => l.id));
+          let m2 = 0;
+          (d.LV || []).forEach((l) => {
+            if (!li.has(l.id)) {
+              LV.push(l);
+              m2++;
+            }
+          });
+          Object.entries(d.JD || {}).forEach(([k, v]) => {
+            if (!JD[k]) JD[k] = v;
+          });
+          Object.entries(d.ROS || {}).forEach(([k, v]) => {
+            if (!ROS[k]) ROS[k] = v;
+          });
+          persist("ta_ros", ROS);
+          Object.entries(d.MO || {}).forEach(([k, v]) => {
+            if (!MO[k]) MO[k] = v;
+          });
+          persist("ta_mo", MO);
+          persist("ta_jd", JD);
+          persist("ta_h", H);
+          persist("ta_lv", LV);
+          META.changes = 0;
+          svM();
+          bk();
+          drawStaff();
+          $("bkm").textContent =
+            `Restored ${n} flight(s) and ${m2} leave record(s) from ${label}.`;
+        } catch (x) {
+          $("bkm").textContent = "That isn't a valid backup.";
+        }
+      }
+      $("bkr").onclick = () => $("bkf").click();
+      $("bkf").onchange = async (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        try {
+          merge(JSON.parse(await f.text()), f.name);
+        } catch (x) {
+          $("bkm").textContent = "That isn't a valid backup.";
+        }
+        e.target.value = "";
+      };
+      $("bkp").onclick = () => {
+        try {
+          merge(JSON.parse($("bkpaste").value.trim()), "pasted text");
+          $("bkpaste").value = "";
+        } catch (x) {
+          $("bkm").textContent = "That isn't a valid backup.";
+        }
+      };
+      bk();
+      $("ptabs").onclick = (e) => {
+        const b = e.target.closest("[data-p]");
+        if (!b) return;
+        $("fp").value = b.dataset.p;
+        [...$("ptabs").children].forEach((x) =>
+          x.classList.toggle("on", x == b),
+        );
+        dash();
+      };
+      document.querySelectorAll("[data-ic]").forEach((e) => {
+        e.innerHTML = ic(e.dataset.ic);
+        e.style.display = "contents";
+      });
 
-const SEC=["Ahmed Shaan","Ahmed Rasheed","Ameen Faisal","Ismail Ahmed","Ahmed Hassan","Abdulla Yoosuf","Ahmed Shain Zubairu","Ahmed Akram","Ibrahim khaleel"],SN={"Ahmed Shaan":"Shaan","Ahmed Rasheed":"Rasheed","Ameen Faisal":"Ameen","Ismail Ahmed":"Ismail","Ahmed Hassan":"H. Hassan","Abdulla Yoosuf":"Abdulla","Ahmed Shain Zubairu":"Shain","Ahmed Akram":"Akram","Ibrahim khaleel":"Khaleel"};
-let ROS={};try{ROS=JSON.parse(localStorage.getItem("ta_ros"))||{}}catch(e){}
-if(!ROS["2026-10"]){const w=(q,k)=>q.repeat(k).split(""),P={"Ahmed Shaan":"MMNNOEEMMNNNOEMMMNNOEMMMNNOE".split(""),"Ahmed Rasheed":["N",...Array(11).fill("AL"),..."MEMMMNNOEMMMNNOE"],"Ameen Faisal":w("OEEMNNN",4),"Ismail Ahmed":w("EMNOEEM",4),"Ahmed Hassan":[...Array(6).fill("AL"),..."MMNNOEEMMNNOEEMMNNOEEM"],"Abdulla Yoosuf":w("EEMNNOE",4),"Ahmed Shain Zubairu":w("NOEMMNN",4),"Ahmed Akram":w("MNOEEMM",4),"Ibrahim khaleel":w("NNOEMMN",4)},r={};
- Object.keys(P).forEach(n=>r[n]=["","",...P[n],""]);ROS["2026-10"]=r}
-const hm=m=>{m=(m%1440+1440)%1440;return pad(m/60|0)+":"+pad(m%60)},tmin=v=>v?+v.slice(0,2)*60+ +v.slice(3,5):null;
-function uOpen(){$("ud").value=$("date").value||fd(new Date());$("uf").value=$("fno").value;$("uc").value=$("ci").value;$("ua").value=$("ar").value;$("us").value=$("dp").value;duty()}
-function uPush(){$("date").value=$("ud").value;$("fno").value=$("uf").value;$("ci").value=$("uc").value;$("ar").value=$("ua").value;$("dp").value=$("us").value;drawStaff()}
-["ud","uf","ua","us","un","ur"].forEach(i=>$(i).oninput=$(i).onchange=()=>{uPush();duty()});
-$("uc").onchange=()=>{const m=tmin($("uc").value);if(m!=null){$("ua").value=hm(m+90);$("us").value=hm(m+120)}uPush();duty()};
-const CL=["#F98513","#98ACD8","#4ade80","#facc15","#f472b6","#22d3ee","#a78bfa"];
-let MO={};try{MO=JSON.parse(localStorage.getItem("ta_mo"))||{}}catch(e){}
-function duty(skip){
- const d=$("ud").value||fd(new Date()),wd=new Date(d+"T00:00:00").getDay(),std=$("un").checked?null:tmin($("us").value),mo=MO[d]||{};
- let f=[360,840];if(std!=null){const fin=Math.ceil((std+60)/60)*60;f=std<840?[360,Math.max(840,fin)]:[fin-480,fin]}
- const base=[["ARFF / EMT",f],["OPS",f],["SAFETY",f],["AIRFIELD",f],["HANDS",f],["CLEANING & GARDENING",f],["AIRPORT OFFICE",[480,960],1],["MAINTENANCE",wd==5||wd==6?[360,840]:[480,960],1],["SECURITY NIGHT",[0,480]],["SECURITY DAY",[480,960]],["SECURITY EVENING",[960,1440]]];
- const rg=r=>hm(r[0])+" - "+hm(r[1]),col={};let k=0;const cc=t=>col[t]||(col[t]=CL[k++%CL.length]);
- const rows=base.map(x=>{const o=mo[x[0]];return[x[0],o&&o.s&&o.e?[tmin(o.s),tmin(o.e)]:x[1],x[2]]});
- const DP=rows.slice(0,8).map(x=>{const t=rg(x[1]);return[x[0],t,x[2],cc(t)]}),sh=[["N","moon-outline"],["M","sunny-outline"],["E","partly-sunny-outline"]].map((x,i)=>{const t=rg(rows[8+i][1]);return[x[0],x[1],t,cc(t)]});
- const R=ROS[d.slice(0,7)],dy=+d.slice(8),g={N:[],M:[],E:[]};if(R)SEC.forEach(n=>{const c=(R[n]||[])[dy-1];if(g[c])g[c].push(SN[n])});
- const now=new Date(),nm=now.getHours()*60+now.getMinutes(),live=d==fd(now),act=nm<480?"N":nm<960?"M":"E",has=Object.values(g).some(a=>a.length);
- const dt=new Date(d+"T00:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}),nf=std==null,tv=x=>nf?"--:--":(x||"--:--"),rt=($("ur").value||"").toUpperCase();
- $("du").innerHTML=`<div class="du-h full"><b>${ic("airplane")} DUTY TIME</b><span class="du-d"><button data-dd="-1">${ic("chevron-back-outline")}</button>${dt}<button data-dd="1">${ic("chevron-forward-outline")}</button></span></div>
+      let JD = {};
+      try {
+        JD = JSON.parse(localStorage.getItem("ta_jd")) || {};
+      } catch (e) {}
+      const LT = { "Annual Leave": 30, FRL: 10, SL: 15, SLM: 15 };
+      function cyc(jd, ref) {
+        const j = new Date(jd + "T00:00:00"),
+          r = new Date(ref + "T00:00:00");
+        let st = new Date(r.getFullYear(), j.getMonth(), j.getDate());
+        if (st > r)
+          st = new Date(r.getFullYear() - 1, j.getMonth(), j.getDate());
+        if (r < j) st = j;
+        return [
+          fd(st),
+          fd(new Date(st.getFullYear() + 1, st.getMonth(), st.getDate() - 1)),
+        ];
+      }
+      function used(n, t, cs, ce) {
+        return LV.filter(
+          (l) => l.n == n && (l.type || "Annual Leave") == t,
+        ).reduce((a, l) => {
+          const s0 = l.f > cs ? l.f : cs,
+            e0 = l.t < ce ? l.t : ce;
+          if (s0 > e0) return a;
+          let c = 0;
+          for (
+            let d = new Date(s0 + "T00:00:00"),
+              end = new Date(e0 + "T00:00:00");
+            d <= end;
+            d.setDate(d.getDate() + 1)
+          ) {
+            if (t == "Annual Leave" && d.getDay() == 5) continue;
+            c++;
+          }
+          return a + c;
+        }, 0);
+      }
+      function bal() {
+        const ref = fd(new Date()),
+          ks = Object.keys(LT);
+        $("lbal").innerHTML =
+          `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${k == "Annual Leave" ? "30 days · 32 after 5 yrs" : LT[k] + " days"}</small></th>`).join("")}</tr>` +
+          [...STAFF, ...OFFS]
+            .map((n) => {
+              const jd = JD[n] || "";
+              let c = "",
+                cells;
+              if (jd) {
+                const [cs, ce] = cyc(jd, ref),
+                  yrs = Math.max(0, +cs.slice(0, 4) - +jd.slice(0, 4));
+                c =
+                  cs +
+                  " → " +
+                  ce +
+                  `<br>Service: ${yrs} yr${yrs == 1 ? "" : "s"}`;
+                cells = ks
+                  .map((k) => {
+                    const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
+                      u = used(n, k, cs, ce),
+                      r = tot - u;
+                    return `<td style="font-weight:600;${r < 0 ? "color:hsl(0 84% 60%)" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
+                  })
+                  .join("");
+              } else cells = ks.map(() => `<td class="lic">—</td>`).join("");
+              return `<tr><td>${esc(n)}</td><td><input type="date" data-jd="${esc(n)}" value="${jd}" style="height:32px;font-size:12px;min-width:130px"></td><td class="lic">${c || "Set join date"}</td>${cells}</tr>`;
+            })
+            .join("") +
+          "</table>";
+        document.querySelectorAll("[data-jd]").forEach(
+          (i) =>
+            (i.onchange = () => {
+              JD[i.dataset.jd] = i.value;
+              persist("ta_jd", JD);
+              bal();
+            }),
+        );
+      }
+
+      const SEC = [
+          "Ahmed Shaan",
+          "Ahmed Rasheed",
+          "Ameen Faisal",
+          "Ismail Ahmed",
+          "Ahmed Hassan",
+          "Abdulla Yoosuf",
+          "Ahmed Shain Zubairu",
+          "Ahmed Akram",
+          "Ibrahim khaleel",
+        ],
+        SN = {
+          "Ahmed Shaan": "Shaan",
+          "Ahmed Rasheed": "Rasheed",
+          "Ameen Faisal": "Ameen",
+          "Ismail Ahmed": "Ismail",
+          "Ahmed Hassan": "H. Hassan",
+          "Abdulla Yoosuf": "Abdulla",
+          "Ahmed Shain Zubairu": "Shain",
+          "Ahmed Akram": "Akram",
+          "Ibrahim khaleel": "Khaleel",
+        };
+      let ROS = {};
+      try {
+        ROS = JSON.parse(localStorage.getItem("ta_ros")) || {};
+      } catch (e) {}
+      if (!ROS["2026-10"]) {
+        const w = (q, k) => q.repeat(k).split(""),
+          P = {
+            "Ahmed Shaan": "MMNNOEEMMNNNOEMMMNNOEMMMNNOE".split(""),
+            "Ahmed Rasheed": [
+              "N",
+              ...Array(11).fill("AL"),
+              ..."MEMMMNNOEMMMNNOE",
+            ],
+            "Ameen Faisal": w("OEEMNNN", 4),
+            "Ismail Ahmed": w("EMNOEEM", 4),
+            "Ahmed Hassan": [
+              ...Array(6).fill("AL"),
+              ..."MMNNOEEMMNNOEEMMNNOEEM",
+            ],
+            "Abdulla Yoosuf": w("EEMNNOE", 4),
+            "Ahmed Shain Zubairu": w("NOEMMNN", 4),
+            "Ahmed Akram": w("MNOEEMM", 4),
+            "Ibrahim khaleel": w("NNOEMMN", 4),
+          },
+          r = {};
+        Object.keys(P).forEach((n) => (r[n] = ["", "", ...P[n], ""]));
+        ROS["2026-10"] = r;
+      }
+      const hm = (m) => {
+          m = ((m % 1440) + 1440) % 1440;
+          return pad((m / 60) | 0) + ":" + pad(m % 60);
+        },
+        tmin = (v) => (v ? +v.slice(0, 2) * 60 + +v.slice(3, 5) : null);
+      function uOpen() {
+        $("ud").value = $("date").value || fd(new Date());
+        $("uf").value = $("fno").value;
+        $("uc").value = $("ci").value;
+        $("ua").value = $("ar").value;
+        $("us").value = $("dp").value;
+        duty();
+      }
+      function uPush() {
+        $("date").value = $("ud").value;
+        $("fno").value = $("uf").value;
+        $("ci").value = $("uc").value;
+        $("ar").value = $("ua").value;
+        $("dp").value = $("us").value;
+        drawStaff();
+      }
+      ["ud", "uf", "ua", "us", "un", "ur"].forEach(
+        (i) =>
+          ($(i).oninput = $(i).onchange =
+            () => {
+              uPush();
+              duty();
+            }),
+      );
+      $("uc").onchange = () => {
+        const m = tmin($("uc").value);
+        if (m != null) {
+          $("ua").value = hm(m + 90);
+          $("us").value = hm(m + 120);
+        }
+        uPush();
+        duty();
+      };
+      const CL = [
+        "#F98513",
+        "#98ACD8",
+        "#4ade80",
+        "#facc15",
+        "#f472b6",
+        "#22d3ee",
+        "#a78bfa",
+      ];
+      let MO = {};
+      try {
+        MO = JSON.parse(localStorage.getItem("ta_mo")) || {};
+      } catch (e) {}
+      function duty(skip) {
+        const d = $("ud").value || fd(new Date()),
+          wd = new Date(d + "T00:00:00").getDay(),
+          std = $("un").checked ? null : tmin($("us").value),
+          mo = MO[d] || {};
+        let f = [360, 840];
+        if (std != null) {
+          const fin = Math.ceil((std + 60) / 60) * 60;
+          f = std < 840 ? [360, Math.max(840, fin)] : [fin - 480, fin];
+        }
+        const base = [
+          ["ARFF / EMT", f],
+          ["OPS", f],
+          ["SAFETY", f],
+          ["AIRFIELD", f],
+          ["HANDS", f],
+          ["CLEANING & GARDENING", f],
+          ["AIRPORT OFFICE", [480, 960], 1],
+          ["MAINTENANCE", wd == 5 || wd == 6 ? [360, 840] : [480, 960], 1],
+          ["SECURITY NIGHT", [0, 480]],
+          ["SECURITY DAY", [480, 960]],
+          ["SECURITY EVENING", [960, 1440]],
+        ];
+        const rg = (r) => hm(r[0]) + " - " + hm(r[1]),
+          col = {};
+        let k = 0;
+        const cc = (t) => col[t] || (col[t] = CL[k++ % CL.length]);
+        const rows = base.map((x) => {
+          const o = mo[x[0]];
+          return [x[0], o && o.s && o.e ? [tmin(o.s), tmin(o.e)] : x[1], x[2]];
+        });
+        const DP = rows.slice(0, 8).map((x) => {
+            const t = rg(x[1]);
+            return [x[0], t, x[2], cc(t)];
+          }),
+          sh = [
+            ["N", "moon-outline"],
+            ["M", "sunny-outline"],
+            ["E", "partly-sunny-outline"],
+          ].map((x, i) => {
+            const t = rg(rows[8 + i][1]);
+            return [x[0], x[1], t, cc(t)];
+          });
+        const R = ROS[d.slice(0, 7)],
+          dy = +d.slice(8),
+          g = { N: [], M: [], E: [] };
+        if (R)
+          SEC.forEach((n) => {
+            const c = (R[n] || [])[dy - 1];
+            if (g[c]) g[c].push(SN[n]);
+          });
+        const now = new Date(),
+          nm = now.getHours() * 60 + now.getMinutes(),
+          live = d == fd(now),
+          act = nm < 480 ? "N" : nm < 960 ? "M" : "E",
+          has = Object.values(g).some((a) => a.length);
+        const dt = new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          }),
+          nf = std == null,
+          tv = (x) => (nf ? "--:--" : x || "--:--"),
+          rt = ($("ur").value || "").toUpperCase();
+        $("du").innerHTML =
+          `<div class="du-h full"><b>${ic("airplane")} DUTY TIME</b><span class="du-d"><button data-dd="-1">${ic("chevron-back-outline")}</button>${dt}<button data-dd="1">${ic("chevron-forward-outline")}</button></span></div>
  <div class="du-n full">Duty time may change based on flight schedule</div>
- <div class="du-hero full"><div class="du-fl"><b>${esc($("uf").value||"NO FLIGHT")}</b><i class="du-r">${esc(rt)}</i><small>${nf?"No flight":"Scheduled"}</small></div><div class="du-t3"><div class="am"><small>CHECK-IN</small><b>${$("uc").value||"--:--"}</b></div><div><small>STA</small><b>${tv($("ua").value)}</b></div><div><small>STD</small><b>${tv($("us").value)}</b></div></div></div>
- <div><h3>${ic("grid-outline")} Department Duty Allocation</h3><div class="du-tiles">${DP.map(x=>`<div class="du-tile${x[2]?" nb":""}"><b>${x[0]}</b><span style="color:${x[3]};border-color:${x[3]}88">${x[1]}</span></div>`).join("")}</div></div>
- <div class="du-sec"><h3>${ic("shield-checkmark-outline")} SECURITY <small>24H ROSTER</small></h3>${has?sh.map(x=>`<div class="du-s${live&&act==x[0]?" on":""}"><span class="du-time" style="color:${x[3]};border-color:${x[3]}88">${x[2]}</span><em>${g[x[0]].join(", ")||"-NONE-"}</em>${live&&act==x[0]?"<i>Active</i>":""}</div>`).join(""):`<p class="du-o">No security roster for this date. Add it in the roster editor below.</p>`}</div>`;
- document.querySelectorAll("[data-dd]").forEach(b=>b.onclick=()=>{const x=new Date(d+"T00:00:00");x.setDate(x.getDate()+ +b.dataset.dd);$("ud").value=fd(x);uPush();duty()});
- DD={dt,nf,rt,DP,sh,g,has,live,act};ros(d);if(!skip)mt(d,base)}
-function mt(d,base){const mo=MO[d]||{};
- $("mt").innerHTML=`<table><tr><th>Department</th><th>Auto</th><th>Start</th><th>End</th></tr>${base.map(x=>`<tr><td>${x[0]}</td><td class="lic">${hm(x[1][0])} - ${hm(x[1][1])}</td><td><input type="time" data-m="${x[0]}" data-p="s" value="${(mo[x[0]]||{}).s||""}" style="height:32px;font-size:12px"></td><td><input type="time" data-m="${x[0]}" data-p="e" value="${(mo[x[0]]||{}).e||""}" style="height:32px;font-size:12px"></td></tr>`).join("")}</table>`;
- $("mt").onchange=e=>{const t=e.target.closest("[data-m]");if(!t)return;const m=MO[d]||(MO[d]={}),o=m[t.dataset.m]||(m[t.dataset.m]={});o[t.dataset.p]=t.value;if(!o.s&&!o.e)delete m[t.dataset.m];if(!Object.keys(m).length)delete MO[d];persist("ta_mo",MO);duty(1)};
- $("mr").onclick=()=>{delete MO[d];persist("ta_mo",MO);duty()}}
-function ros(d){const ym=d.slice(0,7),n=new Date(+ym.slice(0,4),+ym.slice(5),0).getDate(),R=ROS[ym]||{};
- $("rt").innerHTML=`<table class="rs"><tr><th>${ym}</th>${Array.from({length:n},(_,i)=>`<th>${i+1}</th>`).join("")}</tr>${SEC.map(s=>`<tr><td>${SN[s]}</td>${Array.from({length:n},(_,i)=>{const c=(R[s]||[])[i]||"";return`<td class="rc ${c}" data-s="${s}" data-i="${i}">${c}</td>`}).join("")}</tr>`).join("")}</table>`;
- $("rt").onclick=e=>{const t=e.target.closest("[data-s]");if(!t)return;const m=ROS[ym]||(ROS[ym]={}),a=m[t.dataset.s]||(m[t.dataset.s]=Array(n).fill("")),k=["","M","E","N","O","AL"],i=+t.dataset.i;a[i]=k[(k.indexOf(a[i]||"")+1)%6];persist("ta_ros",ROS);duty()}}
+ <div class="du-hero full"><div class="du-fl"><b>${esc($("uf").value || "NO FLIGHT")}</b><i class="du-r">${esc(rt)}</i><small>${nf ? "No flight" : "Scheduled"}</small></div><div class="du-t3"><div class="am"><small>CHECK-IN</small><b>${$("uc").value || "--:--"}</b></div><div><small>STA</small><b>${tv($("ua").value)}</b></div><div><small>STD</small><b>${tv($("us").value)}</b></div></div></div>
+ <div><h3>${ic("grid-outline")} Department Duty Allocation</h3><div class="du-tiles">${DP.map((x) => `<div class="du-tile${x[2] ? " nb" : ""}"><b>${x[0]}</b><span style="color:${x[3]};border-color:${x[3]}88">${x[1]}</span></div>`).join("")}</div></div>
+ <div class="du-sec"><h3>${ic("shield-checkmark-outline")} SECURITY <small>24H ROSTER</small></h3>${has ? sh.map((x) => `<div class="du-s${live && act == x[0] ? " on" : ""}"><span class="du-time" style="color:${x[3]};border-color:${x[3]}88">${x[2]}</span><em>${g[x[0]].join(", ") || "-NONE-"}</em>${live && act == x[0] ? "<i>Active</i>" : ""}</div>`).join("") : `<p class="du-o">No security roster for this date. Add it in the roster editor below.</p>`}</div>`;
+        document.querySelectorAll("[data-dd]").forEach(
+          (b) =>
+            (b.onclick = () => {
+              const x = new Date(d + "T00:00:00");
+              x.setDate(x.getDate() + +b.dataset.dd);
+              $("ud").value = fd(x);
+              uPush();
+              duty();
+            }),
+        );
+        DD = { dt, nf, rt, DP, sh, g, has, live, act };
+        ros(d);
+        if (!skip) mt(d, base);
+      }
+      function mt(d, base) {
+        const mo = MO[d] || {};
+        $("mt").innerHTML =
+          `<table><tr><th>Department</th><th>Auto</th><th>Start</th><th>End</th></tr>${base.map((x) => `<tr><td>${x[0]}</td><td class="lic">${hm(x[1][0])} - ${hm(x[1][1])}</td><td><input type="time" data-m="${x[0]}" data-p="s" value="${(mo[x[0]] || {}).s || ""}" style="height:32px;font-size:12px"></td><td><input type="time" data-m="${x[0]}" data-p="e" value="${(mo[x[0]] || {}).e || ""}" style="height:32px;font-size:12px"></td></tr>`).join("")}</table>`;
+        $("mt").onchange = (e) => {
+          const t = e.target.closest("[data-m]");
+          if (!t) return;
+          const m = MO[d] || (MO[d] = {}),
+            o = m[t.dataset.m] || (m[t.dataset.m] = {});
+          o[t.dataset.p] = t.value;
+          if (!o.s && !o.e) delete m[t.dataset.m];
+          if (!Object.keys(m).length) delete MO[d];
+          persist("ta_mo", MO);
+          duty(1);
+        };
+        $("mr").onclick = () => {
+          delete MO[d];
+          persist("ta_mo", MO);
+          duty();
+        };
+      }
+      function ros(d) {
+        const ym = d.slice(0, 7),
+          n = new Date(+ym.slice(0, 4), +ym.slice(5), 0).getDate(),
+          R = ROS[ym] || {};
+        $("rt").innerHTML =
+          `<table class="rs"><tr><th>${ym}</th>${Array.from({ length: n }, (_, i) => `<th>${i + 1}</th>`).join("")}</tr>${SEC.map(
+            (s) =>
+              `<tr><td>${SN[s]}</td>${Array.from({ length: n }, (_, i) => {
+                const c = (R[s] || [])[i] || "";
+                return `<td class="rc ${c}" data-s="${s}" data-i="${i}">${c}</td>`;
+              }).join("")}</tr>`,
+          ).join("")}</table>`;
+        $("rt").onclick = (e) => {
+          const t = e.target.closest("[data-s]");
+          if (!t) return;
+          const m = ROS[ym] || (ROS[ym] = {}),
+            a = m[t.dataset.s] || (m[t.dataset.s] = Array(n).fill("")),
+            k = ["", "M", "E", "N", "O", "AL"],
+            i = +t.dataset.i;
+          a[i] = k[(k.indexOf(a[i] || "") + 1) % 6];
+          persist("ta_ros", ROS);
+          duty();
+        };
+      }
 
-let DD=null;
-function jpgD(){
- if(!DD)duty();const W=1080,H=2340,P=44,TOP=170,c=document.createElement("canvas"),x=c.getContext("2d"),U=t=>String(t).toUpperCase();c.width=W;c.height=H;
- const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#0c0c33");bg.addColorStop(1,"#111144");x.fillStyle=bg;x.fillRect(0,0,W,H);
- const box=(a,b,w,h,f,st,r=22)=>{rr(x,a,b,w,h,r);x.fillStyle=f;x.fill();if(st){x.strokeStyle=st;x.lineWidth=2;x.stroke()}};
- const T=(t,a,b,f,col,al="left")=>{x.font=f;x.fillStyle=col;x.textAlign=al;x.fillText(t,a,b)};
- const fit=(t,f,mw)=>{let z=+f.match(/(\d+)px/)[1];while(z>16){x.font=f.replace(/\d+px/,z+"px");if(x.measureText(t).width<=mw)break;z-=2}return f.replace(/\d+px/,z+"px")};
- const hs=[100,64,310,860,560],gap=(H-TOP-P-hs.reduce((a,b)=>a+b,0))/4;let y=TOP;const ys=hs.map(h=>{const t=y;y+=h+gap;return t});
- const mono="ui-monospace,Menlo,monospace",ac="#F98513",bl="#98ACD8",nv="#1a2060",dk="#0c0c33";
- T("DUTY TIME",P,ys[0]+64,"800 48px sans-serif","#F4F1EC");box(W-P-620,ys[0],620,88,dk,"#223382",22);T(U(DD.dt),W-P-310,ys[0]+60,"700 42px sans-serif","#F4F1EC","center");
- box(P,ys[1],W-2*P,64,"rgba(249,133,19,.12)","rgba(249,133,19,.4)",16);T("DUTY TIME MAY CHANGE BASED ON FLIGHT SCHEDULE",W/2,ys[1]+42,"700 26px sans-serif",ac,"center");
- const hy=ys[2];box(P,hy,W-2*P,310,nv,"#223382",26);const fn=U($("uf").value||"NO FLIGHT");T(fn,P+30,hy+82,"800 56px "+mono,"#F4F1EC");x.font="800 56px "+mono;const fw=x.measureText(fn).width;
- const sw=DD.nf?230:250,sl=W-P-30-sw;box(sl,hy+34,sw,60,"rgba(34,197,94,.15)","rgba(34,197,94,.4)",30);T(DD.nf?"NO FLIGHT":"SCHEDULED",sl+sw/2,hy+76,"800 28px sans-serif","#4ade80","center");
- if(DD.rt){const mid=(P+30+fw+sl)/2,f2=fit(DD.rt,"700 36px "+mono,sl-(P+30+fw)-30);T(DD.rt,mid,hy+76,f2,bl,"center")}
- x.strokeStyle="#223382";x.beginPath();x.moveTo(P+30,hy+118);x.lineTo(W-P-30,hy+118);x.stroke();
- const cw=(W-2*P-60-36)/3,tv=v=>DD.nf?"--:--":(v||"--:--");
- [["CHECK-IN",$("uc").value||"--:--",1],["STA",tv($("ua").value)],["STD",tv($("us").value)]].forEach((q,i)=>{const cx=P+30+i*(cw+18);box(cx,hy+146,cw,134,q[2]?ac:dk,q[2]?null:"#223382",20);T(q[0],cx+cw/2,hy+192,"800 26px sans-serif",q[2]?"#111144":bl,"center");T(q[1],cx+cw/2,hy+256,"800 58px "+mono,q[2]?"#111144":"#F4F1EC","center")});
- const dy=ys[3];T("DEPARTMENT DUTY ALLOCATION",P+6,dy+30,"800 28px sans-serif",bl);const tw=(W-2*P-18)/2;
- DD.DP.forEach((d,i)=>{const tx=P+(i%2)*(tw+18),ty=dy+60+Math.floor(i/2)*204;box(tx,ty,tw,188,nv,d[2]?null:"#223382",24);
-  const nf=fit(U(d[0]),"800 36px sans-serif",tw-30);T(U(d[0]),tx+tw/2,ty+68,nf,"#F4F1EC","center");
-  box(tx+(tw-310)/2,ty+98,310,70,dk,d[3]+"99",14);T(d[1],tx+tw/2,ty+147,"800 40px "+mono,d[3],"center")});
- const sy=ys[4];box(P,sy,W-2*P,560,nv,"#223382",26);T("SECURITY",P+30,sy+58,"800 32px sans-serif",bl);box(W-P-30-210,sy+22,210,50,dk,"#223382",12);T("24H ROSTER",W-P-30-105,sy+57,"700 24px sans-serif",bl,"center");
- if(!DD.has){T("NO SECURITY ROSTER FOR THIS DATE",W/2,sy+300,"700 30px sans-serif",bl,"center")}
- else DD.sh.forEach((h,i)=>{const ry=sy+92+i*150,on=DD.live&&DD.act==h[0],rw=W-2*P-60;box(P+30,ry,rw,134,dk,on?bl:"#223382",20);
-  T(h[2],P+56,ry+60,"800 40px "+mono,h[3]);if(on)T("● ACTIVE",P+30+rw-26,ry+56,"800 24px sans-serif","#4ade80","right");
-  const nm=U(DD.g[h[0]].join(", ")||"-NONE-");T(nm,P+56,ry+112,fit(nm,"700 42px sans-serif",rw-52),"#F4F1EC")});
- return c}
-$("ujpg").onclick=()=>{duty();window.FN="duty-time-"+$("ud").value;cv=jpgD();$("img").src=cv.toDataURL("image/jpeg",.92);$("modal").style.display="block"};
-</script></body></html>
+      let DD = null;
+      function jpgD() {
+        if (!DD) duty();
+        const W = 1080,
+          H = 2340,
+          P = 44,
+          TOP = 170,
+          c = document.createElement("canvas"),
+          x = c.getContext("2d"),
+          U = (t) => String(t).toUpperCase();
+        c.width = W;
+        c.height = H;
+        const bg = x.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, "#0c0c33");
+        bg.addColorStop(1, "#111144");
+        x.fillStyle = bg;
+        x.fillRect(0, 0, W, H);
+        const box = (a, b, w, h, f, st, r = 22) => {
+          rr(x, a, b, w, h, r);
+          x.fillStyle = f;
+          x.fill();
+          if (st) {
+            x.strokeStyle = st;
+            x.lineWidth = 2;
+            x.stroke();
+          }
+        };
+        const T = (t, a, b, f, col, al = "left") => {
+          x.font = f;
+          x.fillStyle = col;
+          x.textAlign = al;
+          x.fillText(t, a, b);
+        };
+        const fit = (t, f, mw) => {
+          let z = +f.match(/(\d+)px/)[1];
+          while (z > 16) {
+            x.font = f.replace(/\d+px/, z + "px");
+            if (x.measureText(t).width <= mw) break;
+            z -= 2;
+          }
+          return f.replace(/\d+px/, z + "px");
+        };
+        const hs = [100, 64, 310, 860, 560],
+          gap = (H - TOP - P - hs.reduce((a, b) => a + b, 0)) / 4;
+        let y = TOP;
+        const ys = hs.map((h) => {
+          const t = y;
+          y += h + gap;
+          return t;
+        });
+        const mono = "ui-monospace,Menlo,monospace",
+          ac = "#F98513",
+          bl = "#98ACD8",
+          nv = "#1a2060",
+          dk = "#0c0c33";
+        T("DUTY TIME", P, ys[0] + 64, "800 48px sans-serif", "#F4F1EC");
+        box(W - P - 620, ys[0], 620, 88, dk, "#223382", 22);
+        T(
+          U(DD.dt),
+          W - P - 310,
+          ys[0] + 60,
+          "700 42px sans-serif",
+          "#F4F1EC",
+          "center",
+        );
+        box(
+          P,
+          ys[1],
+          W - 2 * P,
+          64,
+          "rgba(249,133,19,.12)",
+          "rgba(249,133,19,.4)",
+          16,
+        );
+        T(
+          "DUTY TIME MAY CHANGE BASED ON FLIGHT SCHEDULE",
+          W / 2,
+          ys[1] + 42,
+          "700 26px sans-serif",
+          ac,
+          "center",
+        );
+        const hy = ys[2];
+        box(P, hy, W - 2 * P, 310, nv, "#223382", 26);
+        const fn = U($("uf").value || "NO FLIGHT");
+        T(fn, P + 30, hy + 82, "800 56px " + mono, "#F4F1EC");
+        x.font = "800 56px " + mono;
+        const fw = x.measureText(fn).width;
+        const sw = DD.nf ? 230 : 250,
+          sl = W - P - 30 - sw;
+        box(
+          sl,
+          hy + 34,
+          sw,
+          60,
+          "rgba(34,197,94,.15)",
+          "rgba(34,197,94,.4)",
+          30,
+        );
+        T(
+          DD.nf ? "NO FLIGHT" : "SCHEDULED",
+          sl + sw / 2,
+          hy + 76,
+          "800 28px sans-serif",
+          "#4ade80",
+          "center",
+        );
+        if (DD.rt) {
+          const mid = (P + 30 + fw + sl) / 2,
+            f2 = fit(DD.rt, "700 36px " + mono, sl - (P + 30 + fw) - 30);
+          T(DD.rt, mid, hy + 76, f2, bl, "center");
+        }
+        x.strokeStyle = "#223382";
+        x.beginPath();
+        x.moveTo(P + 30, hy + 118);
+        x.lineTo(W - P - 30, hy + 118);
+        x.stroke();
+        const cw = (W - 2 * P - 60 - 36) / 3,
+          tv = (v) => (DD.nf ? "--:--" : v || "--:--");
+        [
+          ["CHECK-IN", $("uc").value || "--:--", 1],
+          ["STA", tv($("ua").value)],
+          ["STD", tv($("us").value)],
+        ].forEach((q, i) => {
+          const cx = P + 30 + i * (cw + 18);
+          box(
+            cx,
+            hy + 146,
+            cw,
+            134,
+            q[2] ? ac : dk,
+            q[2] ? null : "#223382",
+            20,
+          );
+          T(
+            q[0],
+            cx + cw / 2,
+            hy + 192,
+            "800 26px sans-serif",
+            q[2] ? "#111144" : bl,
+            "center",
+          );
+          T(
+            q[1],
+            cx + cw / 2,
+            hy + 256,
+            "800 58px " + mono,
+            q[2] ? "#111144" : "#F4F1EC",
+            "center",
+          );
+        });
+        const dy = ys[3];
+        T(
+          "DEPARTMENT DUTY ALLOCATION",
+          P + 6,
+          dy + 30,
+          "800 28px sans-serif",
+          bl,
+        );
+        const tw = (W - 2 * P - 18) / 2;
+        DD.DP.forEach((d, i) => {
+          const tx = P + (i % 2) * (tw + 18),
+            ty = dy + 60 + Math.floor(i / 2) * 204;
+          box(tx, ty, tw, 188, nv, d[2] ? null : "#223382", 24);
+          const nf = fit(U(d[0]), "800 36px sans-serif", tw - 30);
+          T(U(d[0]), tx + tw / 2, ty + 68, nf, "#F4F1EC", "center");
+          box(tx + (tw - 310) / 2, ty + 98, 310, 70, dk, d[3] + "99", 14);
+          T(d[1], tx + tw / 2, ty + 147, "800 40px " + mono, d[3], "center");
+        });
+        const sy = ys[4];
+        box(P, sy, W - 2 * P, 560, nv, "#223382", 26);
+        T("SECURITY", P + 30, sy + 58, "800 32px sans-serif", bl);
+        box(W - P - 30 - 210, sy + 22, 210, 50, dk, "#223382", 12);
+        T(
+          "24H ROSTER",
+          W - P - 30 - 105,
+          sy + 57,
+          "700 24px sans-serif",
+          bl,
+          "center",
+        );
+        if (!DD.has) {
+          T(
+            "NO SECURITY ROSTER FOR THIS DATE",
+            W / 2,
+            sy + 300,
+            "700 30px sans-serif",
+            bl,
+            "center",
+          );
+        } else
+          DD.sh.forEach((h, i) => {
+            const ry = sy + 92 + i * 150,
+              on = DD.live && DD.act == h[0],
+              rw = W - 2 * P - 60;
+            box(P + 30, ry, rw, 134, dk, on ? bl : "#223382", 20);
+            T(h[2], P + 56, ry + 60, "800 40px " + mono, h[3]);
+            if (on)
+              T(
+                "● ACTIVE",
+                P + 30 + rw - 26,
+                ry + 56,
+                "800 24px sans-serif",
+                "#4ade80",
+                "right",
+              );
+            const nm = U(DD.g[h[0]].join(", ") || "-NONE-");
+            T(
+              nm,
+              P + 56,
+              ry + 112,
+              fit(nm, "700 42px sans-serif", rw - 52),
+              "#F4F1EC",
+            );
+          });
+        return c;
+      }
+      $("ujpg").onclick = () => {
+        duty();
+        window.FN = "duty-time-" + $("ud").value;
+        cv = jpgD();
+        $("img").src = cv.toDataURL("image/jpeg", 0.92);
+        $("modal").style.display = "block";
+      };
+    </script>
+  </body>
+</html>
