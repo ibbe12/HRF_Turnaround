@@ -199,7 +199,8 @@
         opacity: 1;
       }
       button[data-del],
-      button[data-lv] {
+      button[data-lv],
+      button[data-hd] {
         color: hsl(0 84% 60%);
       }
       .row {
@@ -745,10 +746,9 @@
           monospace;
       }
       .du-fl small {
-        background: rgba(34, 197, 94, 0.15);
-        color: #4ade80;
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        padding: 2px 8px;
+        background: rgba(152, 172, 216, 0.22);
+        color: #f4f1ec;
+        padding: 3px 10px;
         border-radius: 99px;
         font-weight: 700;
       }
@@ -808,13 +808,13 @@
       .du-tile span,
       .du-time {
         font:
-          800 12px ui-monospace,
+          800 15px ui-monospace,
           monospace;
         color: #f98513;
         background: #0c0c33;
-        border: 1px solid rgba(249, 133, 19, 0.35);
+        border: 0;
         border-radius: 6px;
-        padding: 3px 8px;
+        padding: 4px 10px;
       }
       .du-tile.bl {
         border-color: #98acd8;
@@ -931,11 +931,13 @@
         flex: 1;
         text-align: center;
       }
-      .du-tile.nb {
-        border-color: transparent;
+      .du-nt {
+        font-size: 11px;
+        font-weight: 600;
+        color: #f4f1ec;
       }
       .du-s .du-time {
-        font-size: 15px;
+        font-size: 17px;
       }
       #modal {
         display: none;
@@ -957,14 +959,13 @@
   </head>
   <body>
     <aside id="sb">
-      <h2 style="padding: 0 6px">
-        <span data-ic="airplane"></span> HRF Operation
-      </h2>
+      <h2 style="padding: 0 6px"><span data-ic="airplane"></span> Ops Menu</h2>
       <button id="nD">
         <span data-ic="stats-chart-outline"></span> Dashboard</button
       ><button id="nA" class="on">
         <span data-ic="clipboard-outline"></span> Task Assign</button
       ><button id="nU"><span data-ic="time-outline"></span> Duty Time</button
+      ><button id="nH"><span data-ic="flag-outline"></span> Holidays</button
       ><button id="nL">
         <span data-ic="calendar-outline"></span> Leave Management</button
       ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
@@ -1080,6 +1081,15 @@
               <label>Departure Time (STD)</label><input type="time" id="us" />
             </div>
             <div>
+              <label>Aircraft Type</label
+              ><select id="uac">
+                <option>ATR-72</option>
+                <option>ATR-42</option>
+                <option>DH-300</option>
+                <option>DH-200</option>
+              </select>
+            </div>
+            <div>
               <label>Route</label><input id="ur" placeholder="HRF/MLE/HRF" />
             </div>
             <div>
@@ -1102,10 +1112,23 @@
             </div>
           </div>
         </div>
+        <div class="card">
+          <h2>Additional flights</h2>
+          <p class="lic">
+            Flights are shown in check-in time order. Duty time follows the last
+            departure of the day.
+          </p>
+          <div id="xf"></div>
+          <button id="xa" class="s" style="margin-top: 8px">Add flight</button>
+        </div>
         <div class="du" id="du"></div>
         <div class="row" style="margin-top: 12px">
           <button id="ujpg">
-            <span data-ic="image-outline"></span> Export JPG (phone screen)
+            <span data-ic="image-outline"></span> Export JPG (colour)</button
+          ><button id="ujpgbw" class="s">
+            <span data-ic="image-outline"></span> Export JPG (black &amp; white)</button
+          ><button id="ujpgps" class="s">
+            <span data-ic="image-outline"></span> Export JPG (pastel)
           </button>
         </div>
         <div class="card" style="margin-top: 14px">
@@ -1127,6 +1150,29 @@
             please check it and fix any mistakes.
           </p>
           <div class="sc" id="rt"></div>
+        </div>
+      </div>
+      <div id="pH" style="display: none">
+        <div class="card">
+          <h2>Public holidays</h2>
+          <div class="g">
+            <div><label>Date</label><input type="date" id="hd" /></div>
+            <div>
+              <label>Holiday name</label
+              ><input id="hn" placeholder="e.g. Independence Day" />
+            </div>
+          </div>
+          <button id="ha" style="margin-top: 10px">
+            <span data-ic="flag-outline"></span> Add Holiday
+          </button>
+          <p class="lic">
+            On a public holiday the Airport Office shows "PH" instead of its
+            duty time, and "OFF" on Fridays and Saturdays.
+          </p>
+        </div>
+        <div class="card">
+          <h2>Holiday list</h2>
+          <div id="hl"></div>
         </div>
       </div>
       <div id="pL" style="display: none">
@@ -1320,6 +1366,8 @@
           '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M256 48v48M256 416v48M403.08 108.92l-33.94 33.94M142.86 369.14l-33.94 33.94M464 256h-48M96 256H48M403.08 403.08l-33.94-33.94M142.86 142.86l-33.94-33.94"/><circle cx="256" cy="256" r="80" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
         "partly-sunny-outline":
           '<path d="M90.61 306.85A16.07 16.07 0 00104 293.6C116.09 220.17 169.63 176 232 176c57.93 0 96.62 37.75 112.2 77.74a15.84 15.84 0 0012.2 9.87c50 8.15 91.6 41.54 91.6 99.59 0 59.4-48.6 100.8-108 100.8H106c-49.5 0-90-24.7-90-79.2 0-48.47 38.67-72.22 74.61-77.95z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path d="M384.8 271.4a80 80 0 10-123.55-92M464 208h32M336 48v32M222.86 94.86l22.63 22.63M449.14 94.86l-22.63 22.63" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "flag-outline":
+          '<path d="M80 464V68.14a8 8 0 014-6.9C91.81 56.66 112.92 48 160 48c64 0 145 48 192 48a199.53 199.53 0 0077.23-15.77 2 2 0 012.77 1.85v219.36a4 4 0 01-2.39 3.65C421.37 308.7 392.33 320 352 320c-48 0-128-32-192-32s-80 16-80 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
       };
       const ic = (n) =>
         `<svg class="i" viewBox="0 0 512 512" aria-hidden="true">${ICONS[n] || ""}</svg>`;
@@ -2000,7 +2048,7 @@
       $("fs").innerHTML += STAFF.map((n) => `<option>${n}</option>`).join("");
       ["fp", "fr", "fs"].forEach((i) => ($(i).onchange = dash));
       function tab(t) {
-        ["A", "D", "U", "L", "B"].forEach((k) => {
+        ["A", "D", "U", "H", "L", "B"].forEach((k) => {
           $("p" + k).style.display = k == t ? "" : "none";
           $("n" + k).className = k == t ? "on" : "";
         });
@@ -2008,8 +2056,9 @@
         if (t == "D") dash();
         if (t == "L") leaves();
         if (t == "U") uOpen();
+        if (t == "H") hol();
       }
-      ["A", "D", "U", "L", "B"].forEach(
+      ["A", "D", "U", "H", "L", "B"].forEach(
         (k) => ($("n" + k).onclick = () => tab(k)),
       );
       $("mb").onclick = () => $("sb").classList.toggle("o");
@@ -2368,6 +2417,8 @@
           JD,
           ROS,
           MO,
+          XF,
+          HOL,
         });
       $("bkb").onclick = async () => {
         const name = "turnaround-backup-" + fd(new Date()) + ".json",
@@ -2442,6 +2493,14 @@
             if (!MO[k]) MO[k] = v;
           });
           persist("ta_mo", MO);
+          Object.entries(d.XF || {}).forEach(([k, v]) => {
+            if (!XF[k]) XF[k] = v;
+          });
+          persist("ta_xf", XF);
+          Object.entries(d.HOL || {}).forEach(([k, v]) => {
+            if (!HOL[k]) HOL[k] = v;
+          });
+          persist("ta_hol", HOL);
           persist("ta_jd", JD);
           persist("ta_h", H);
           persist("ta_lv", LV);
@@ -2625,6 +2684,7 @@
       function uOpen() {
         $("ud").value = $("date").value || fd(new Date());
         $("uf").value = $("fno").value;
+        $("uac").value = $("ac").value;
         $("uc").value = $("ci").value;
         $("ua").value = $("ar").value;
         $("us").value = $("dp").value;
@@ -2633,12 +2693,13 @@
       function uPush() {
         $("date").value = $("ud").value;
         $("fno").value = $("uf").value;
+        $("ac").value = $("uac").value;
         $("ci").value = $("uc").value;
         $("ar").value = $("ua").value;
         $("dp").value = $("us").value;
         drawStaff();
       }
-      ["ud", "uf", "ua", "us", "un", "ur"].forEach(
+      ["ud", "uf", "ua", "us", "un", "ur", "uac"].forEach(
         (i) =>
           ($(i).oninput = $(i).onchange =
             () => {
@@ -2656,13 +2717,13 @@
         duty();
       };
       const CL = [
-        "#F98513",
-        "#98ACD8",
-        "#4ade80",
-        "#facc15",
-        "#f472b6",
-        "#22d3ee",
-        "#a78bfa",
+        "#FFB020",
+        "#4ADE80",
+        "#38BDF8",
+        "#F472B6",
+        "#C084FC",
+        "#FB7185",
+        "#2DD4BF",
       ];
       let MO = {};
       try {
@@ -2671,7 +2732,9 @@
       function duty(skip) {
         const d = $("ud").value || fd(new Date()),
           wd = new Date(d + "T00:00:00").getDay(),
-          std = $("un").checked ? null : tmin($("us").value),
+          FLs = $("un").checked ? [] : flights(d),
+          sd = FLs.map((f) => tmin(f.std)).filter((v) => v != null),
+          std = sd.length ? Math.max(...sd) : null,
           mo = MO[d] || {};
         let f = [360, 840];
         if (std != null) {
@@ -2697,11 +2760,30 @@
         const cc = (t) => col[t] || (col[t] = CL[k++ % CL.length]);
         const rows = base.map((x, i) => {
           const o = i < 8 && mo[x[0]];
-          return [x[0], o && o.s && o.e ? [tmin(o.s), tmin(o.e)] : x[1], x[2]];
+          const mn = o && o.s && o.e;
+          return [
+            x[0],
+            mn ? [tmin(o.s), tmin(o.e)] : x[1],
+            x[2],
+            x[0] == "AIRPORT OFFICE" && !mn
+              ? HOL[d]
+                ? "PH"
+                : wd == 5 || wd == 6
+                  ? "OFF"
+                  : ""
+              : "",
+          ];
         });
         const DP = rows.slice(0, 8).map((x) => {
-            const t = rg(x[1]);
-            return [x[0], t, x[2], cc(t)];
+            const t = x[3] || rg(x[1]);
+            return [
+              x[0],
+              t,
+              x[2],
+              cc(t),
+              (mo[x[0]] || {}).note || "",
+              (mo[x[0]] || {}).note2 || "",
+            ];
           }),
           sh = [
             ["N", "moon-outline"],
@@ -2733,12 +2815,25 @@
           nf = std == null,
           tv = (x) => (nf ? "--:--" : x || "--:--"),
           rt = ($("ur").value || "").toUpperCase();
+        const hero = (f) => {
+          const x = f || {};
+          return `<div class="du-hero full"><div class="du-fl"><b>${esc(x.no || "NO FLIGHT")}</b><i class="du-r">${esc((x.rt || "").toUpperCase())}</i><small>${f ? esc(x.ac || "") : "No flight"}</small></div><div class="du-t3"><div class="am"><small>CHECK-IN</small><b>${x.ci || "--:--"}</b></div><div><small>STA</small><b>${x.sta || "--:--"}</b></div><div><small>STD</small><b>${x.std || "--:--"}</b></div></div></div>`;
+        };
         $("du").innerHTML =
           `<div class="du-h full"><b>${ic("airplane")} DUTY TIME</b><span class="du-d"><button data-dd="-1">${ic("chevron-back-outline")}</button>${dt}<button data-dd="1">${ic("chevron-forward-outline")}</button></span></div>
  <div class="du-n full">Duty time may change based on flight schedule</div>
- <div class="du-hero full"><div class="du-fl"><b>${esc($("uf").value || "NO FLIGHT")}</b><i class="du-r">${esc(rt)}</i><small>${nf ? "No flight" : "Scheduled"}</small></div><div class="du-t3"><div class="am"><small>CHECK-IN</small><b>${$("uc").value || "--:--"}</b></div><div><small>STA</small><b>${tv($("ua").value)}</b></div><div><small>STD</small><b>${tv($("us").value)}</b></div></div></div>
- <div><h3>${ic("grid-outline")} Department Duty Allocation</h3><div class="du-tiles">${DP.map((x) => `<div class="du-tile${x[2] ? " nb" : ""}"><b>${x[0]}</b><span style="color:${x[3]};border-color:${x[3]}88">${x[1]}</span></div>`).join("")}</div></div>
- <div class="du-sec"><h3>${ic("shield-checkmark-outline")} SECURITY <small>24H ROSTER</small></h3>${has ? sh.map((x) => `<div class="du-s${live && act == x[0] ? " on" : ""}"><span class="du-time" style="color:${x[3]};border-color:${x[3]}88">${x[2]}</span><em>${g[x[0]].join(", ") || "-NONE-"}</em>${live && act == x[0] ? "<i>Active</i>" : ""}</div>`).join("") : `<p class="du-o">No security roster for this date. Add it in the roster editor below.</p>`}</div>`;
+ ${(FLs.length ? FLs : [null]).map(hero).join("")}
+ <div><h3>${ic("grid-outline")} Department Duty Allocation</h3><div class="du-tiles">${DP.map(
+   (x) =>
+     `<div class="du-tile${x[2] ? " nb" : ""}"><b>${x[0]}</b><span style="color:${x[3]};border-color:${x[3]}88">${x[1]}</span>${[
+       x[4],
+       x[5],
+     ]
+       .filter(Boolean)
+       .map((t) => `<small class="du-nt">${esc(t)}</small>`)
+       .join("")}</div>`,
+ ).join("")}</div></div>
+ <div class="du-sec"><h3>${ic("shield-checkmark-outline")} SECURITY</h3>${has ? sh.map((x) => `<div class="du-s${live && act == x[0] ? " on" : ""}"><span class="du-time" style="color:${x[3]};border-color:${x[3]}88">${x[2]}</span><em>${g[x[0]].join(", ") || "-NONE-"}</em>${live && act == x[0] ? "<i>Active</i>" : ""}</div>`).join("") : `<p class="du-o">No security roster for this date. Add it in the roster editor below.</p>`}</div>`;
         document.querySelectorAll("[data-dd]").forEach(
           (b) =>
             (b.onclick = () => {
@@ -2749,21 +2844,24 @@
               duty();
             }),
         );
-        DD = { dt, nf, rt, DP, sh, g, has, live, act };
+        DD = { dt, nf, fl: FLs, DP, sh, g, has, live, act };
         ros(d);
-        if (!skip) mt(d, base.slice(0, 8));
+        if (!skip) {
+          mt(d, base.slice(0, 8));
+          xfr(d);
+        }
       }
       function mt(d, base) {
         const mo = MO[d] || {};
         $("mt").innerHTML =
-          `<table><tr><th>Department</th><th>Auto</th><th>Start</th><th>End</th></tr>${base.map((x) => `<tr><td>${x[0]}</td><td class="lic">${hm(x[1][0])} - ${hm(x[1][1])}</td><td><input type="time" data-m="${x[0]}" data-p="s" value="${(mo[x[0]] || {}).s || ""}" style="height:32px;font-size:12px"></td><td><input type="time" data-m="${x[0]}" data-p="e" value="${(mo[x[0]] || {}).e || ""}" style="height:32px;font-size:12px"></td></tr>`).join("")}</table>`;
+          `<table><tr><th>Department</th><th>Auto</th><th>Start</th><th>End</th><th>Note line 1</th><th>Note line 2</th></tr>${base.map((x) => `<tr><td>${x[0]}</td><td class="lic">${hm(x[1][0])} - ${hm(x[1][1])}</td><td><input type="time" data-m="${x[0]}" data-p="s" value="${(mo[x[0]] || {}).s || ""}" style="height:32px;font-size:12px"></td><td><input type="time" data-m="${x[0]}" data-p="e" value="${(mo[x[0]] || {}).e || ""}" style="height:32px;font-size:12px"></td><td><input data-m="${x[0]}" data-p="note" maxlength="40" placeholder="Custom text" value="${esc((mo[x[0]] || {}).note || "")}" style="height:32px;font-size:12px;min-width:140px"></td><td><input data-m="${x[0]}" data-p="note2" maxlength="40" placeholder="Custom text" value="${esc((mo[x[0]] || {}).note2 || "")}" style="height:32px;font-size:12px;min-width:140px"></td></tr>`).join("")}</table>`;
         $("mt").onchange = (e) => {
           const t = e.target.closest("[data-m]");
           if (!t) return;
           const m = MO[d] || (MO[d] = {}),
             o = m[t.dataset.m] || (m[t.dataset.m] = {});
           o[t.dataset.p] = t.value;
-          if (!o.s && !o.e) delete m[t.dataset.m];
+          if (!o.s && !o.e && !o.note && !o.note2) delete m[t.dataset.m];
           if (!Object.keys(m).length) delete MO[d];
           persist("ta_mo", MO);
           duty(1);
@@ -2800,7 +2898,73 @@
       }
 
       let DD = null;
-      function jpgD() {
+      let XF = {};
+      try {
+        XF = JSON.parse(localStorage.getItem("ta_xf")) || {};
+      } catch (e) {}
+      function flights(d) {
+        const L = [];
+        if ($("uf").value || $("uc").value || $("us").value)
+          L.push({
+            no: $("uf").value,
+            rt: $("ur").value,
+            ac: $("uac").value,
+            ci: $("uc").value,
+            sta: $("ua").value,
+            std: $("us").value,
+          });
+        (XF[d] || []).forEach((f) => L.push(f));
+        const k = (f) => f.ci || "99:99";
+        return L.sort((a, b) => (k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0));
+      }
+      function xfr(d) {
+        const L = XF[d] || [];
+        $("xf").innerHTML =
+          L.map(
+            (f, i) =>
+              `<div class="g" style="padding:10px 0;border-bottom:1px solid var(--bd)"><div><label>Flight No:</label><input data-x="${i}" data-f="no" value="${esc(f.no || "")}"></div><div><label>Route</label><input data-x="${i}" data-f="rt" placeholder="HRF/MLE/HRF" value="${esc(f.rt || "")}"></div><div><label>Aircraft</label><select data-x="${i}" data-f="ac">${["ATR-72", "ATR-42", "DH-300", "DH-200"].map((a) => `<option ${a == f.ac ? "selected" : ""}>${a}</option>`).join("")}</select></div><div><label>Check-In</label><input type="time" data-x="${i}" data-f="ci" value="${f.ci || ""}"></div><div><label>STA</label><input type="time" data-x="${i}" data-f="sta" value="${f.sta || ""}"></div><div><label>STD</label><input type="time" data-x="${i}" data-f="std" value="${f.std || ""}"></div><div><label>&nbsp;</label><button class="del" data-xd="${i}" style="margin:0">${ic("trash-outline")} Remove</button></div></div>`,
+          ).join("") || '<p class="lic">No additional flights.</p>';
+      }
+      $("xf").onchange = (e) => {
+        const t = e.target,
+          d = $("ud").value || fd(new Date());
+        if (!t.dataset.f) return;
+        const f = XF[d][+t.dataset.x];
+        f[t.dataset.f] = t.value;
+        if (t.dataset.f == "ci") {
+          const m = tmin(t.value);
+          if (m != null) {
+            f.sta = hm(m + 90);
+            f.std = hm(m + 120);
+          }
+        }
+        persist("ta_xf", XF);
+        duty(1);
+        if (t.dataset.f == "ci") xfr(d);
+      };
+      $("xf").onclick = (e) => {
+        const b = e.target.closest("[data-xd]");
+        if (!b) return;
+        const d = $("ud").value || fd(new Date());
+        XF[d].splice(+b.dataset.xd, 1);
+        if (!XF[d].length) delete XF[d];
+        persist("ta_xf", XF);
+        duty();
+      };
+      $("xa").onclick = () => {
+        const d = $("ud").value || fd(new Date());
+        (XF[d] = XF[d] || []).push({
+          no: "",
+          rt: "",
+          ac: $("uac").value || "ATR-72",
+          ci: "",
+          sta: "",
+          std: "",
+        });
+        persist("ta_xf", XF);
+        xfr(d);
+      };
+      function jpgD(bw) {
         if (!DD) duty();
         const W = 1080,
           H = 2340,
@@ -2811,11 +2975,6 @@
           U = (t) => String(t).toUpperCase();
         c.width = W;
         c.height = H;
-        const bg = x.createLinearGradient(0, 0, 0, H);
-        bg.addColorStop(0, "#0c0c33");
-        bg.addColorStop(1, "#111144");
-        x.fillStyle = bg;
-        x.fillRect(0, 0, W, H);
         const box = (a, b, w, h, f, st, r = 22) => {
           rr(x, a, b, w, h, r);
           x.fillStyle = f;
@@ -2841,140 +3000,182 @@
           }
           return f.replace(/\d+px/, z + "px");
         };
-        const hs = [100, 64, 310, 800, 560],
-          gap = (H - TOP - P - hs.reduce((a, b) => a + b, 0)) / 4;
+        const mono = "ui-monospace,Menlo,monospace",
+          B = bw == 1,
+          PS = bw == 2,
+          m3 = (a, b, c) => (B ? b : PS ? c : a),
+          ac = m3("#F98513", "#000", "#DEC3B3"),
+          bl = m3("#98ACD8", "#222", "#7a6c66"),
+          nv = m3("#1a2060", "#fff", "#E7EBEE"),
+          dk = m3("#0c0c33", "#ececec", "#F8F2EF"),
+          T0 = m3("#F4F1EC", "#000", "#3d3532"),
+          LN = m3("#223382", "#000", "#DEC3B3"),
+          AT = m3("#111144", "#fff", "#3d3532"),
+          GR = m3("#4ade80", "#000", "#3F8071"),
+          NF = m3("rgba(249,133,19,.12)", "#fff", "#E5D6CE"),
+          NS = m3("rgba(249,133,19,.4)", "#000", "#DEC3B3"),
+          PL = m3("rgba(152,172,216,.22)", "#dcdcdc", "#DEC3B3"),
+          NT = m3("#F98513", "#000", "#8a5a44"),
+          CP = [
+            "#B5623A",
+            "#3E6E91",
+            "#7B4E8C",
+            "#3F8071",
+            "#A8505F",
+            "#6B6B3A",
+            "#4F6D8A",
+          ],
+          tc = (q) => (B ? "#000" : PS ? CP[CL.indexOf(q)] || "#3d3532" : q);
+        const bg = x.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, m3("#0c0c33", "#fff", "#F8F2EF"));
+        bg.addColorStop(1, m3("#111144", "#fff", "#E5D6CE"));
+        x.fillStyle = bg;
+        x.fillRect(0, 0, W, H);
+        const FL = DD.fl.length ? DD.fl : [null],
+          N = FL.length,
+          cp = N > 1,
+          hh = cp ? 200 : 300,
+          hg = 14;
+        const nr = Math.max(
+            0,
+            ...DD.DP.map((d) => [d[4], d[5]].filter(Boolean).length),
+          ),
+          th = nr ? 168 + nr * 32 + 20 : 188,
+          pt = th + 16;
+        const hs = [100, 64, N * hh + (N - 1) * hg, 3 * pt + th, 540],
+          sum = hs.reduce((a, b) => a + b, 0),
+          av = H - TOP - P,
+          k = Math.min(1, av / (sum + 72)),
+          gap = k < 1 ? 18 : (av - sum) / 4;
         let y = TOP;
         const ys = hs.map((h) => {
           const t = y;
           y += h + gap;
           return t;
         });
-        const mono = "ui-monospace,Menlo,monospace",
-          ac = "#F98513",
-          bl = "#98ACD8",
-          nv = "#1a2060",
-          dk = "#0c0c33";
-        T("DUTY TIME", P, ys[0] + 64, "800 48px sans-serif", "#F4F1EC");
+        x.save();
+        x.translate(W / 2, TOP);
+        x.scale(k, k);
+        x.translate(-W / 2, -TOP);
+        T("DUTY TIME", P, ys[0] + 64, "800 48px sans-serif", T0);
         x.font = "700 42px sans-serif";
         const dw = x.measureText(U(DD.dt)).width + 56;
-        box(W - P - dw, ys[0], dw, 88, dk, "#223382", 22);
-        T(
-          U(DD.dt),
-          W - P - 28,
-          ys[0] + 60,
-          "700 42px sans-serif",
-          "#F4F1EC",
-          "right",
-        );
-        box(
-          P,
-          ys[1],
-          W - 2 * P,
-          64,
-          "rgba(249,133,19,.12)",
-          "rgba(249,133,19,.4)",
-          16,
-        );
+        box(W - P - dw, ys[0], dw, 88, dk, LN, 22);
+        T(U(DD.dt), W - P - 28, ys[0] + 60, "700 42px sans-serif", T0, "right");
+        box(P, ys[1], W - 2 * P, 64, NF, NS, 16);
         T(
           "DUTY TIME MAY CHANGE BASED ON FLIGHT SCHEDULE",
           W / 2,
           ys[1] + 42,
           "700 26px sans-serif",
-          ac,
+          NT,
           "center",
         );
-        const hy = ys[2];
-        box(P, hy, W - 2 * P, 310, nv, "#223382", 26);
-        const fn = U($("uf").value || "NO FLIGHT");
-        T(fn, P + 30, hy + 82, "800 56px " + mono, "#F4F1EC");
-        x.font = "800 56px " + mono;
-        const fw = x.measureText(fn).width;
-        const sw = DD.nf ? 230 : 250,
-          sl = W - P - 30 - sw;
-        box(
-          sl,
-          hy + 34,
-          sw,
-          60,
-          "rgba(34,197,94,.15)",
-          "rgba(34,197,94,.4)",
-          30,
-        );
-        T(
-          DD.nf ? "NO FLIGHT" : "SCHEDULED",
-          sl + sw / 2,
-          hy + 76,
-          "800 28px sans-serif",
-          "#4ade80",
-          "center",
-        );
-        if (DD.rt) {
-          const mid = (P + 30 + fw + sl) / 2,
-            f2 = fit(DD.rt, "700 36px " + mono, sl - (P + 30 + fw) - 30);
-          T(DD.rt, mid, hy + 76, f2, bl, "center");
-        }
-        x.strokeStyle = "#223382";
-        x.beginPath();
-        x.moveTo(P + 30, hy + 118);
-        x.lineTo(W - P - 30, hy + 118);
-        x.stroke();
-        const cw = (W - 2 * P - 60 - 36) / 3,
-          tv = (v) => (DD.nf ? "--:--" : v || "--:--");
-        [
-          ["CHECK-IN", $("uc").value || "--:--", 1],
-          ["STA", tv($("ua").value)],
-          ["STD", tv($("us").value)],
-        ].forEach((q, i) => {
-          const cx = P + 30 + i * (cw + 18);
-          box(
-            cx,
-            hy + 146,
-            cw,
-            134,
-            q[2] ? ac : dk,
-            q[2] ? null : "#223382",
-            20,
-          );
-          T(
-            q[0],
-            cx + cw / 2,
-            hy + 192,
-            "800 26px sans-serif",
-            q[2] ? "#111144" : bl,
-            "center",
-          );
-          T(
-            q[1],
-            cx + cw / 2,
-            hy + 256,
-            "800 58px " + mono,
-            q[2] ? "#111144" : "#F4F1EC",
-            "center",
-          );
+        FL.forEach((f, i) => {
+          const hy = ys[2] + i * (hh + hg),
+            no = U(f ? f.no || "NO FLIGHT" : "NO FLIGHT"),
+            at = f ? U(f.ac || "") : "NO FLIGHT",
+            rt = f ? U(f.rt || "") : "",
+            fs = cp ? 48 : 56;
+          box(P, hy, W - 2 * P, hh, nv, LN, 26);
+          x.font = "800 " + fs + "px " + mono;
+          const fw = x.measureText(no).width;
+          T(no, P + 30, hy + (cp ? 64 : 82), "800 " + fs + "px " + mono, T0);
+          let sl = W - P - 30;
+          if (at) {
+            x.font = "800 28px sans-serif";
+            const sw = x.measureText(at).width + 56;
+            sl = W - P - 30 - sw;
+            box(sl, hy + (cp ? 18 : 34), sw, cp ? 56 : 60, PL, null, 28);
+            T(
+              at,
+              sl + sw / 2,
+              hy + (cp ? 57 : 76),
+              "800 28px sans-serif",
+              T0,
+              "center",
+            );
+          }
+          if (rt)
+            T(
+              rt,
+              (P + 30 + fw + sl) / 2,
+              hy + (cp ? 60 : 76),
+              fit(
+                rt,
+                "700 " + (cp ? 32 : 36) + "px " + mono,
+                sl - (P + 30 + fw) - 30,
+              ),
+              bl,
+              "center",
+            );
+          const ly = hy + (cp ? 92 : 118);
+          x.strokeStyle = LN;
+          x.lineWidth = 2;
+          x.beginPath();
+          x.moveTo(P + 30, ly);
+          x.lineTo(W - P - 30, ly);
+          x.stroke();
+          const cw = (W - 2 * P - 60 - 36) / 3,
+            ch = cp ? 84 : 134,
+            cy = hy + (cp ? 106 : 146);
+          [
+            ["CHECK-IN", (f && f.ci) || "--:--", 1],
+            ["STA", (f && f.sta) || "--:--"],
+            ["STD", (f && f.std) || "--:--"],
+          ].forEach((q, j) => {
+            const cx = P + 30 + j * (cw + 18);
+            box(cx, cy, cw, ch, q[2] ? ac : dk, q[2] ? null : LN, 20);
+            T(
+              q[0],
+              cx + cw / 2,
+              cy + (cp ? 30 : 46),
+              (cp ? "800 22px" : "800 26px") + " sans-serif",
+              q[2] ? AT : bl,
+              "center",
+            );
+            T(
+              q[1],
+              cx + cw / 2,
+              cy + (cp ? 70 : 110),
+              "800 " + (cp ? 44 : 58) + "px " + mono,
+              q[2] ? AT : T0,
+              "center",
+            );
+          });
         });
-        const dy = ys[3];
-        const tw = (W - 2 * P - 18) / 2;
+        const dy = ys[3],
+          tw = (W - 2 * P - 18) / 2;
         DD.DP.forEach((d, i) => {
           const tx = P + (i % 2) * (tw + 18),
-            ty = dy + Math.floor(i / 2) * 204;
-          box(tx, ty, tw, 188, nv, d[2] ? null : "#223382", 24);
+            ty = dy + Math.floor(i / 2) * pt;
+          box(tx, ty, tw, th, nv, LN, 24);
           const nf = fit(U(d[0]), "800 36px sans-serif", tw - 30);
-          T(U(d[0]), tx + tw / 2, ty + 68, nf, "#F4F1EC", "center");
-          box(tx + (tw - 310) / 2, ty + 98, 310, 70, dk, d[3] + "99", 14);
-          T(d[1], tx + tw / 2, ty + 147, "800 40px " + mono, d[3], "center");
+          T(U(d[0]), tx + tw / 2, ty + 68, nf, T0, "center");
+          box(tx + (tw - 400) / 2, ty + 98, 400, 74, dk, null, 14);
+          T(
+            d[1],
+            tx + tw / 2,
+            ty + 152,
+            "800 46px " + mono,
+            tc(d[3]),
+            "center",
+          );
+          [d[4], d[5]].filter(Boolean).forEach((t, q) => {
+            const nt = U(t);
+            T(
+              nt,
+              tx + tw / 2,
+              ty + 168 + (q + 1) * 32,
+              fit(nt, "700 26px sans-serif", tw - 36),
+              T0,
+              "center",
+            );
+          });
         });
         const sy = ys[4];
-        box(P, sy, W - 2 * P, 560, nv, "#223382", 26);
-        T("SECURITY", P + 30, sy + 58, "800 32px sans-serif", bl);
-        box(W - P - 30 - 210, sy + 22, 210, 50, dk, "#223382", 12);
-        T(
-          "24H ROSTER",
-          W - P - 30 - 105,
-          sy + 57,
-          "700 24px sans-serif",
-          bl,
-          "center",
-        );
+        box(P, sy, W - 2 * P, 540, nv, LN, 26);
+        T("SECURITY", P + 30, sy + 60, "800 36px sans-serif", T0);
         if (!DD.has) {
           T(
             "NO SECURITY ROSTER FOR THIS DATE",
@@ -2989,34 +3190,58 @@
             const ry = sy + 92 + i * 150,
               on = DD.live && DD.act == h[0],
               rw = W - 2 * P - 60;
-            box(P + 30, ry, rw, 134, dk, on ? bl : "#223382", 20);
-            T(h[2], P + 56, ry + 60, "800 40px " + mono, h[3]);
-            if (on)
-              T(
-                "● ACTIVE",
-                P + 30 + rw - 26,
-                ry + 56,
-                "800 24px sans-serif",
-                "#4ade80",
-                "right",
-              );
+            box(P + 30, ry, rw, 134, dk, LN, 20);
+            T(h[2], P + 56, ry + 62, "800 46px " + mono, tc(h[3]));
             const nm = U(DD.g[h[0]].join(", ") || "-NONE-");
             T(
               nm,
               P + 56,
-              ry + 112,
+              ry + 114,
               fit(nm, "700 42px sans-serif", rw - 52),
-              "#F4F1EC",
+              T0,
             );
           });
+        x.restore();
         return c;
       }
-      $("ujpg").onclick = () => {
+      const exD = (bw) => {
         duty();
-        window.FN = "duty-time-" + $("ud").value;
-        cv = jpgD();
+        window.FN = "duty-time-" + $("ud").value + ["", "-bw", "-pastel"][bw];
+        cv = jpgD(bw);
         $("img").src = cv.toDataURL("image/jpeg", 0.92);
         $("modal").style.display = "block";
+      };
+      $("ujpg").onclick = () => exD(0);
+      $("ujpgbw").onclick = () => exD(1);
+      $("ujpgps").onclick = () => exD(2);
+
+      let HOL = {};
+      try {
+        HOL = JSON.parse(localStorage.getItem("ta_hol")) || {};
+      } catch (e) {}
+      function hol() {
+        const ks = Object.keys(HOL).sort();
+        $("hl").innerHTML =
+          ks
+            .map(
+              (k) =>
+                `<div class="t"><b>${esc(HOL[k])}<br><small class="lic">${new Date(k + "T00:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</small></b><span><button class="del" data-hd="${k}">${ic("trash-outline")} Delete</button></span></div>`,
+            )
+            .join("") || '<p class="lic">No holidays added.</p>';
+      }
+      $("ha").onclick = () => {
+        if (!$("hd").value) return;
+        HOL[$("hd").value] = $("hn").value.trim() || "Public Holiday";
+        $("hn").value = "";
+        persist("ta_hol", HOL);
+        hol();
+      };
+      $("hl").onclick = (e) => {
+        const b = e.target.closest("[data-hd]");
+        if (!b) return;
+        delete HOL[b.dataset.hd];
+        persist("ta_hol", HOL);
+        hol();
       };
     </script>
   </body>
