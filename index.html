@@ -5,7 +5,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Lexend:wght@500;700;800&display=swap"
     />
     <title>Flight Turnaround Task Assign</title>
     <meta
@@ -201,7 +201,7 @@
       button[data-del],
       button[data-lv],
       button[data-hd] {
-        color: hsl(0 84% 60%);
+        color: #e04b33;
       }
       .row {
         display: flex;
@@ -443,8 +443,9 @@
         color: var(--mu);
       }
       .nm {
-        font-size: 9px;
-        color: #fff;
+        font-size: 10px;
+        color: #3a3532;
+        font-weight: 600;
         border-radius: 4px;
         padding: 1px 3px;
         margin-top: 2px;
@@ -742,8 +743,9 @@
       }
       .du-fl b {
         font:
-          800 16px ui-monospace,
-          monospace;
+          800 16px Lexend,
+          system-ui,
+          sans-serif;
       }
       .du-fl small {
         background: rgba(152, 172, 216, 0.22);
@@ -773,8 +775,9 @@
       }
       .du-t3 b {
         font:
-          800 15px ui-monospace,
-          monospace;
+          800 15px Lexend,
+          system-ui,
+          sans-serif;
       }
       .du-t3 .am {
         background: #f98513;
@@ -808,8 +811,9 @@
       .du-tile span,
       .du-time {
         font:
-          800 15px ui-monospace,
-          monospace;
+          800 15px Lexend,
+          system-ui,
+          sans-serif;
         color: #f98513;
         background: #0c0c33;
         border: 0;
@@ -907,7 +911,7 @@
         color: #111;
       }
       .rc.O {
-        background: #ef4444;
+        background: #e8553d;
         color: #fff;
       }
       .rc.AL {
@@ -924,8 +928,9 @@
       }
       .du-r {
         font:
-          700 13px ui-monospace,
-          monospace;
+          700 13px Lexend,
+          system-ui,
+          sans-serif;
         color: #98acd8;
         font-style: normal;
         flex: 1;
@@ -938,6 +943,13 @@
       }
       .du-s .du-time {
         font-size: 17px;
+      }
+      .du-tile span,
+      .du-time,
+      .du-t3 b,
+      .du-fl b {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.01em;
       }
       #modal {
         display: none;
@@ -959,7 +971,9 @@
   </head>
   <body>
     <aside id="sb">
-      <h2 style="padding: 0 6px"><span data-ic="airplane"></span> Ops Menu</h2>
+      <h2 style="padding: 0 6px">
+        <span data-ic="airplane"></span> HRF OPERATIONS
+      </h2>
       <button id="nD">
         <span data-ic="stats-chart-outline"></span> Dashboard</button
       ><button id="nA" class="on">
@@ -1198,6 +1212,7 @@
             </div>
             <div><label>Note (optional)</label><input id="ln" /></div>
           </div>
+          <p id="ld" style="margin: 10px 0 0; font-size: 14px"></p>
           <button id="la" style="margin-top: 10px">
             <span data-ic="calendar-outline"></span> Add Leave
           </button>
@@ -1213,9 +1228,10 @@
             service), FRL 10, SL 15 and SLM 15 per leave year. Off Day (one per
             week) and Release (unlimited) are recorded but never deducted from
             any balance. Each person's leave year starts on the anniversary of
-            their join date, so enter join dates below. Fridays are not deducted
-            from Annual Leave; all other days are counted as calendar days.
-            Leave records saved before this update count as Annual Leave.
+            their join date, so enter join dates below. Fridays and public
+            holidays are not deducted from Annual Leave; all other days are
+            counted as calendar days. Leave records saved before this update
+            count as Annual Leave.
           </p>
           <div id="lbal" class="sc"></div>
         </div>
@@ -1443,16 +1459,42 @@
             OFFS.indexOf(p) - OFFS.indexOf(q),
         );
       }
-      function build(avail, slots, rest) {
-        // slots: {task,lic}; order = priority order
+      function tl(excl) {
+        const i = {},
+          c = {};
+        H.log
+          .filter((l) => l.id != excl)
+          .sort((a, b) =>
+            a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id,
+          )
+          .forEach((l, k) =>
+            [...l.a, ...l.b].forEach((o) =>
+              o.staff.forEach((n) => {
+                const q = n + "|" + o.task;
+                i[q] = k;
+                c[q] = (c[q] || 0) + 1;
+              }),
+            ),
+          );
+        return { i, c };
+      }
+      function pickL(pool, task, lic, L) {
+        return (
+          pool
+            .filter((s) => !lic || LIC.includes(s))
+            .sort(
+              (p, q) =>
+                (L.i[p + "|" + task] ?? -1) - (L.i[q + "|" + task] ?? -1) ||
+                (L.c[p + "|" + task] || 0) - (L.c[q + "|" + task] || 0) ||
+                STAFF.indexOf(p) - STAFF.indexOf(q),
+            )[0] || null
+        );
+      }
+      function build(avail, slots, rest, L) {
         let pool = [...avail],
           out = [];
         for (const sl of slots) {
-          const c = pool
-            .filter((s) => !sl.lic || LIC.includes(s))
-            .map((s) => [s, H.last[key(s, sl.task)] ?? -1, Math.random()])
-            .sort((a, b) => a[1] - b[1] || a[2] - b[2])[0];
-          const who = c ? c[0] : null;
+          const who = pickL(pool, sl.task, sl.lic, L);
           if (who) pool = pool.filter((s) => s != who);
           let e = out.find((o) => o.task == sl.task);
           if (!e) {
@@ -1470,15 +1512,6 @@
           alert("No staff available");
           return;
         }
-        const ci = [
-          "Counter",
-          "Sticker",
-          "Machine-In",
-          "Cart Load",
-          ...(av.length >= 9 ? ["Cart Load"] : []),
-          "Machine-Out",
-          "Trolley",
-        ].map((t) => ({ task: t }));
 
         const atr = $("ac").value.startsWith("ATR");
         const tt = atr
@@ -1508,8 +1541,38 @@
           { task: "Baggage Tractor", lic: 1 },
           ...pri.map((t) => ({ task: t })),
         ];
-        const a = build(av, ci, "Tag"),
-          b = build(av, tr, "Arrival");
+        const L = tl(0),
+          b = build(av, tr, "Arrival", L);
+        const arrP = (b.find((o) => o.task == "Arrival") || { staff: [] })
+            .staff,
+          ld = (
+            b.find(
+              (o) => o.task == (atr ? "Unload / Load CP 1-2" : "Unload / Load"),
+            ) || { staff: [] }
+          ).staff[0];
+        let pl = [...av];
+        const a = [],
+          add = (task, w) => {
+            if (w) pl = pl.filter((q) => q != w);
+            let e = a.find((o) => o.task == task);
+            if (!e) {
+              e = { task, staff: [] };
+              a.push(e);
+            }
+            e.staff.push(w || "-NONE-");
+          },
+          frm = (task, c0) => {
+            const c = c0.filter((q) => pl.includes(q));
+            return pickL(c.length ? c : pl, task, 0, L);
+          };
+        add("Trolley", ld && pl.includes(ld) ? ld : pickL(pl, "Trolley", 0, L));
+        add("Counter", frm("Counter", arrP));
+        for (let k = 0; k < (av.length >= 9 ? 2 : 1); k++)
+          add("Cart Load", frm("Cart Load", arrP));
+        ["Sticker", "Machine-In", "Machine-Out"].forEach((t) =>
+          add(t, pickL(pl, t, 0, L)),
+        );
+        if (pl.length) a.push({ task: "Tag", staff: [...pl] });
         const co = [
           "Counter",
           "Tag",
@@ -1538,7 +1601,7 @@
           const f = (t) => (t == "Arrival" ? 99 : order.indexOf(t));
           return f(x.task) - f(y.task);
         });
-        res = { a, b, saved: 0, ord: order, off: offOrder(0)[0] || "" };
+        res = { a, b, saved: 0, ord: order, ...offAssign(0) };
         render();
       }
       function brief() {
@@ -1649,15 +1712,13 @@
             })
             .join("")}</div>`;
         $("out").innerHTML =
-          `<p style="color:#d00;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>` +
-          `<div class="card"><div class="t"><b>Officer</b><span><select id="offs">${["", ...OFFS].map((n) => `<option value="${n}" ${n == res.off ? "selected" : ""}>${n || "—"}</option>`).join("")}</select></span></div></div>` +
+          `<p style="color:#E04B33;font-weight:700;text-align:center">Pre-Flight Briefing: ${brief()}</p><p class="lic" style="text-align:center">Tap a name to assign manually. If that person already has another task, the two swap.</p>` +
+          offCard() +
           sec("1 · Check-In Tasks", "a") +
           sec("2 · Flight Turnaround Tasks (" + $("ac").value + ")", "b");
         $("ex").style.display = "flex";
-        $("offs").onchange = (e) => {
-          res.off = e.target.value;
-          res.saved = 0;
-        };
+        $("offs").onchange = (e) => setO("off", e.target.value);
+        $("adoS").onchange = (e) => setO("ado", e.target.value);
         document
           .querySelectorAll("#out select[data-p]")
           .forEach(
@@ -1691,6 +1752,8 @@
           dp: $("dp").value,
           pax: $("pax").value,
           off: res.off,
+          ado: res.ado,
+          to: res.to,
           a: res.a,
           b: res.b,
         });
@@ -1789,7 +1852,8 @@
           (_, k) => 95 + blocks[k][1].reduce((t, o) => t + rh(o), 0) + 30,
         );
         const HH = 400,
-          H2 = 40 + HH + 30 + hc[0] + 30 + hc[1] + 30 + 140;
+          ex = res.ado || (res.to && res.to.length) ? 70 : 0,
+          H2 = 40 + HH + 30 + hc[0] + 30 + hc[1] + 30 + 140 + ex;
         c.width = W;
         c.height = H2;
         const g = x.createLinearGradient(0, 0, 0, H2);
@@ -1900,7 +1964,7 @@
         x.fillText(on, cx, iy);
         cx += x.measureText(on).width + 26;
         item("#3fdc6a", "STAFF AVAILABLE", av);
-        item("#ff4d4d", "STAFF ON LEAVE", lv);
+        item("#EF5B45", "STAFF ON LEAVE", lv);
         y += HH + 30;
         blocks.forEach((b, k) => {
           card(y, hc[k]);
@@ -1945,6 +2009,35 @@
           });
           y += hc[k] + 30;
         });
+        if (ex) {
+          const seg = (arr, yy) => {
+            x.font = "700 26px sans-serif";
+            x.textAlign = "left";
+            const w = arr.reduce((a, q) => a + x.measureText(q[0]).width, 0);
+            let px = W / 2 - w / 2;
+            arr.forEach((q) => {
+              x.fillStyle = q[1];
+              x.fillText(q[0], px, yy);
+              px += x.measureText(q[0]).width;
+            });
+          };
+          seg(
+            [
+              ["ADO: ", "#cfd6ea"],
+              [(res.ado || "-NONE-").toUpperCase(), "#fff"],
+              ["      ·      ", "#cfd6ea"],
+              ["T/O: ", "#cfd6ea"],
+              ...(res.to && res.to.length
+                ? res.to.flatMap((n, i) => [
+                    ...(i ? [[", ", "#cfd6ea"]] : []),
+                    [n.toUpperCase(), i ? "#fff" : "#EF5B45"],
+                  ])
+                : [["-NONE-", "#fff"]]),
+            ],
+            y + 36,
+          );
+          y += ex;
+        }
         x.textAlign = "center";
         x.font = "800 40px sans-serif";
         const t1 = "PRE-FLIGHT BRIEFING : ",
@@ -1955,10 +2048,10 @@
         x.textAlign = "left";
         x.fillStyle = "#fff";
         x.fillText(t1, sx, y + 45);
-        x.fillStyle = "#ff8a8a";
+        x.fillStyle = "#F58A74";
         x.fillText(t2, sx + w1, y + 45);
         x.textAlign = "center";
-        x.fillStyle = "#ff3b3b";
+        x.fillStyle = "#EF5B45";
         x.font = "700 26px sans-serif";
         x.fillText("MANDATORY ATTENDANCE", W / 2, y + 90);
         return c;
@@ -2045,7 +2138,9 @@
         return [fd(s), fd(e)];
       }
       $("fr").value = fd(new Date());
-      $("fs").innerHTML += STAFF.map((n) => `<option>${n}</option>`).join("");
+      const ALLN = [...STAFF, ...OFFS];
+      $("fs").innerHTML +=
+        `<optgroup label="Staff">${STAFF.map((n) => `<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map((n) => `<option>${n}</option>`).join("")}</optgroup>`;
       ["fp", "fr", "fs"].forEach((i) => ($(i).onchange = dash));
       function tab(t) {
         ["A", "D", "U", "H", "L", "B"].forEach((k) => {
@@ -2073,6 +2168,33 @@
         $("fl").textContent =
           $("fp").value == "all" ? "All records" : s + " → " + e;
         const E = [];
+        L.forEach((l) => {
+          if (l.off)
+            E.push({
+              d: l.date,
+              f: l.fno,
+              part: "Officers",
+              t: "Officer",
+              n: l.off,
+            });
+          if (l.ado)
+            E.push({
+              d: l.date,
+              f: l.fno,
+              part: "Officers",
+              t: "Asst Duty Officer (ADO)",
+              n: l.ado,
+            });
+          (l.to || []).forEach((n, i) =>
+            E.push({
+              d: l.date,
+              f: l.fno,
+              part: "Officers",
+              t: i ? "Terminal Officer (T/O)" : "T/O red lead",
+              n,
+            }),
+          );
+        });
         L.forEach((l) =>
           [
             ["Check-In", l.a],
@@ -2080,18 +2202,17 @@
           ].forEach(([part, arr]) =>
             arr.forEach((o) =>
               o.staff.forEach((n) => {
-                if (STAFF.includes(n))
-                  E.push({ d: l.date, f: l.fno, part, t: o.task, n });
+                E.push({ d: l.date, f: l.fno, part, t: o.task, n });
               }),
             ),
           ),
         );
         const F = who == "all" ? E : E.filter((x) => x.n == who),
           cnt = {};
-        STAFF.forEach((n) => (cnt[n] = 0));
+        ALLN.forEach((n) => (cnt[n] = 0));
         F.forEach((x) => cnt[x.n]++);
         const mx = Math.max(1, ...Object.values(cnt)),
-          top = STAFF.slice().sort((a, b) => cnt[b] - cnt[a])[0];
+          top = ALLN.slice().sort((a, b) => cnt[b] - cnt[a])[0];
         let h = `<div class="g kp">${[
           ["Flights", L.length],
           ["Assignments", F.length],
@@ -2104,7 +2225,7 @@
           )
           .join("")}</div>`;
         if (who == "all") {
-          h += `<div class="card"><h2>Assignments per staff</h2>${STAFF.map((n) => bar(n, cnt[n], mx)).join("")}</div>`;
+          h += `<div class="card"><h2>Assignments per staff</h2>${ALLN.map((n) => bar(n, cnt[n], mx)).join("")}</div>`;
           const T = [...new Set(F.map((x) => x.t))],
             M = {};
           let cm = 1;
@@ -2114,7 +2235,7 @@
             cm = Math.max(cm, M[k]);
           });
           if (T.length)
-            h += `<div class="card"><h2>Staff × task</h2><div class="sc"><table class="mx"><tr><th>Staff</th>${T.map((t) => `<th>${esc(t)}</th>`).join("")}</tr>${STAFF.map(
+            h += `<div class="card"><h2>Staff × task</h2><div class="sc"><table class="mx"><tr><th>Staff</th>${T.map((t) => `<th>${esc(t)}</th>`).join("")}</tr>${ALLN.map(
               (n) =>
                 `<tr><td>${n}</td>${T.map((t) => {
                   const c = M[n + "|" + t] || 0;
@@ -2190,13 +2311,14 @@
       function leaves() {
         cal();
         bal();
+        ltot();
         const td = fd(new Date());
         $("ll").innerHTML =
           LV.slice()
             .sort((a, b) => (a.f < b.f ? 1 : -1))
             .map(
               (l) =>
-                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
+                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t} · ${cdays(l.f, l.t, l.type || "Annual Leave")} day${cdays(l.f, l.t, l.type || "Annual Leave") == 1 ? "" : "s"}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
             )
             .join("") || "No leave records";
         document.querySelectorAll("[data-lv]").forEach(
@@ -2242,6 +2364,8 @@
           saved: 0,
           sid: l.id,
           off: l.off || "",
+          ado: l.ado || "",
+          to: l.to || [],
           ord: ordFor($("ac").value),
         };
         tab("A");
@@ -2272,22 +2396,22 @@
       };
 
       const PAL = [
-        "#e6194b",
-        "#3cb44b",
-        "#4363d8",
-        "#f58231",
-        "#911eb4",
-        "#2aa6a6",
-        "#f032e6",
-        "#9a6324",
-        "#a0a000",
-        "#00798c",
-        "#b03030",
-        "#2a2a9a",
-        "#e0a800",
-        "#6a7fdb",
-        "#2e8b57",
-        "#cc5500",
+        "#F8C8C4",
+        "#CFE8C9",
+        "#C5D5F2",
+        "#FBD9B5",
+        "#DCC8EE",
+        "#BFE3E0",
+        "#F6C6E3",
+        "#E3D2BE",
+        "#E8E5A8",
+        "#BCD9E6",
+        "#F0C6C6",
+        "#C9CBEA",
+        "#F7E3A8",
+        "#D3DDF7",
+        "#C4E6D2",
+        "#F2CDB0",
       ];
       const colr = (n) => PAL[[...STAFF, ...OFFS].indexOf(n) % PAL.length];
       let cm = new Date(),
@@ -2304,15 +2428,7 @@
         for (let d = 1; d <= dim; d++) {
           const ds = y + "-" + pad(mo + 1) + "-" + pad(d),
             ls = LV.filter((l) => l.f <= ds && ds <= l.t);
-          h += `<div class="cd ${ds == td ? "td" : ""} ${ds == sel ? "sl" : ""}" data-d="${ds}"><span>${d}</span>${ls.length ? `<em>${ls.length}</em>` : ""}${ls
-            .slice(0, 3)
-            .map(
-              (l) =>
-                `<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`,
-            )
-            .join(
-              "",
-            )}${ls.length > 3 ? `<div class="lic" style="font-size:9px">+${ls.length - 3} more</div>` : ""}</div>`;
+          h += `<div class="cd ${ds == td ? "td" : ""} ${ds == sel ? "sl" : ""}" data-d="${ds}"><span>${d}</span>${ls.length ? `<em>${ls.length}</em>` : ""}${ls.map((l) => `<div class="nm" style="background:${colr(l.n)}">${esc(l.n)}</div>`).join("")}</div>`;
         }
         const sl = LV.filter((l) => l.f <= sel && sel <= l.t);
         h +=
@@ -2338,6 +2454,7 @@
               sel = e.dataset.d;
               $("lf").value = $("lt").value = sel;
               cal();
+              ltot();
             }),
         );
       }
@@ -2579,7 +2696,8 @@
             d <= end;
             d.setDate(d.getDate() + 1)
           ) {
-            if (t == "Annual Leave" && d.getDay() == 5) continue;
+            if (t == "Annual Leave" && (d.getDay() == 5 || HOL[fd(d)]))
+              continue;
             c++;
           }
           return a + c;
@@ -2608,7 +2726,7 @@
                     const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
                       u = used(n, k, cs, ce),
                       r = tot - u;
-                    return `<td style="font-weight:600;${r < 0 ? "color:hsl(0 84% 60%)" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
+                    return `<td style="font-weight:600;${r < 0 ? "color:#E04B33" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
                   })
                   .join("");
               } else cells = ks.map(() => `<td class="lic">—</td>`).join("");
@@ -2639,7 +2757,7 @@
         ],
         SN = {
           "Ahmed Shaan": "Shaan",
-          "Ahmed Rasheed": "Rasheed",
+          "Ahmed Rasheed": "A.Rasheed",
           "Ameen Faisal": "Ameen",
           "Ismail Ahmed": "Ismail",
           "Ahmed Hassan": "A. Hassan",
@@ -2861,10 +2979,15 @@
           const m = MO[d] || (MO[d] = {}),
             o = m[t.dataset.m] || (m[t.dataset.m] = {});
           o[t.dataset.p] = t.value;
+          if (t.value && (t.dataset.p == "s" || t.dataset.p == "e")) {
+            const mm = tmin(t.value);
+            if (t.dataset.p == "s") o.e = hm(mm + 480);
+            else o.s = hm(mm - 480);
+          }
           if (!o.s && !o.e && !o.note && !o.note2) delete m[t.dataset.m];
           if (!Object.keys(m).length) delete MO[d];
           persist("ta_mo", MO);
-          duty(1);
+          duty(t.dataset.p == "s" || t.dataset.p == "e" ? 0 : 1);
         };
         $("mr").onclick = () => {
           delete MO[d];
@@ -3000,7 +3123,7 @@
           }
           return f.replace(/\d+px/, z + "px");
         };
-        const mono = "ui-monospace,Menlo,monospace",
+        const mono = "Lexend,system-ui,sans-serif",
           B = bw == 1,
           PS = bw == 2,
           m3 = (a, b, c) => (B ? b : PS ? c : a),
@@ -3057,7 +3180,7 @@
         x.translate(W / 2, TOP);
         x.scale(k, k);
         x.translate(-W / 2, -TOP);
-        T("DUTY TIME", P, ys[0] + 64, "800 48px sans-serif", T0);
+        T("DUTY TIME", P, ys[0] + 66, "800 56px " + mono, T0);
         x.font = "700 42px sans-serif";
         const dw = x.measureText(U(DD.dt)).width + 56;
         box(W - P - dw, ys[0], dw, 88, dk, LN, 22);
@@ -3074,7 +3197,7 @@
         FL.forEach((f, i) => {
           const hy = ys[2] + i * (hh + hg),
             no = U(f ? f.no || "NO FLIGHT" : "NO FLIGHT"),
-            at = f ? U(f.ac || "") : "NO FLIGHT",
+            at = f ? U(f.ac || "") : "",
             rt = f ? U(f.rt || "") : "",
             fs = cp ? 48 : 56;
           box(P, hy, W - 2 * P, hh, nv, LN, 26);
@@ -3204,7 +3327,11 @@
         x.restore();
         return c;
       }
-      const exD = (bw) => {
+      const exD = async (bw) => {
+        try {
+          await document.fonts.load("800 56px Lexend");
+          await document.fonts.load("700 30px Lexend");
+        } catch (e) {}
         duty();
         window.FN = "duty-time-" + $("ud").value + ["", "-bw", "-pastel"][bw];
         cv = jpgD(bw);
@@ -3243,6 +3370,104 @@
         persist("ta_hol", HOL);
         hol();
       };
+
+      function ltot() {
+        const f = $("lf").value,
+          t = $("lt").value;
+        if (!f || !t) {
+          $("ld").textContent = "";
+          return;
+        }
+        if (t < f) {
+          $("ld").textContent = "End date is before the start date";
+          return;
+        }
+        let n = 0,
+          ex = 0;
+        const ty = $("lty").value;
+        for (
+          let d = new Date(f + "T00:00:00"), e = new Date(t + "T00:00:00");
+          d <= e;
+          d.setDate(d.getDate() + 1)
+        ) {
+          if (ty == "Annual Leave" && (d.getDay() == 5 || HOL[fd(d)])) {
+            ex++;
+            continue;
+          }
+          n++;
+        }
+        $("ld").innerHTML =
+          `<b>Total: ${n} day${n == 1 ? "" : "s"}</b>` +
+          (ex
+            ? ` <span class="lic">(${ex} Friday/public holiday day${ex == 1 ? "" : "s"} not counted)</span>`
+            : "");
+      }
+      ["lf", "lt", "lty"].forEach((i) => ($(i).onchange = ltot));
+      ltot();
+      function cdays(f, t, ty) {
+        let n = 0;
+        for (
+          let d = new Date(f + "T00:00:00"), e = new Date(t + "T00:00:00");
+          d <= e;
+          d.setDate(d.getDate() + 1)
+        ) {
+          if (ty == "Annual Leave" && (d.getDay() == 5 || HOL[fd(d)])) continue;
+          n++;
+        }
+        return n;
+      }
+
+      function rk(role, pool, excl) {
+        const li = {},
+          cn = {},
+          g = (l) => (role == "to1" ? l.to && l.to[0] : l[role]);
+        H.log
+          .filter((l) => l.id != excl && g(l))
+          .sort((a, b) =>
+            a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id,
+          )
+          .forEach((l, i) => {
+            const n = g(l);
+            li[n] = i;
+            cn[n] = (cn[n] || 0) + 1;
+          });
+        return pool
+          .slice()
+          .sort(
+            (p, q) =>
+              (li[p] ?? -1) - (li[q] ?? -1) ||
+              (cn[p] || 0) - (cn[q] || 0) ||
+              OFFS.indexOf(p) - OFFS.indexOf(q),
+          );
+      }
+      function offAssign(excl) {
+        let pool = OFFS.filter((n) => !lr(n));
+        const off = rk("off", pool, excl)[0] || "";
+        pool = pool.filter((n) => n != off);
+        const ado = rk("ado", pool, excl)[0] || "";
+        pool = pool.filter((n) => n != ado);
+        return { off, ado, to: rk("to1", pool, excl) };
+      }
+      function fixTO() {
+        const pool = OFFS.filter((n) => !lr(n) && n != res.off && n != res.ado),
+          keep = res.to && res.to[0];
+        res.to = rk("to1", pool, res.sid || 0);
+        if (keep && pool.includes(keep))
+          res.to = [keep, ...res.to.filter((n) => n != keep)];
+      }
+      function setO(role, v) {
+        const other = role == "off" ? "ado" : "off";
+        if (v && res[other] == v) res[other] = res[role];
+        res[role] = v;
+        fixTO();
+        res.saved = 0;
+        render();
+      }
+      function offCard() {
+        const oc = (id, l, v) =>
+          `<div class="t"><b>${l}</b><span><select id="${id}">${["", ...OFFS].map((n) => `<option value="${n}" ${n == v ? "selected" : ""}>${n || "—"}</option>`).join("")}</select></span></div>`;
+        return `<div class="card">${oc("offs", "Officer", res.off)}${oc("adoS", "Asst Duty Officer (ADO)", res.ado)}<div class="t"><b>Terminal Officer (TO)</b><span>${res.to && res.to.length ? res.to.map((n, i) => `<em style="font-style:normal;${i ? "" : "color:#E04B33;font-weight:700"}">${n}${i < res.to.length - 1 ? "," : ""}</em>`).join(" ") : "-NONE-"}</span></div></div>`;
+      }
     </script>
   </body>
 </html>
