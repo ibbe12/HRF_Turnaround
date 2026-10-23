@@ -12,6 +12,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
       /* shadcn/ui design tokens (zinc theme) re-created in plain CSS */
       :root {
@@ -951,6 +952,346 @@
         font-variant-numeric: tabular-nums;
         letter-spacing: 0.01em;
       }
+      .at-P {
+        background: #cfe8c9 !important;
+        color: #2f3b2d;
+      }
+      .at-A {
+        background: #f5b7a8 !important;
+        color: #4a2a22;
+      }
+      .at-L {
+        background: #c5d5f2 !important;
+        color: #25324d;
+      }
+      .at-O {
+        background: #e2ded9 !important;
+        color: #3a3532;
+      }
+      .at-PH {
+        background: #dcc8ee !important;
+        color: #3a2a4a;
+      }
+      .ac {
+        cursor: pointer;
+        text-align: center;
+        font-weight: 700;
+        min-width: 22px;
+      }
+      #emod {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9;
+        overflow: auto;
+        padding: 16px;
+      }
+      #emod > .card {
+        max-width: 820px;
+        margin: 16px auto;
+      }
+      .eph {
+        width: 120px;
+        height: 150px;
+        border: 2px dashed var(--bd);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 12px;
+        color: var(--mu);
+        overflow: hidden;
+        cursor: pointer;
+        background: hsl(var(--muted));
+        margin: 0;
+      }
+      .eph img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .av {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: hsl(var(--muted));
+        display: inline-block;
+        vertical-align: middle;
+      }
+      #imod {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9;
+        overflow: auto;
+        padding: 16px;
+      }
+      #imod > .card {
+        max-width: 720px;
+        margin: 16px auto;
+      }
+      #smod {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9;
+        overflow: auto;
+        padding: 16px;
+      }
+      #smod > .card {
+        max-width: 720px;
+        margin: 16px auto;
+      }
+      .fgrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+        gap: 14px;
+        align-items: start;
+        margin-bottom: 14px;
+      }
+      .fgrid > .card {
+        margin-bottom: 0;
+      }
+      .tlr {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .tlr > span {
+        flex: 0 0 74px;
+      }
+      .tlt {
+        position: relative;
+        flex: 1;
+        height: 18px;
+        background: hsl(var(--secondary));
+        border-radius: 9px;
+      }
+      .tlt i {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        background: #f98513;
+        border-radius: 9px;
+        min-width: 6px;
+      }
+      .tax {
+        display: flex;
+        justify-content: space-between;
+        margin-left: 82px;
+        font-size: 11px;
+        color: var(--mu);
+      }
+      .fhd {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--bd);
+        font-size: 13px;
+      }
+      .fhd b {
+        font-size: 14px;
+      }
+      .fqa {
+        margin-left: auto;
+        display: flex;
+        gap: 6px;
+      }
+      .fqa button {
+        height: 30px;
+        padding: 0 14px;
+        font-size: 12px;
+      }
+      .fqa button[data-fd] {
+        background: transparent;
+        color: #e04b33;
+        border: 1px solid #e04b33;
+      }
+      .rstrip {
+        display: flex;
+        align-items: center;
+        background: #1a2060;
+        color: #fff;
+        padding: 18px 20px;
+        overflow-x: auto;
+      }
+      .rstrip span {
+        font-size: var(--rs, 44px);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      @media (max-width: 600px) {
+        .rstrip {
+          padding: 14px;
+        }
+        .rstrip span {
+          font-size: calc(var(--rs, 44px) * 0.78);
+        }
+      }
+      .rstrip .seg {
+        flex: 1;
+        min-width: 26px;
+        height: 1px;
+        background: #fff;
+        margin: 0 10px;
+        position: relative;
+      }
+      .rstrip .seg:before,
+      .rstrip .seg:after {
+        content: "";
+        position: absolute;
+        top: -3px;
+        width: 5px;
+        height: 5px;
+        border: 1px solid #fff;
+        border-radius: 50%;
+        background: #1a2060;
+      }
+      .rstrip .seg:before {
+        left: -4px;
+      }
+      .rstrip .seg:after {
+        right: -4px;
+      }
+      .fdate {
+        font-size: 15px;
+        font-weight: 600;
+        padding-bottom: 8px;
+        margin: 18px 0 12px;
+        border-bottom: 1px solid var(--bd);
+        position: relative;
+      }
+      .fdate:first-child {
+        margin-top: 4px;
+      }
+      .fdate:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        width: 170px;
+        max-width: 60%;
+        height: 2px;
+        background: var(--tx);
+      }
+      .fcard {
+        background: hsl(var(--muted) / 0.55);
+        border-radius: 4px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .ftop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px 6px;
+        gap: 8px;
+      }
+      .fcode b {
+        display: block;
+        font-size: 44px;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .fcode small {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        margin-top: 5px;
+      }
+      .fcode.r {
+        text-align: right;
+      }
+      .fmid {
+        flex: 1;
+        text-align: center;
+        padding: 0 6px;
+        min-width: 70px;
+      }
+      .fmid svg {
+        width: 100%;
+        max-width: 110px;
+        height: 38px;
+      }
+      .fmid span {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .fgrid3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        padding: 8px 22px 14px;
+        font-size: 12px;
+      }
+      .fgrid3 > div {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 14px;
+        row-gap: 6px;
+        align-content: start;
+      }
+      .fgrid3 em {
+        font-style: normal;
+        color: var(--mu);
+      }
+      .fact {
+        display: flex;
+        border-top: 1px solid var(--bd);
+      }
+      .fact button {
+        flex: 1;
+        height: 42px;
+        padding: 0 4px;
+        background: transparent;
+        color: var(--tx);
+        border-radius: 0;
+        font-size: 12px;
+        font-weight: 700;
+        border-left: 1px solid var(--bd);
+      }
+      .fact button:first-child {
+        border-left: 0;
+      }
+      .fact button:hover {
+        background: hsl(var(--accent));
+        opacity: 1;
+      }
+      .dotg {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #3fb77a;
+        margin-right: 6px;
+      }
+      @media (max-width: 600px) {
+        .fgrid3 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .fcode b {
+          font-size: 34px;
+        }
+        .ftop {
+          padding: 14px 14px 4px;
+        }
+        .fgrid3 {
+          padding: 8px 14px 12px;
+        }
+      }
       #modal {
         display: none;
         position: fixed;
@@ -976,17 +1317,26 @@
       </h2>
       <button id="nD">
         <span data-ic="stats-chart-outline"></span> Dashboard</button
-      ><button id="nA" class="on">
-        <span data-ic="clipboard-outline"></span> Task Assign</button
-      ><button id="nU"><span data-ic="time-outline"></span> Duty Time</button
-      ><button id="nH"><span data-ic="flag-outline"></span> Holidays</button
+      ><button id="nF"><span data-ic="airplane"></span> Flight Schedule</button
       ><button id="nL">
         <span data-ic="calendar-outline"></span> Leave Management</button
+      ><button id="nA" class="on">
+        <span data-ic="clipboard-outline"></span> Task Assignment</button
+      ><button id="nU"><span data-ic="time-outline"></span> Duty Time</button
+      ><button id="nE"><span data-ic="people-outline"></span> Employee</button
+      ><button id="nT">
+        <span data-ic="finger-print-outline"></span> Time &amp; Attendance</button
+      ><button id="nH"><span data-ic="flag-outline"></span> Holidays</button
       ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
       <p id="sbw" class="lic" style="padding: 0 6px"></p>
+      <p class="lic" style="padding: 10px 6px 0; opacity: 0.7">
+        Version 23 Oct 2026 · f
+      </p>
     </aside>
     <main>
-      <h1><span data-ic="airplane"></span> Flight Turnaround Task Assign</h1>
+      <h1 id="ptitle">
+        <span data-ic="clipboard-outline"></span> Task Assignment
+      </h1>
       <div id="wipe" class="card" style="display: none">
         <b>No saved data found in this browser.</b> If your browser data was
         cleared, restore your latest backup file.
@@ -1000,6 +1350,10 @@
           <h2>Flight details</h2>
           <div class="g">
             <div><label>Date</label><input type="date" id="date" /></div>
+            <div>
+              <label>Flight from schedule</label
+              ><select id="schsel"></select>
+            </div>
             <div>
               <label>Flight No:</label
               ><input id="fno" placeholder="e.g. Q2 101" />
@@ -1124,6 +1478,25 @@
                 No flight today</label
               >
             </div>
+            <div>
+              <label>Schedule</label
+              ><label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  height: 40px;
+                  font-weight: 500;
+                "
+                ><input
+                  type="checkbox"
+                  id="usch"
+                  checked
+                  style="width: 18px; height: 18px"
+                />
+                Include scheduled flights</label
+              >
+            </div>
           </div>
         </div>
         <div class="card">
@@ -1189,6 +1562,300 @@
           <div id="hl"></div>
         </div>
       </div>
+      <div id="pF" style="display: none">
+        <div class="card">
+          <div class="row" style="align-items: center">
+            <h2 style="margin: 0; flex: 1">
+              Flight schedule <span class="badge" id="fcnt"></span>
+            </h2>
+            <button id="fadd" style="flex: 0 0 auto">
+              <span data-ic="airplane"></span> Add Flight
+            </button>
+          </div>
+          <div class="tabs" id="ftabs" style="margin-top: 12px">
+            <button data-fp="day">Daily</button
+            ><button data-fp="week">Weekly</button
+            ><button data-fp="month" class="on">Monthly</button
+            ><button data-fp="year">Yearly</button>
+          </div>
+          <div
+            class="row"
+            style="align-items: center; margin-top: 12px; flex-wrap: nowrap"
+          >
+            <button class="s" id="fprev" style="flex: 0 0 48px">
+              <span data-ic="chevron-back-outline"></span></button
+            ><b
+              id="fpl"
+              style="flex: 1; text-align: center; font-size: 14px"
+            ></b
+            ><button class="s" id="fnext" style="flex: 0 0 48px">
+              <span data-ic="chevron-forward-outline"></span></button
+            ><button class="s" id="ftod" style="flex: 0 0 auto">Today</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2 id="fdh">Flights</h2>
+          <div class="sc" id="sfl"></div>
+        </div>
+        <div class="g kp" id="fkp" style="margin-bottom: 14px"></div>
+        <div class="fgrid" id="fch"></div>
+      </div>
+      <div id="smod">
+        <div class="card">
+          <div class="row" style="align-items: center; flex-wrap: nowrap">
+            <h2 id="sh" style="margin: 0; flex: 1">Add flight</h2>
+            <button
+              class="s"
+              id="scn"
+              style="flex: 0 0 auto; height: 34px; padding: 0 10px"
+            >
+              <span data-ic="close-outline"></span>
+            </button>
+          </div>
+          <div class="g" style="margin-top: 12px">
+            <div><label>Date *</label><input type="date" id="sfDate" /></div>
+            <div>
+              <label>Flight No: *</label><input id="sfNo" placeholder="Q2442" />
+            </div>
+            <div>
+              <label>Route</label><input id="sfRt" placeholder="HRF/MLE/HRF" />
+            </div>
+            <div>
+              <label>Aircraft Type</label
+              ><select id="sfAc">
+                <option>ATR-72</option>
+                <option>ATR-42</option>
+                <option>DH-300</option>
+                <option>DH-200</option>
+              </select>
+            </div>
+            <div>
+              <label>Check-In Time *</label><input type="time" id="sfCi" />
+            </div>
+            <div>
+              <label>Arrival Time (STA)</label><input type="time" id="sfSta" />
+            </div>
+            <div>
+              <label>Departure Time (STD)</label
+              ><input type="time" id="sfStd" />
+            </div>
+          </div>
+          <p id="sfErr" class="lic" style="color: #e04b33; margin: 8px 0 0"></p>
+          <div class="row" style="margin-top: 12px">
+            <button id="ssv">Save flight</button>
+          </div>
+        </div>
+      </div>
+      <div id="pE" style="display: none">
+        <div class="card">
+          <div class="row" style="align-items: center">
+            <h2 style="margin: 0; flex: 1">
+              Employees <span class="badge" id="ecnt"></span>
+            </h2>
+            <button id="eadd" style="flex: 0 0 auto">
+              <span data-ic="people-outline"></span> Add Employee
+            </button>
+          </div>
+          <div class="g" style="margin-top: 12px">
+            <input id="eq" placeholder="Search name, short name or SN" /><select
+              id="efg"
+            ></select>
+          </div>
+        </div>
+        <div class="card"><div class="sc" id="el"></div></div>
+      </div>
+      <div id="emod">
+        <div class="card">
+          <div class="row" style="align-items: center; flex-wrap: nowrap">
+            <h2 id="eh" style="margin: 0; flex: 1">Add employee</h2>
+            <button
+              class="s"
+              id="ecn"
+              style="flex: 0 0 auto; height: 34px; padding: 0 10px"
+            >
+              <span data-ic="close-outline"></span>
+            </button>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 16px;
+              flex-wrap: wrap;
+              align-items: flex-start;
+              margin-top: 14px;
+            "
+          >
+            <div>
+              <label>Passport photo</label
+              ><label class="eph" id="eph" for="epf"></label
+              ><input type="file" id="epf" accept="image/*" hidden />
+            </div>
+            <div class="g" style="flex: 1; min-width: 260px">
+              <div>
+                <label>SN Number *</label
+                ><input id="ei" placeholder="SN-0000" />
+              </div>
+              <div><label>Full name *</label><input id="en" /></div>
+              <div>
+                <label>Short name (task roster)</label
+                ><input id="esn" placeholder="e.g. A.shareef" />
+              </div>
+              <div>
+                <label>Date of birth</label><input type="date" id="edob" />
+              </div>
+              <div>
+                <label>Gender</label
+                ><select id="eg">
+                  <option value=""></option>
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </div>
+              <div>
+                <label>Marital status</label
+                ><select id="em">
+                  <option value=""></option>
+                  <option>Single</option>
+                  <option>Married</option>
+                  <option>Divorced</option>
+                  <option>Widowed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="g" style="margin-top: 12px">
+            <div>
+              <label>Department</label
+              ><select id="edp"></select>
+            </div>
+            <div><label>Designation</label><input id="ed" /></div>
+            <div><label>Join date</label><input type="date" id="ej" /></div>
+            <div>
+              <label>Mobile number</label><input id="ep" inputmode="tel" />
+            </div>
+            <div>
+              <label>Email address</label><input id="eem" type="email" />
+            </div>
+            <div>
+              <label>Emergency contact</label
+              ><input id="eec" inputmode="tel" placeholder="Name / number" />
+            </div>
+            <div><label>NIC number</label><input id="enic" /></div>
+            <div>
+              <label>Salary (MVR)</label><input id="esal" inputmode="decimal" />
+            </div>
+            <div>
+              <label>Status</label
+              ><select id="es">
+                <option>Active</option>
+                <option>Inactive</option>
+              </select>
+            </div>
+            <div>
+              <label>Baggage tractor licence</label
+              ><select id="elc">
+                <option>No</option>
+                <option>Yes</option>
+              </select>
+            </div>
+            <div style="grid-column: 1/-1">
+              <label>Permanent address</label><input id="epa" />
+            </div>
+            <div style="grid-column: 1/-1">
+              <label>Present address</label><input id="epr" />
+            </div>
+          </div>
+          <p id="eerr" class="lic" style="color: #e04b33; margin: 8px 0 0"></p>
+          <div class="row" style="margin-top: 12px">
+            <button id="esv">Save employee</button>
+          </div>
+        </div>
+      </div>
+      <div id="pT" style="display: none">
+        <div class="card">
+          <div class="tabs" id="ttabs">
+            <button data-v="d" class="on">Daily</button
+            ><button data-v="m">Monthly</button>
+          </div>
+          <div class="g" style="margin-top: 12px">
+            <div id="tdw"><label>Date</label><input type="date" id="td" /></div>
+            <div id="tmw" style="display: none">
+              <label>Month</label><input type="month" id="tm" />
+            </div>
+            <div>
+              <label>Department</label
+              ><select id="tg"></select>
+            </div>
+            <div>
+              <label>Search</label><input id="tq" placeholder="Name or ID" />
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px" id="tbt">
+            <button id="tpa" class="s">Mark blanks present</button
+            ><button id="tsh" class="s">Fill security shift times</button>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <button id="tim">
+              <span data-ic="download-outline"></span> Import from attendance
+              machine
+            </button>
+          </div>
+          <p class="lic" style="margin-top: 8px">
+            Leave records and the security roster fill in Leave, Off and AL
+            automatically (shown as auto). Tap a day in Monthly to change its
+            status. Overtime is hours worked beyond 8.
+          </p>
+        </div>
+        <div class="card">
+          <h2 id="tt"></h2>
+          <div class="sc" id="tb"></div>
+        </div>
+      </div>
+      <div id="imod">
+        <div class="card">
+          <div class="row" style="align-items: center; flex-wrap: nowrap">
+            <h2 style="margin: 0; flex: 1">Import from attendance machine</h2>
+            <button
+              class="s"
+              id="icn"
+              style="flex: 0 0 auto; height: 34px; padding: 0 10px"
+            >
+              <span data-ic="close-outline"></span>
+            </button>
+          </div>
+          <p class="lic" style="margin: 10px 0">
+            Export the punch / attendance report from the machine software as a
+            CSV or Excel file, then choose it here. The machine ID is matched to
+            the SN number, so 369 becomes SN-0369. The first punch of each day
+            becomes Check-In and the last punch becomes Check-Out.
+          </p>
+          <input type="file" id="ifl" accept=".csv,.txt,.xls,.xlsx" />
+          <div id="imap" style="display: none">
+            <div class="g" style="margin-top: 12px">
+              <div>
+                <label>Employee ID column</label
+                ><select id="ic1"></select>
+              </div>
+              <div>
+                <label>Date column</label
+                ><select id="ic2"></select>
+              </div>
+              <div>
+                <label>Time column</label
+                ><select id="ic3"></select>
+              </div>
+            </div>
+            <p class="lic">
+              If date and time are in one column, choose that column for both
+              Date and Time.
+            </p>
+            <div id="isum" style="margin-top: 10px"></div>
+            <button id="iap" style="margin-top: 10px">
+              Apply to attendance
+            </button>
+          </div>
+        </div>
+      </div>
       <div id="pL" style="display: none">
         <div class="card">
           <h2>Add leave</h2>
@@ -1215,6 +1882,9 @@
           <p id="ld" style="margin: 10px 0 0; font-size: 14px"></p>
           <button id="la" style="margin-top: 10px">
             <span data-ic="calendar-outline"></span> Add Leave
+          </button>
+          <button id="lcx" class="s" style="margin-top: 10px; display: none">
+            Cancel edit
           </button>
           <p class="lic">
             Staff on leave are automatically excluded when the flight date falls
@@ -1325,6 +1995,28 @@
     </main>
     <!-- Icons: Ionicons (MIT) https://ionic.io/ionicons -->
     <script>
+      const PT = {
+          A: "Task Assignment",
+          D: "Dashboard",
+          F: "Flight Schedule",
+          U: "Duty Time",
+          H: "Holidays",
+          L: "Leave Management",
+          E: "Employee",
+          T: "Time & Attendance",
+          B: "Data Backup",
+        },
+        PI = {
+          A: "clipboard-outline",
+          D: "stats-chart-outline",
+          F: "airplane",
+          U: "time-outline",
+          H: "flag-outline",
+          L: "calendar-outline",
+          E: "people-outline",
+          T: "finger-print-outline",
+          B: "save-outline",
+        };
       const ICONS = {
         airplane:
           '<path d="M186.62 464H160a16 16 0 01-14.57-22.6l64.46-142.25L113.1 297l-35.3 42.77C71.07 348.23 65.7 352 52 352H34.08a17.66 17.66 0 01-14.7-7.06c-2.38-3.21-4.72-8.65-2.44-16.41l19.82-71c.15-.53.33-1.06.53-1.58a.38.38 0 000-.15 14.82 14.82 0 01-.53-1.59l-19.84-71.45c-2.15-7.61.2-12.93 2.56-16.06a16.83 16.83 0 0113.6-6.7H52c10.23 0 20.16 4.59 26 12l34.57 42.05 97.32-1.44-64.44-142A16 16 0 01160 48h26.91a25 25 0 0119.35 9.8l125.05 152 57.77-1.52c4.23-.23 15.95-.31 18.66-.31C463 208 496 225.94 496 256c0 9.46-3.78 27-29.07 38.16-14.93 6.6-34.85 9.94-59.21 9.94-2.68 0-14.37-.08-18.66-.31l-57.76-1.54-125.36 152a25 25 0 01-19.32 9.75z"/>',
@@ -1384,6 +2076,10 @@
           '<path d="M90.61 306.85A16.07 16.07 0 00104 293.6C116.09 220.17 169.63 176 232 176c57.93 0 96.62 37.75 112.2 77.74a15.84 15.84 0 0012.2 9.87c50 8.15 91.6 41.54 91.6 99.59 0 59.4-48.6 100.8-108 100.8H106c-49.5 0-90-24.7-90-79.2 0-48.47 38.67-72.22 74.61-77.95z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path d="M384.8 271.4a80 80 0 10-123.55-92M464 208h32M336 48v32M222.86 94.86l22.63 22.63M449.14 94.86l-22.63 22.63" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
         "flag-outline":
           '<path d="M80 464V68.14a8 8 0 014-6.9C91.81 56.66 112.92 48 160 48c64 0 145 48 192 48a199.53 199.53 0 0077.23-15.77 2 2 0 012.77 1.85v219.36a4 4 0 01-2.39 3.65C421.37 308.7 392.33 320 352 320c-48 0-128-32-192-32s-80 16-80 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
+        "people-outline":
+          '<path d="M402 168c-2.93 40.67-33.1 72-66 72s-63.12-31.32-66-72c-3-42.31 26.37-72 66-72s69 30.46 66 72z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M336 304c-65.17 0-127.84 32.37-143.54 95.41-2.08 8.34 3.15 16.59 11.72 16.59h263.65c8.57 0 13.77-8.25 11.72-16.59C463.85 335.36 401.18 304 336 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M200 185.94c-2.34 32.48-26.72 58.06-53 58.06s-50.7-25.57-53-58.06C91.61 152.15 115.34 128 147 128s55.39 24.77 53 57.94z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M206 306c-18.05-8.27-37.93-11.45-59-11.45-52 0-102.1 25.85-114.65 76.2-1.65 6.66 2.53 13.25 9.37 13.25H154" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
+        "finger-print-outline":
+          '<path d="M390.42 75.28a10.45 10.45 0 01-5.32-1.44C340.72 50.08 302.35 40 256.35 40c-45.77 0-89.23 11.28-128.76 33.84C122 77 115.11 74.8 111.87 69a12.4 12.4 0 014.63-16.32A281.81 281.81 0 01256.35 16c49.23 0 92.23 11.28 139.39 36.48a12 12 0 014.85 16.08 11.3 11.3 0 01-10.17 6.72zm-330.79 126a11.73 11.73 0 01-6.7-2.16 12.26 12.26 0 01-2.78-16.8c22.89-33.6 52-60 86.69-78.48 72.58-38.84 165.51-39.12 238.32-.24 34.68 18.48 63.8 44.64 86.69 78a12.29 12.29 0 01-2.78 16.8 11.26 11.26 0 01-16.18-2.88c-20.8-30.24-47.15-54-78.36-70.56-66.34-35.28-151.18-35.28-217.29.24-31.44 16.8-57.79 40.8-78.59 71a10 10 0 01-9.02 5.08zM204.1 491a10.66 10.66 0 01-8.09-3.6C175.9 466.48 165 453 149.55 424c-16-29.52-24.27-65.52-24.27-104.16 0-71.28 58.71-129.36 130.84-129.36S387 248.56 387 319.84a11.56 11.56 0 11-23.11 0c0-58.08-48.32-105.36-107.72-105.36S148.4 261.76 148.4 319.84c0 34.56 7.39 66.48 21.49 92.4 14.8 27.6 25 39.36 42.77 58.08a12.67 12.67 0 010 17 12.44 12.44 0 01-8.56 3.68zm165.75-44.4c-27.51 0-51.78-7.2-71.66-21.36a129.1 129.1 0 01-55-105.36 11.57 11.57 0 1123.12 0 104.28 104.28 0 0044.84 85.44c16.41 11.52 35.6 17 58.72 17a147.41 147.41 0 0024-2.4c6.24-1.2 12.25 3.12 13.4 9.84a11.92 11.92 0 01-9.47 13.92 152.28 152.28 0 01-27.95 2.88zM323.38 496a13 13 0 01-3-.48c-36.76-10.56-60.8-24.72-86-50.4-32.37-33.36-50.16-77.76-50.16-125.28 0-38.88 31.9-70.56 71.19-70.56s71.2 31.68 71.2 70.56c0 25.68 21.5 46.56 48.08 46.56s48.08-20.88 48.08-46.56c0-90.48-75.13-163.92-167.59-163.92-65.65 0-125.75 37.92-152.79 96.72-9 19.44-13.64 42.24-13.64 67.2 0 18.72 1.61 48.24 15.48 86.64 2.32 6.24-.69 13.2-6.7 15.36a11.34 11.34 0 01-14.79-7 276.39 276.39 0 01-16.88-95c0-28.8 5.32-55 15.72-77.76 30.75-67 98.94-110.4 173.6-110.4 105.18 0 190.71 84.24 190.71 187.92 0 38.88-31.9 70.56-71.2 70.56s-71.2-31.68-71.2-70.56c.01-25.68-21.49-46.6-48.07-46.6s-48.08 20.88-48.08 46.56c0 41 15.26 79.44 43.23 108.24 22 22.56 43 35 75.59 44.4 6.24 1.68 9.71 8.4 8.09 14.64a11.39 11.39 0 01-10.87 9.16z"/>',
       };
       const ic = (n) =>
         `<svg class="i" viewBox="0 0 512 512" aria-hidden="true">${ICONS[n] || ""}</svg>`;
@@ -1419,7 +2115,10 @@
             (l) => l.n == n && l.f <= $("date").value && $("date").value <= l.t,
           ),
         isL = (n) => lr(n) || S[n] == "L";
-      $("date").onchange = () => drawStaff();
+      $("date").onchange = () => {
+        drawStaff();
+        schOpts();
+      };
       function drawStaff() {
         $("staff").innerHTML = STAFF.map(
           (n) =>
@@ -2011,28 +2710,34 @@
         });
         if (ex) {
           const seg = (arr, yy) => {
-            x.font = "700 26px sans-serif";
             x.textAlign = "left";
-            const w = arr.reduce((a, q) => a + x.measureText(q[0]).width, 0);
+            const fo = (q) =>
+                q[2] ? "800 32px sans-serif" : "700 26px sans-serif",
+              mw = (q) => {
+                x.font = fo(q);
+                return x.measureText(q[0]).width;
+              },
+              w = arr.reduce((a, q) => a + mw(q), 0);
             let px = W / 2 - w / 2;
             arr.forEach((q) => {
+              x.font = fo(q);
               x.fillStyle = q[1];
               x.fillText(q[0], px, yy);
-              px += x.measureText(q[0]).width;
+              px += mw(q);
             });
           };
           seg(
             [
               ["ADO: ", "#cfd6ea"],
-              [(res.ado || "-NONE-").toUpperCase(), "#fff"],
+              [(res.ado || "-NONE-").toUpperCase(), "#fff", 1],
               ["      ·      ", "#cfd6ea"],
               ["T/O: ", "#cfd6ea"],
               ...(res.to && res.to.length
                 ? res.to.flatMap((n, i) => [
                     ...(i ? [[", ", "#cfd6ea"]] : []),
-                    [n.toUpperCase(), i ? "#fff" : "#EF5B45"],
+                    [n.toUpperCase(), i ? "#fff" : "#EF5B45", 1],
                   ])
-                : [["-NONE-", "#fff"]]),
+                : [["-NONE-", "#fff", 1]]),
             ],
             y + 36,
           );
@@ -2143,17 +2848,21 @@
         `<optgroup label="Staff">${STAFF.map((n) => `<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map((n) => `<option>${n}</option>`).join("")}</optgroup>`;
       ["fp", "fr", "fs"].forEach((i) => ($(i).onchange = dash));
       function tab(t) {
-        ["A", "D", "U", "H", "L", "B"].forEach((k) => {
+        ["A", "D", "F", "U", "H", "L", "E", "T", "B"].forEach((k) => {
           $("p" + k).style.display = k == t ? "" : "none";
           $("n" + k).className = k == t ? "on" : "";
         });
         $("sb").classList.remove("o");
+        $("ptitle").innerHTML = ic(PI[t]) + " " + PT[t];
         if (t == "D") dash();
         if (t == "L") leaves();
         if (t == "U") uOpen();
         if (t == "H") hol();
+        if (t == "F") sch();
+        if (t == "E") emp();
+        if (t == "T") att();
       }
-      ["A", "D", "U", "H", "L", "B"].forEach(
+      ["A", "D", "F", "U", "H", "L", "E", "T", "B"].forEach(
         (k) => ($("n" + k).onclick = () => tab(k)),
       );
       $("mb").onclick = () => $("sb").classList.toggle("o");
@@ -2295,14 +3004,18 @@
           alert("Please check the dates");
           return;
         }
-        LV.push({
-          id: Date.now(),
-          n: $("ls").value,
-          f: $("lf").value,
-          t: $("lt").value,
-          note: $("ln").value,
-          type: $("lty").value,
-        });
+        const rec = {
+            id: LEDIT || Date.now(),
+            n: $("ls").value,
+            f: $("lf").value,
+            t: $("lt").value,
+            note: $("ln").value,
+            type: $("lty").value,
+          },
+          lk = LEDIT ? LV.findIndex((x) => x.id == LEDIT) : -1;
+        if (lk >= 0) LV[lk] = rec;
+        else LV.push(rec);
+        lEditEnd();
         $("ln").value = "";
         svL();
         leaves();
@@ -2318,7 +3031,7 @@
             .sort((a, b) => (a.f < b.f ? 1 : -1))
             .map(
               (l) =>
-                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t} · ${cdays(l.f, l.t, l.type || "Annual Leave")} day${cdays(l.f, l.t, l.type || "Annual Leave") == 1 ? "" : "s"}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
+                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t} · ${cdays(l.f, l.t, l.type || "Annual Leave")} day${cdays(l.f, l.t, l.type || "Annual Leave") == 1 ? "" : "s"}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-le="${l.id}">${ic("create-outline")} Edit</button><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
             )
             .join("") || "No leave records";
         document.querySelectorAll("[data-lv]").forEach(
@@ -2413,7 +3126,7 @@
         "#C4E6D2",
         "#F2CDB0",
       ];
-      const colr = (n) => PAL[[...STAFF, ...OFFS].indexOf(n) % PAL.length];
+      const colr = (n) => PAL[Math.max(0, ALLR.indexOf(n)) % PAL.length];
       let cm = new Date(),
         sel = fd(new Date());
       cm.setDate(1);
@@ -2536,6 +3249,9 @@
           MO,
           XF,
           HOL,
+          EMP,
+          ATT,
+          SCH,
         });
       $("bkb").onclick = async () => {
         const name = "turnaround-backup-" + fd(new Date()) + ".json",
@@ -2618,6 +3334,23 @@
             if (!HOL[k]) HOL[k] = v;
           });
           persist("ta_hol", HOL);
+          (d.EMP || []).forEach((e) => {
+            if (!EMP.some((x) => x.key == e.key)) EMP.push(mig(e));
+          });
+          Object.entries(d.ATT || {}).forEach(([dt, o]) => {
+            const day = ATT[dt] || (ATT[dt] = {});
+            Object.entries(o).forEach(([k, r]) => {
+              if (!day[k]) day[k] = r;
+            });
+          });
+          persist("ta_emp", EMP);
+          persist("ta_att", ATT);
+          (d.SCH || []).forEach((f) => {
+            if (!SCH.some((x) => x.id == f.id)) SCH.push(f);
+          });
+          persist("ta_sch", SCH);
+          syncAll();
+          schOpts();
           persist("ta_jd", JD);
           persist("ta_h", H);
           persist("ta_lv", LV);
@@ -2708,37 +3441,40 @@
           ks = Object.keys(LT);
         $("lbal").innerHTML =
           `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${k == "Annual Leave" ? "30 days · 32 after 5 yrs" : LT[k] + " days"}</small></th>`).join("")}</tr>` +
-          [...STAFF, ...OFFS]
-            .map((n) => {
-              const jd = JD[n] || "";
-              let c = "",
-                cells;
-              if (jd) {
-                const [cs, ce] = cyc(jd, ref),
-                  yrs = Math.max(0, +cs.slice(0, 4) - +jd.slice(0, 4));
-                c =
-                  cs +
-                  " → " +
-                  ce +
-                  `<br>Service: ${yrs} yr${yrs == 1 ? "" : "s"}`;
-                cells = ks
-                  .map((k) => {
-                    const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
-                      u = used(n, k, cs, ce),
-                      r = tot - u;
-                    return `<td style="font-weight:600;${r < 0 ? "color:#E04B33" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
-                  })
-                  .join("");
-              } else cells = ks.map(() => `<td class="lic">—</td>`).join("");
-              return `<tr><td>${esc(n)}</td><td><input type="date" data-jd="${esc(n)}" value="${jd}" style="height:32px;font-size:12px;min-width:130px"></td><td class="lic">${c || "Set join date"}</td>${cells}</tr>`;
-            })
-            .join("") +
+          ALLR.map((n) => {
+            const jd = JD[n] || "";
+            let c = "",
+              cells;
+            if (jd) {
+              const [cs, ce] = cyc(jd, ref),
+                yrs = Math.max(0, +cs.slice(0, 4) - +jd.slice(0, 4));
+              c =
+                cs +
+                " → " +
+                ce +
+                `<br>Service: ${yrs} yr${yrs == 1 ? "" : "s"}`;
+              cells = ks
+                .map((k) => {
+                  const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
+                    u = used(n, k, cs, ce),
+                    r = tot - u;
+                  return `<td style="font-weight:600;${r < 0 ? "color:#E04B33" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
+                })
+                .join("");
+            } else cells = ks.map(() => `<td class="lic">—</td>`).join("");
+            return `<tr><td>${esc(n)}</td><td><input type="date" data-jd="${esc(n)}" value="${jd}" style="height:32px;font-size:12px;min-width:130px"></td><td class="lic">${c || "Set join date"}</td>${cells}</tr>`;
+          }).join("") +
           "</table>";
         document.querySelectorAll("[data-jd]").forEach(
           (i) =>
             (i.onchange = () => {
               JD[i.dataset.jd] = i.value;
               persist("ta_jd", JD);
+              const xe = EMP && EMP.find((e) => ref(e) == i.dataset.jd);
+              if (xe) {
+                xe.join = i.value;
+                persist("ta_emp", EMP);
+              }
               bal();
             }),
         );
@@ -2816,8 +3552,9 @@
         $("ar").value = $("ua").value;
         $("dp").value = $("us").value;
         drawStaff();
+        schOpts();
       }
-      ["ud", "uf", "ua", "us", "un", "ur", "uac"].forEach(
+      ["ud", "uf", "ua", "us", "un", "ur", "uac", "usch"].forEach(
         (i) =>
           ($(i).oninput = $(i).onchange =
             () => {
@@ -3037,6 +3774,18 @@
             std: $("us").value,
           });
         (XF[d] || []).forEach((f) => L.push(f));
+        if ($("usch").checked)
+          flightsOn(d).forEach((f) => {
+            if (!L.some((x) => x.no == f.no && x.ci == f.ci))
+              L.push({
+                no: f.no,
+                rt: f.rt,
+                ac: f.ac,
+                ci: f.ci,
+                sta: f.sta,
+                std: f.std,
+              });
+          });
         const k = (f) => f.ci || "99:99";
         return L.sort((a, b) => (k(a) < k(b) ? -1 : k(a) > k(b) ? 1 : 0));
       }
@@ -3468,6 +4217,1015 @@
           `<div class="t"><b>${l}</b><span><select id="${id}">${["", ...OFFS].map((n) => `<option value="${n}" ${n == v ? "selected" : ""}>${n || "—"}</option>`).join("")}</select></span></div>`;
         return `<div class="card">${oc("offs", "Officer", res.off)}${oc("adoS", "Asst Duty Officer (ADO)", res.ado)}<div class="t"><b>Terminal Officer (TO)</b><span>${res.to && res.to.length ? res.to.map((n, i) => `<em style="font-style:normal;${i ? "" : "color:#E04B33;font-weight:700"}">${n}${i < res.to.length - 1 ? "," : ""}</em>`).join(" ") : "-NONE-"}</span></div></div>`;
       }
+
+      const DEPTS = [
+        "Ground Staff",
+        "Officers",
+        "Security",
+        "ARFF / EMT",
+        "OPS",
+        "Safety",
+        "Airfield",
+        "Hands",
+        "Cleaning & Gardening",
+        "Airport Office",
+        "Maintenance",
+      ];
+      const SNI = {
+          "Ahmed Shaan": "SN-0392",
+          "Ahmed Rasheed": "SN-0393",
+          "Ameen Faisal": "SN-0389",
+          "Ismail Ahmed": "SN-0597",
+          "Ahmed Hassan": "SN-0394",
+          "Abdulla Yoosuf": "SN-0684",
+          "Ahmed Shain Zubairu": "SN-0686",
+          "Ahmed Akram": "SN-0947",
+          "Ibrahim khaleel": "SN-0948",
+        },
+        SN0 = Object.assign({}, SN);
+      const ALLR = [],
+        ref = (e) => e.short || e.name,
+        jn = (e) => e.join || JD[ref(e)] || "";
+      const DEF = {
+        photo: "",
+        id: "",
+        name: "",
+        short: "",
+        dob: "",
+        dept: "Other",
+        desg: "",
+        join: "",
+        phone: "",
+        email: "",
+        emerg: "",
+        nic: "",
+        gender: "",
+        marital: "",
+        salary: "",
+        permAddr: "",
+        presAddr: "",
+        status: "Active",
+        licence: "No",
+      };
+      const mig = (e) => {
+        const o = { ...DEF, ...e };
+        o.dept =
+          e.dept || (e.group == "Officer" ? "Officers" : e.group || "Other");
+        o.short = e.short || SN0[e.name] || e.name;
+        return o;
+      };
+      let EMP = null,
+        ATT = {};
+      try {
+        EMP = JSON.parse(localStorage.getItem("ta_emp"));
+      } catch (e) {}
+      try {
+        ATT = JSON.parse(localStorage.getItem("ta_att")) || {};
+      } catch (e) {}
+      if (EMP) EMP = EMP.map(mig);
+      else {
+        const mk = (key, id, name, short, dept, lic) => ({
+          ...DEF,
+          key,
+          id,
+          name,
+          short,
+          dept,
+          join: JD[short] || "",
+          licence: lic ? "Yes" : "No",
+        });
+        EMP = [
+          ...STAFF.map((n) => mk(n, "", n, n, "Ground Staff", LIC.includes(n))),
+          ...OFFS.map((n) => mk(n, "", n, n, "Officers")),
+          ...SEC.map((n) => mk(SNI[n], SNI[n], n, SN0[n] || n, "Security")),
+        ];
+      }
+      function syncLists() {
+        const act = EMP.filter((e) => e.status != "Inactive"),
+          gs = act.filter((e) => e.dept == "Ground Staff");
+        STAFF.length = 0;
+        STAFF.push(...gs.map(ref));
+        OFFS.length = 0;
+        OFFS.push(...act.filter((e) => e.dept == "Officers").map(ref));
+        LIC.length = 0;
+        LIC.push(...gs.filter((e) => e.licence == "Yes").map(ref));
+        const sc = act.filter((e) => e.dept == "Security");
+        SEC.length = 0;
+        SEC.push(...sc.map((e) => e.name));
+        Object.keys(SN).forEach((k) => delete SN[k]);
+        sc.forEach((e) => (SN[e.name] = ref(e)));
+        ALLN.length = 0;
+        ALLN.push(...STAFF, ...OFFS);
+        ALLR.length = 0;
+        ALLR.push(...act.map(ref));
+      }
+      function fsOpts() {
+        const v = $("fs").value || "all";
+        $("fs").innerHTML =
+          `<option value="all">All staff</option><optgroup label="Staff">${STAFF.map((n) => `<option>${esc(n)}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map((n) => `<option>${esc(n)}</option>`).join("")}</optgroup>`;
+        $("fs").value = v;
+      }
+      function lsOpts() {
+        const v = $("ls").value;
+        $("ls").innerHTML = DEPTS.map((d) => {
+          const L = EMP.filter((e) => e.status != "Inactive" && e.dept == d);
+          return L.length
+            ? `<optgroup label="${d}">${L.map((e) => `<option>${esc(ref(e))}</option>`).join("")}</optgroup>`
+            : "";
+        }).join("");
+        if (v) $("ls").value = v;
+      }
+      function dpOpts() {
+        const o = DEPTS.map((d) => `<option>${d}</option>`).join(""),
+          a = '<option value="">All departments</option>' + o;
+        $("edp").innerHTML = o;
+        $("efg").innerHTML = a;
+        const t = $("tg").value;
+        $("tg").innerHTML = a;
+        $("tg").value = t;
+      }
+      function syncAll() {
+        syncLists();
+        drawStaff();
+        fsOpts();
+        lsOpts();
+        dpOpts();
+      }
+      let eK = null,
+        ePh = "";
+      const FM = [
+        ["ei", "id"],
+        ["en", "name"],
+        ["esn", "short"],
+        ["edob", "dob"],
+        ["ed", "desg"],
+        ["ej", "join"],
+        ["ep", "phone"],
+        ["eem", "email"],
+        ["eec", "emerg"],
+        ["enic", "nic"],
+        ["esal", "salary"],
+        ["epa", "permAddr"],
+        ["epr", "presAddr"],
+      ];
+      const ST = [
+        ["", "—"],
+        ["P", "Present"],
+        ["A", "Absent"],
+        ["L", "Leave"],
+        ["O", "Off"],
+        ["PH", "Public holiday"],
+      ];
+      function ePv() {
+        $("eph").innerHTML = ePh
+          ? `<img src="${ePh}" alt="">`
+          : "Click to upload<br>photo";
+      }
+      function eOpen(x) {
+        eK = x ? x.key : null;
+        $("eh").textContent = x ? "Edit employee" : "Add employee";
+        ePh = x ? x.photo || "" : "";
+        $("eerr").textContent = "";
+        FM.forEach(
+          ([i, p]) =>
+            ($(i).value = x ? (p == "join" ? jn(x) : x[p] || "") : ""),
+        );
+        $("edp").value = x ? x.dept : "Ground Staff";
+        $("eg").value = x ? x.gender || "" : "";
+        $("em").value = x ? x.marital || "" : "";
+        $("es").value = x ? x.status : "Active";
+        $("elc").value = x ? x.licence || "No" : "No";
+        ePv();
+        $("emod").style.display = "block";
+      }
+      $("eadd").onclick = () => eOpen(null);
+      $("ecn").onclick = () => ($("emod").style.display = "none");
+      $("epf").onchange = (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          const im = new Image();
+          im.onload = () => {
+            const c = document.createElement("canvas"),
+              k = Math.min(1, 320 / Math.max(im.width, im.height));
+            c.width = Math.round(im.width * k);
+            c.height = Math.round(im.height * k);
+            c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+            ePh = c.toDataURL("image/jpeg", 0.8);
+            ePv();
+          };
+          im.src = r.result;
+        };
+        r.readAsDataURL(f);
+        e.target.value = "";
+      };
+      $("esv").onclick = () => {
+        const n = $("en").value.trim(),
+          sn = $("ei").value.trim();
+        if (!sn || !n) {
+          $("eerr").textContent = "SN number and full name are required.";
+          return;
+        }
+        const o = {
+          ...(EMP.find((e) => e.key == eK) || DEF),
+          key: eK || "e" + Date.now(),
+          photo: ePh,
+          dept: $("edp").value,
+          gender: $("eg").value,
+          marital: $("em").value,
+          status: $("es").value,
+          licence: $("elc").value,
+        };
+        FM.forEach(([i, p]) => (o[p] = $(i).value.trim()));
+        if (!o.short) o.short = o.name;
+        const k = EMP.findIndex((e) => e.key == o.key);
+        if (k >= 0) EMP[k] = o;
+        else EMP.push(o);
+        if (o.join) {
+          JD[ref(o)] = o.join;
+          persist("ta_jd", JD);
+        }
+        persist("ta_emp", EMP);
+        $("emod").style.display = "none";
+        syncAll();
+        emp();
+      };
+      function emp() {
+        const q = ($("eq").value || "").toLowerCase(),
+          g = $("efg").value,
+          L = EMP.filter(
+            (e) =>
+              (!g || e.dept == g) &&
+              (!q || (e.name + e.short + e.id).toLowerCase().includes(q)),
+          );
+        $("ecnt").textContent =
+          EMP.filter((e) => e.status != "Inactive").length + " active";
+        const svc = (j) => {
+          if (!j) return "—";
+          const a = new Date(j + "T00:00:00"),
+            b = new Date(),
+            m =
+              (b.getFullYear() - a.getFullYear()) * 12 +
+              b.getMonth() -
+              a.getMonth() -
+              (b.getDate() < a.getDate() ? 1 : 0);
+          return m < 0 ? "—" : Math.floor(m / 12) + "y " + (m % 12) + "m";
+        };
+        $("el").innerHTML =
+          `<table><tr><th></th><th>SN</th><th>Full name</th><th>Short name</th><th>Department</th><th>Designation</th><th>Join date</th><th>Service</th><th>Mobile</th><th>Status</th><th></th></tr>` +
+          L.map(
+            (e) =>
+              `<tr><td>${e.photo ? `<img class="av" src="${e.photo}" alt="">` : `<span class="av" style="display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">${esc((e.name || "?")[0])}</span>`}</td><td>${esc(e.id || "—")}</td><td style="text-align:left">${esc(e.name)}</td><td>${esc(ref(e))}</td><td>${esc(e.dept)}</td><td>${esc(e.desg || "—")}</td><td>${jn(e) || "—"}</td><td>${svc(jn(e))}</td><td>${esc(e.phone || "—")}</td><td>${e.status}</td><td style="white-space:nowrap"><button class="del" data-pe="${esc(e.key)}">${ic("create-outline")} Edit</button> <button class="del" data-pd="${esc(e.key)}" style="color:#E04B33">${ic("trash-outline")}</button></td></tr>`,
+          ).join("") +
+          "</table>";
+      }
+      ["eq", "efg"].forEach((i) => ($(i).oninput = $(i).onchange = emp));
+      $("el").onclick = (e) => {
+        const b = e.target.closest("[data-pe],[data-pd]");
+        if (!b) return;
+        if (b.dataset.pd) {
+          if (confirm("Delete this employee?")) {
+            EMP = EMP.filter((x) => x.key != b.dataset.pd);
+            persist("ta_emp", EMP);
+            syncAll();
+            emp();
+          }
+          return;
+        }
+        const x = EMP.find((v) => v.key == b.dataset.pe);
+        if (x) eOpen(x);
+      };
+      let tv = "d";
+      const hrs = (r) => {
+        const a = tmin(r.i),
+          b = tmin(r.o);
+        return a == null || b == null ? null : ((b - a + 1440) % 1440) / 60;
+      };
+      function dflt(e, d) {
+        const lv = LV.find((l) => l.n == ref(e) && l.f <= d && d <= l.t);
+        if (lv) return lv.type == "Off Day" ? "O" : "L";
+        if (e.dept == "Security") {
+          const r = ROS[d.slice(0, 7)],
+            c = r && r[e.name] && r[e.name][+d.slice(8) - 1];
+          if (c == "O") return "O";
+          if (c == "AL") return "L";
+        }
+        return "";
+      }
+      const curL = () => {
+        const g = $("tg").value,
+          q = $("tq").value.toLowerCase();
+        return EMP.filter(
+          (e) =>
+            e.status != "Inactive" &&
+            (!g || e.dept == g) &&
+            (!q || (e.name + e.short + e.id).toLowerCase().includes(q)),
+        );
+      };
+      function att() {
+        if (!$("td").value) $("td").value = fd(new Date());
+        if (!$("tm").value) $("tm").value = fd(new Date()).slice(0, 7);
+        $("tdw").style.display = tv == "d" ? "" : "none";
+        $("tmw").style.display = tv == "m" ? "" : "none";
+        $("tbt").style.display = tv == "d" ? "" : "none";
+        if (tv == "d") attD($("td").value, curL());
+        else attM($("tm").value, curL());
+      }
+      function attD(d, L) {
+        $("tt").textContent =
+          "Attendance · " +
+          new Date(d + "T00:00:00").toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        $("tb").innerHTML =
+          `<table><tr><th>Employee</th><th>Status</th><th>In</th><th>Out</th><th>Hours</th><th>OT</th><th>Note</th></tr>` +
+          L.map((e) => {
+            const r = (ATT[d] || {})[e.key] || {},
+              df = dflt(e, d),
+              v = r.s || df,
+              h = hrs(r),
+              k = esc(e.key);
+            return `<tr><td style="text-align:left">${esc(e.name)}<br><small class="lic">${esc(e.dept)}${e.desg ? " · " + esc(e.desg) : ""}</small></td><td><select data-k="${k}" data-f="s" class="at-${v || "x"}" style="height:32px;font-size:12px;width:auto">${ST.map((x) => `<option value="${x[0]}" ${x[0] == v ? "selected" : ""}>${x[1]}${!r.s && x[0] == df && df ? " (auto)" : ""}</option>`).join("")}</select></td><td><input type="time" data-k="${k}" data-f="i" value="${r.i || ""}" style="height:32px;font-size:12px"></td><td><input type="time" data-k="${k}" data-f="o" value="${r.o || ""}" style="height:32px;font-size:12px"></td><td>${h == null ? "—" : h.toFixed(1)}${r.m ? '<span title="From attendance machine" style="color:#2f9e5b"> ●</span>' : ""}</td><td>${h != null && h > 8 ? (h - 8).toFixed(1) : "—"}</td><td><input data-k="${k}" data-f="n" value="${esc(r.n || "")}" style="height:32px;font-size:12px;min-width:110px"></td></tr>`;
+          }).join("") +
+          "</table>";
+      }
+      function attM(mo, L) {
+        const n = new Date(+mo.slice(0, 4), +mo.slice(5), 0).getDate();
+        $("tt").textContent = "Monthly attendance · " + mo;
+        $("tb").innerHTML =
+          `<table class="rs"><tr><th>Employee</th>${Array.from({ length: n }, (_, i) => `<th>${i + 1}</th>`).join("")}<th>P</th><th>A</th><th>L</th><th>O</th><th>OT h</th></tr>` +
+          L.map((e) => {
+            const c = { P: 0, A: 0, L: 0, O: 0 };
+            let ot = 0;
+            const cells = Array.from({ length: n }, (_, i) => {
+              const d = mo + "-" + pad(i + 1),
+                r = (ATT[d] || {})[e.key] || {},
+                v = r.s || dflt(e, d),
+                h = hrs(r);
+              if (c[v] != null) c[v]++;
+              if (h > 8) ot += h - 8;
+              return `<td class="ac at-${v || "x"}" data-k="${esc(e.key)}" data-d="${d}">${v}</td>`;
+            }).join("");
+            return `<tr><td>${esc(e.name)}</td>${cells}<td>${c.P}</td><td>${c.A}</td><td>${c.L}</td><td>${c.O}</td><td>${ot.toFixed(1)}</td></tr>`;
+          }).join("") +
+          "</table>";
+      }
+      const aSet = (d, k, f) => {
+        const day = ATT[d] || (ATT[d] = {}),
+          r = day[k] || (day[k] = {});
+        f(r);
+        if (!r.s && !r.i && !r.o && !r.n) delete day[k];
+        if (!Object.keys(day).length) delete ATT[d];
+      };
+      $("tb").onchange = (e) => {
+        const t = e.target,
+          k = t.dataset.k;
+        if (!k || !t.dataset.f) return;
+        const d = $("td").value;
+        aSet(d, k, (r) => {
+          r[t.dataset.f] = t.value;
+          const f = t.dataset.f;
+          if (f == "i" || f == "o") delete r.m;
+          if (f == "i" && t.value && !r.o) r.o = hm(tmin(t.value) + 480);
+          else if (f == "o" && t.value && !r.i) r.i = hm(tmin(t.value) - 480);
+          if ((f == "i" || f == "o") && !r.s) r.s = "P";
+        });
+        persist("ta_att", ATT);
+        att();
+      };
+      $("tb").onclick = (e) => {
+        const t = e.target.closest("[data-d]");
+        if (!t) return;
+        const e0 = EMP.find((x) => x.key == t.dataset.k),
+          k = ["", "P", "A", "L", "O", "PH"],
+          d = t.dataset.d,
+          cur = ((ATT[d] || {})[t.dataset.k] || {}).s || dflt(e0, d);
+        aSet(d, t.dataset.k, (r) => {
+          r.s = k[(k.indexOf(cur) + 1) % 6];
+        });
+        persist("ta_att", ATT);
+        att();
+      };
+      $("tpa").onclick = () => {
+        const d = $("td").value;
+        curL().forEach((e) => {
+          if (!((ATT[d] || {})[e.key] || {}).s && !dflt(e, d))
+            aSet(d, e.key, (r) => {
+              r.s = "P";
+            });
+        });
+        persist("ta_att", ATT);
+        att();
+      };
+      $("tsh").onclick = () => {
+        const d = $("td").value,
+          SH = {
+            M: ["08:00", "16:00"],
+            E: ["16:00", "00:00"],
+            N: ["00:00", "08:00"],
+          };
+        curL()
+          .filter((e) => e.dept == "Security")
+          .forEach((e) => {
+            const r0 = ROS[d.slice(0, 7)],
+              c = r0 && r0[e.name] && r0[e.name][+d.slice(8) - 1];
+            if (SH[c])
+              aSet(d, e.key, (r) => {
+                r.i = SH[c][0];
+                r.o = SH[c][1];
+                r.s = r.s || "P";
+              });
+          });
+        persist("ta_att", ATT);
+        att();
+      };
+      $("ttabs").onclick = (e) => {
+        const b = e.target.closest("[data-v]");
+        if (!b) return;
+        tv = b.dataset.v;
+        [...$("ttabs").children].forEach((x) =>
+          x.classList.toggle("on", x == b),
+        );
+        att();
+      };
+      ["td", "tm", "tg", "tq"].forEach(
+        (i) => ($(i).oninput = $(i).onchange = att),
+      );
+      syncAll();
+      let IM = null;
+      function csvParse(t) {
+        const L = t
+            .split(/\r?\n/)
+            .filter((x) => x.trim())
+            .slice(0, 5)
+            .join("\n"),
+          cnt = (ch) =>
+            (L.match(new RegExp(ch == "\t" ? "\t" : "\\" + ch, "g")) || [])
+              .length,
+          d = [",", ";", "\t"].sort((a, b) => cnt(b) - cnt(a))[0],
+          rows = [];
+        let r = [],
+          c = "",
+          q = false;
+        for (let i = 0; i < t.length; i++) {
+          const ch = t[i];
+          if (q) {
+            if (ch == '"') {
+              if (t[i + 1] == '"') {
+                c += '"';
+                i++;
+              } else q = false;
+            } else c += ch;
+          } else if (ch == '"') q = true;
+          else if (ch == d) {
+            r.push(c);
+            c = "";
+          } else if (ch == "\n" || ch == "\r") {
+            if (ch == "\r" && t[i + 1] == "\n") i++;
+            r.push(c);
+            rows.push(r);
+            r = [];
+            c = "";
+          } else c += ch;
+        }
+        if (c || r.length) {
+          r.push(c);
+          rows.push(r);
+        }
+        return rows.filter((r) => r.some((x) => String(x).trim()));
+      }
+      const MON = {
+        jan: 1,
+        feb: 2,
+        mar: 3,
+        apr: 4,
+        may: 5,
+        jun: 6,
+        jul: 7,
+        aug: 8,
+        sep: 9,
+        oct: 10,
+        nov: 11,
+        dec: 12,
+      };
+      function pDate(v) {
+        v = String(v).trim();
+        let m;
+        if ((m = v.match(/(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/)))
+          return m[1] + "-" + pad(+m[2]) + "-" + pad(+m[3]);
+        if ((m = v.match(/(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/)))
+          return m[3] + "-" + pad(+m[2]) + "-" + pad(+m[1]);
+        if (
+          (m = v.match(/(\d{1,2})[-\/ ]([A-Za-z]{3})[a-z]*[-\/ ,]*(\d{4})/))
+        ) {
+          const mo = MON[m[2].toLowerCase()];
+          if (mo) return m[3] + "-" + pad(mo) + "-" + pad(+m[1]);
+        }
+        return null;
+      }
+      function pTime(v) {
+        const m = String(v).match(
+          /(\d{1,2}):(\d{2})(?::\d{2})?\s*([AaPp][Mm])?/,
+        );
+        if (!m) return null;
+        let h = +m[1];
+        if (m[3]) {
+          const pm = /p/i.test(m[3]);
+          if (pm && h < 12) h += 12;
+          if (!pm && h == 12) h = 0;
+        }
+        return h * 60 + +m[2];
+      }
+      $("tim").onclick = () => {
+        $("imod").style.display = "block";
+      };
+      $("icn").onclick = () => ($("imod").style.display = "none");
+      $("ifl").onchange = async (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        let rows;
+        try {
+          if (/\.xlsx?$/i.test(f.name)) {
+            if (!window.XLSX) {
+              $("imap").style.display = "block";
+              $("isum").textContent =
+                "The Excel reader could not load. Save the report as CSV and try again.";
+              return;
+            }
+            const wb = XLSX.read(await f.arrayBuffer(), {
+                type: "array",
+                cellDates: true,
+              }),
+              ws = wb.Sheets[wb.SheetNames[0]];
+            rows = XLSX.utils.sheet_to_json(ws, {
+              header: 1,
+              raw: false,
+              dateNF: "yyyy-mm-dd hh:mm:ss",
+              defval: "",
+            });
+          } else rows = csvParse(await f.text());
+        } catch (x) {
+          $("imap").style.display = "block";
+          $("isum").textContent = "Could not read that file.";
+          return;
+        }
+        let hi = rows.findIndex(
+          (r, i) =>
+            i < 20 &&
+            r.filter((c) => String(c).trim()).length >= 3 &&
+            r.some((c) => /id|user|date|time|punch/i.test(c)),
+        );
+        if (hi < 0) hi = 0;
+        const hd = (rows[hi] || []).map((c) => String(c).trim());
+        IM = { rows: rows.slice(hi + 1), hd };
+        const opt = hd
+          .map(
+            (h, i) =>
+              `<option value="${i}">${esc(h || "Column " + (i + 1))}</option>`,
+          )
+          .join("");
+        ["ic1", "ic2", "ic3"].forEach((i) => ($(i).innerHTML = opt));
+        const f1 = (re) => {
+            const i = hd.findIndex((h) => re.test(h));
+            return i < 0 ? 0 : i;
+          },
+          dt = hd.findIndex((h) => /date.?time|timestamp/i.test(h));
+        $("ic1").value = f1(
+          /user\s*id|userid|emp(loyee)?\s*(id|code|no)|\bid\b|card|code/i,
+        );
+        $("ic2").value = dt >= 0 ? dt : f1(/date/i);
+        $("ic3").value = dt >= 0 ? dt : f1(/time|punch/i);
+        $("imap").style.display = "block";
+        isum();
+      };
+      ["ic1", "ic2", "ic3"].forEach(
+        (i) => ($(i).onchange = () => IM && isum()),
+      );
+      function icalc() {
+        const a = +$("ic1").value,
+          b = +$("ic2").value,
+          c = +$("ic3").value,
+          num = EMP.map((e) => ({
+            e,
+            n: parseInt(String(e.id).replace(/\D/g, ""), 10),
+          })),
+          mp = {},
+          un = new Set();
+        let used = 0,
+          bad = 0;
+        IM.rows.forEach((r) => {
+          const idn = parseInt(String(r[a]).replace(/\D/g, ""), 10),
+            d = pDate(r[b]),
+            t = pTime(r[c]);
+          if (isNaN(idn) || !d || t == null) {
+            bad++;
+            return;
+          }
+          const m = num.find((x) => x.n === idn);
+          if (!m) {
+            un.add("SN-" + String(idn).padStart(4, "0"));
+            return;
+          }
+          const k = m.e.key + "|" + d;
+          (mp[k] = mp[k] || []).push(t);
+          used++;
+        });
+        return { mp, un: [...un], used, bad };
+      }
+      function isum() {
+        const x = icalc();
+        IM.res = x;
+        const days = new Set(Object.keys(x.mp).map((k) => k.split("|")[1]));
+        $("isum").innerHTML =
+          `<b>${x.used}</b> punches matched · <b>${Object.keys(x.mp).length}</b> employee-days · <b>${days.size}</b> date${days.size == 1 ? "" : "s"}` +
+          (x.bad ? ` · ${x.bad} rows skipped (unreadable)` : "") +
+          (x.un.length
+            ? `<br><span style="color:#E04B33">No employee found for: ${x.un.slice(0, 30).join(", ")}${x.un.length > 30 ? "…" : ""}. Check those SN numbers in the Employee menu.</span>`
+            : "");
+      }
+      $("iap").onclick = () => {
+        const x = IM && IM.res;
+        if (!x) return;
+        Object.entries(x.mp).forEach(([k, ts]) => {
+          const [key, d] = k.split("|"),
+            lo = Math.min(...ts),
+            hi = Math.max(...ts);
+          aSet(d, key, (r) => {
+            r.i = hm(lo);
+            if (hi - lo >= 10) r.o = hm(hi);
+            else if (r.m) delete r.o;
+            r.s = r.s || "P";
+            r.m = 1;
+          });
+        });
+        persist("ta_att", ATT);
+        $("imod").style.display = "none";
+        att();
+      };
+      let SCH = [];
+      try {
+        SCH = JSON.parse(localStorage.getItem("ta_sch")) || [];
+      } catch (e) {}
+      {
+        const seen = new Set();
+        SCH.forEach((f) => {
+          while (seen.has(f.id)) f.id = +f.id + 1;
+          seen.add(f.id);
+        });
+      }
+      const WDN = {
+        1: "Mon",
+        2: "Tue",
+        3: "Wed",
+        4: "Thu",
+        5: "Fri",
+        6: "Sat",
+        0: "Sun",
+      };
+      let sK = null;
+      function flightsOn(d) {
+        const wd = new Date(d + "T00:00:00").getDay();
+        return SCH.filter((f) =>
+          f.date
+            ? f.date == d
+            : (!f.from || d >= f.from) &&
+              (!f.to || d <= f.to) &&
+              (f.days || []).includes(wd),
+        ).sort((a, b) => ((a.ci || "99:99") < (b.ci || "99:99") ? -1 : 1));
+      }
+      function schOpts() {
+        const d = $("date").value,
+          L = flightsOn(d),
+          v = $("schsel").value;
+        $("schsel").innerHTML =
+          '<option value="">— enter manually —</option>' +
+          L.map(
+            (f) =>
+              `<option value="${f.id}">${esc(f.no)} · ${esc(f.rt || "")} · ${f.ci || "--:--"}</option>`,
+          ).join("");
+        if (L.some((f) => f.id == v)) $("schsel").value = v;
+      }
+      $("schsel").onchange = () => {
+        const f = SCH.find((x) => x.id == $("schsel").value);
+        if (!f) return;
+        $("fno").value = f.no;
+        $("ac").value = f.ac;
+        $("ci").value = f.ci || "";
+        $("ar").value = f.sta || "";
+        $("dp").value = f.std || "";
+        $("ur").value = f.rt || "";
+      };
+      let fp = "month",
+        fref = fd(new Date());
+      function sOpen(f) {
+        sK = f ? f.id : null;
+        $("sh").textContent = f ? "Edit flight" : "Add flight";
+        $("sfErr").textContent = "";
+        $("sfNo").value = f ? f.no : "";
+        $("sfRt").value = f ? f.rt || "" : "";
+        $("sfAc").value = f ? f.ac : "ATR-72";
+        $("sfDate").value = f ? f.date || "" : fref;
+        $("sfCi").value = f ? f.ci || "" : "";
+        $("sfSta").value = f ? f.sta || "" : "";
+        $("sfStd").value = f ? f.std || "" : "";
+        $("smod").style.display = "block";
+      }
+      $("fadd").onclick = () => sOpen(null);
+      $("scn").onclick = () => ($("smod").style.display = "none");
+      $("sfCi").onchange = () => {
+        const m = tmin($("sfCi").value);
+        if (m != null) {
+          $("sfSta").value = hm(m + 90);
+          $("sfStd").value = hm(m + 120);
+        }
+      };
+      $("ssv").onclick = () => {
+        const no = $("sfNo").value.trim();
+        if (!no || !$("sfCi").value || !$("sfDate").value) {
+          $("sfErr").textContent =
+            "Date, flight number and check-in time are required.";
+          return;
+        }
+        const o = {
+            id: sK || Date.now() * 1000 + Math.floor(Math.random() * 1000),
+            no,
+            rt: $("sfRt").value.trim().toUpperCase(),
+            ac: $("sfAc").value,
+            ci: $("sfCi").value,
+            sta: $("sfSta").value,
+            std: $("sfStd").value,
+            date: $("sfDate").value,
+          },
+          k = SCH.findIndex((f) => f.id == o.id);
+        if (k >= 0) SCH[k] = o;
+        else SCH.push(o);
+        persist("ta_sch", SCH);
+        fref = o.date;
+        $("smod").style.display = "none";
+        sch();
+        schOpts();
+      };
+      function fshift(k) {
+        const x = new Date(fref + "T00:00:00");
+        if (fp == "day") x.setDate(x.getDate() + k);
+        else if (fp == "week") x.setDate(x.getDate() + 7 * k);
+        else if (fp == "month") x.setMonth(x.getMonth() + k, 1);
+        else x.setFullYear(x.getFullYear() + k);
+        fref = fd(x);
+        sch();
+      }
+      function sch() {
+        $("fcnt").textContent = SCH.length;
+        const d = fref,
+          L = flightsOn(d),
+          [s0, e0] = rng(fp, d);
+        const days = [];
+        for (
+          let x = new Date(s0 + "T00:00:00"), e = new Date(e0 + "T00:00:00");
+          x <= e;
+          x.setDate(x.getDate() + 1)
+        )
+          days.push(fd(x));
+        const per = days.map((ds) => ({ ds, L: flightsOn(ds) })),
+          all = per.flatMap((p) => p.L),
+          tot = all.length,
+          act = per.filter((p) => p.L.length).length,
+          peak = per.reduce(
+            (a, b) => (b.L.length > a.L.length ? b : a),
+            per[0],
+          );
+        const cis = all
+            .map((f) => f.ci)
+            .filter(Boolean)
+            .sort(),
+          sts = all
+            .map((f) => f.std)
+            .filter(Boolean)
+            .sort(),
+          gt = all
+            .map((f) => tmin(f.std) - tmin(f.sta))
+            .filter((v) => !isNaN(v) && v >= 0);
+        const mons = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+          lab =
+            fp == "day"
+              ? s0
+              : fp == "month"
+                ? mons[+s0.slice(5, 7) - 1] + " " + s0.slice(0, 4)
+                : fp == "year"
+                  ? s0.slice(0, 4)
+                  : s0 + " → " + e0;
+        $("fpl").textContent =
+          { day: "Day", week: "Week", month: "Month", year: "Year" }[fp] +
+          ": " +
+          lab;
+        $("fkp").innerHTML = [
+          ["Flights", tot],
+          ["Operating days", act + " / " + days.length],
+          ["Avg per day", (tot / days.length).toFixed(1)],
+          [
+            "Peak day",
+            peak.L.length ? peak.ds.slice(5) + " · " + peak.L.length : "—",
+          ],
+          ["Earliest check-in", cis[0] || "—"],
+          ["Latest departure", sts[sts.length - 1] || "—"],
+          [
+            "Avg ground time",
+            gt.length
+              ? Math.round(gt.reduce((a, b) => a + b, 0) / gt.length) + " min"
+              : "—",
+          ],
+          ["Routes", new Set(all.map((f) => f.rt).filter(Boolean)).size],
+        ]
+          .map(
+            (k) =>
+              `<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`,
+          )
+          .join("");
+        const ac = {},
+          fn = {};
+        all.forEach((f) => {
+          ac[f.ac] = (ac[f.ac] || 0) + 1;
+          fn[f.no] = (fn[f.no] || 0) + 1;
+        });
+        const am = Math.max(1, ...Object.values(ac));
+        let c1 = "";
+        if (fp == "year") {
+          const mc = Array(12).fill(0);
+          per.forEach((p) => (mc[+p.ds.slice(5, 7) - 1] += p.L.length));
+          const m = Math.max(1, ...mc);
+          c1 = `<div class="card"><h2>Flights per month</h2>${mc.map((v, i) => bar(mons[i], v, m)).join("")}</div>`;
+        } else if (fp != "day") {
+          const m = Math.max(1, ...per.map((p) => p.L.length));
+          c1 = `<div class="card"><h2>Flights per day</h2>${per.map((p) => bar(WDN[new Date(p.ds + "T00:00:00").getDay()] + " " + +p.ds.slice(8), p.L.length, m)).join("")}</div>`;
+        }
+        const top = Object.entries(fn)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10),
+          tm = Math.max(1, ...top.map((x) => x[1]));
+        const tl = L.map((f) => {
+          const a = tmin(f.ci) ?? 0,
+            b = Math.min(1440, Math.max(a + 10, tmin(f.std) ?? a + 120));
+          return `<div class="tlr"><span>${esc(f.no)}</span><div class="tlt"><i style="left:${a / 14.4}%;width:${(b - a) / 14.4}%"></i></div></div>`;
+        }).join("");
+        $("fch").innerHTML =
+          c1 +
+          `<div class="card"><h2>Aircraft mix</h2>${
+            Object.keys(ac)
+              .map((k) => bar(k, ac[k], am))
+              .join("") || '<p class="lic">No flights in this period.</p>'
+          }</div>` +
+          (fp != "day"
+            ? `<div class="card"><h2>Flights by flight number</h2>${top.map((x) => bar(x[0], x[1], tm)).join("") || '<p class="lic">No flights in this period.</p>'}</div>`
+            : `<div class="card" style="grid-column:1/-1"><h2>Timeline · ${d}</h2>${tl || '<p class="lic">No flights on this date.</p>'}${tl ? '<div class="tax"><span>00</span><span>04</span><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span></div>' : ""}</div>`);
+        const rows = per
+          .flatMap((p) => p.L.map((f) => ({ ...f, ds: p.ds })))
+          .sort((a, b) =>
+            a.ds < b.ds
+              ? -1
+              : a.ds > b.ds
+                ? 1
+                : (a.ci || "") < (b.ci || "")
+                  ? -1
+                  : 1,
+          );
+        $("fdh").innerHTML =
+          'Upcoming Flights <span class="badge">' + rows.length + "</span>";
+        const ord = (n) =>
+            n +
+            (n % 100 >= 11 && n % 100 <= 13
+              ? "th"
+              : { 1: "st", 2: "nd", 3: "rd" }[n % 10] || "th"),
+          AP = {
+            MLE: "Malé, Maldives",
+            HRF: "Hoarafushi, Maldives",
+            HDK: "Kulhudhuffushi, Maldives",
+            HAQ: "Hanimaadhoo, Maldives",
+          };
+        const arrow =
+          '<svg viewBox="0 0 100 40" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 34 Q50 -6 96 34"/><path d="M76 7 L87 11 L81 20"/><circle cx="4" cy="34" r="2.2" fill="currentColor"/><circle cx="96" cy="34" r="2.2" fill="currentColor"/></svg>';
+        let html = "",
+          last = "";
+        rows.forEach((f) => {
+          if (f.ds != last) {
+            last = f.ds;
+            const x = new Date(f.ds + "T00:00:00");
+            html += `<div class="fdate">${x.toLocaleDateString("en-GB", { weekday: "long" })} ${ord(x.getDate())} ${x.toLocaleDateString("en-GB", { month: "long" })} ${x.getFullYear()}</div>`;
+          }
+          const st = (f.rt || "")
+              .toUpperCase()
+              .split(/[\/\-\s>→,]+/)
+              .filter(Boolean),
+            o = st[0] || "—",
+            dd = st.length > 1 ? st[st.length - 1] : "—",
+            via = st.slice(1, -1).join(" / ") || "no",
+            g = tmin(f.std) - tmin(f.sta),
+            gt = isNaN(g) || g < 0 ? "—" : g + " min",
+            a = `data-ds="${f.ds}"`,
+            stops =
+              st
+                .map(
+                  (c, i) =>
+                    (i ? '<i class="seg"></i>' : "") +
+                    `<span${c == "HRF" ? ' class="hub"' : ""}>${esc(c)}</span>`,
+                )
+                .join("") || "<span>NO ROUTE</span>";
+          html += `<div class="fcard"><div class="fhd"><b>${esc(f.no)}</b><span>${esc(f.ac)}</span><span class="fqa"><button data-fe="${f.id}" ${a}>Edit</button><button data-fd="${f.id}" ${a}>Delete</button></span></div><div class="rstrip" style="--rs:${st.length <= 2 ? 44 : st.length == 3 ? 38 : st.length == 4 ? 32 : 26}px">${stops}</div>
+<div class="fgrid3"><div><em>Check-in</em><span>${f.ci || "—"}</span><em>Departure</em><span>${f.std || "—"}</span><em>Aircraft</em><span>${esc(f.ac)}</span></div><div><em>Ground time</em><span>${gt}</span><em>Stopover</em><span>${esc(via)}</span></div><div><em>Arrival</em><span>${f.sta || "—"}</span><em>Status</em><span><i class="dotg"></i>Scheduled</span></div></div>
+<div class="fact"><button data-fe="${f.id}" ${a}>${ic("create-outline")} Edit</button><button data-fd="${f.id}" ${a} style="color:#E04B33">${ic("trash-outline")} Delete</button><button data-ft="${f.id}" ${a}>Task Assignment</button><button data-fu="${f.id}" ${a}>Duty Time</button></div></div>`;
+        });
+        $("sfl").innerHTML =
+          html ||
+          '<p class="lic">No flights in this period. Tap Add Flight, or use the arrows to look at other dates.</p>';
+      }
+      $("ftabs").onclick = (e) => {
+        const b = e.target.closest("[data-fp]");
+        if (!b) return;
+        fp = b.dataset.fp;
+        [...$("ftabs").children].forEach((x) =>
+          x.classList.toggle("on", x == b),
+        );
+        sch();
+      };
+      $("fprev").onclick = () => fshift(-1);
+      $("fnext").onclick = () => fshift(1);
+      $("ftod").onclick = () => {
+        fref = fd(new Date());
+        sch();
+      };
+      $("sfl").onclick = (e) => {
+        const b = e.target.closest("[data-fe],[data-fd],[data-ft],[data-fu]");
+        if (!b) return;
+        if (b.dataset.fd) {
+          if (confirm("Delete this flight?")) {
+            SCH = SCH.filter((f) => f.id != b.dataset.fd);
+            persist("ta_sch", SCH);
+            sch();
+            schOpts();
+          }
+          return;
+        }
+        const id = b.dataset.fe || b.dataset.ft || b.dataset.fu,
+          f = SCH.find((x) => x.id == id);
+        if (!f) return;
+        if (b.dataset.fe) {
+          sOpen(f);
+          return;
+        }
+        $("date").value = b.dataset.ds;
+        drawStaff();
+        schOpts();
+        if (b.dataset.ft) {
+          $("schsel").value = f.id;
+          $("schsel").onchange();
+          tab("A");
+        } else tab("U");
+      };
+      schOpts();
+      let LEDIT = null;
+      function lEditEnd() {
+        LEDIT = null;
+        $("la").innerHTML = ic("calendar-outline") + " Add Leave";
+        $("lcx").style.display = "none";
+      }
+      $("lcx").onclick = () => {
+        lEditEnd();
+        $("ln").value = "";
+      };
+      $("ll").onclick = (e) => {
+        const b = e.target.closest("[data-le]");
+        if (!b) return;
+        const l = LV.find((x) => x.id == b.dataset.le);
+        if (!l) return;
+        LEDIT = l.id;
+        if (![...$("ls").options].some((o) => o.value == l.n))
+          $("ls").innerHTML += `<option>${esc(l.n)}</option>`;
+        $("ls").value = l.n;
+        $("lf").value = l.f;
+        $("lt").value = l.t;
+        $("lty").value = l.type || "Annual Leave";
+        $("ln").value = l.note || "";
+        $("la").innerHTML = ic("checkmark-circle-outline") + " Update Leave";
+        $("lcx").style.display = "";
+        ltot();
+        $("ls").scrollIntoView({ block: "center" });
+      };
     </script>
   </body>
 </html>
