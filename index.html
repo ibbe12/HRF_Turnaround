@@ -1367,6 +1367,51 @@
       #tsub button {
         white-space: nowrap;
       }
+      .dn {
+        border-radius: 14px;
+        padding: 20px 18px;
+        color: #fff;
+        border-color: #3a4857;
+      }
+      .dn h2 {
+        color: #fff;
+        font-weight: 400;
+        font-size: 22px;
+        margin: 0 0 2px;
+      }
+      .dn .sb {
+        color: #2fd0b0;
+        font-size: 13px;
+      }
+      .dsv {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        margin: 6px auto 0;
+      }
+      .dl {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .dl span {
+        border: 1px solid var(--c);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: #e8edf3;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dl i {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--c);
+      }
       #modal {
         display: none;
         position: fixed;
@@ -1405,7 +1450,7 @@
       ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
       <p id="sbw" class="lic" style="padding: 0 6px"></p>
       <p class="lic" style="padding: 10px 6px 0; opacity: 0.7">
-        Version 25 Oct 2026 · k
+        Version 29 Oct 2026 · n
       </p>
     </aside>
     <main>
@@ -2449,6 +2494,12 @@
             OFFS.indexOf(p) - OFFS.indexOf(q),
         );
       }
+      const cat = (t) =>
+        /^Unload \/ Load Help/.test(t)
+          ? "Unload / Load Help"
+          : /^Unload \/ Load/.test(t)
+            ? "Unload / Load"
+            : t;
       function tl(excl) {
         const i = {},
           c = {};
@@ -2460,7 +2511,7 @@
           .forEach((l, k) =>
             [...l.a, ...l.b].forEach((o) =>
               o.staff.forEach((n) => {
-                const q = n + "|" + o.task;
+                const q = n + "|" + cat(o.task);
                 i[q] = k;
                 c[q] = (c[q] || 0) + 1;
               }),
@@ -2469,13 +2520,14 @@
         return { i, c };
       }
       function pickL(pool, task, lic, L) {
+        const t = cat(task);
         return (
           pool
             .filter((s) => !lic || LIC.includes(s))
             .sort(
               (p, q) =>
-                (L.i[p + "|" + task] ?? -1) - (L.i[q + "|" + task] ?? -1) ||
-                (L.c[p + "|" + task] || 0) - (L.c[q + "|" + task] || 0) ||
+                (L.i[p + "|" + t] ?? -1) - (L.i[q + "|" + t] ?? -1) ||
+                (L.c[p + "|" + t] || 0) - (L.c[q + "|" + t] || 0) ||
                 STAFF.indexOf(p) - STAFF.indexOf(q),
             )[0] || null
         );
@@ -2573,19 +2625,8 @@
           "Cart Load",
         ];
         a.sort((x, y) => co.indexOf(x.task) - co.indexOf(y.task));
-        const order = ["Baggage Tractor", "GPU", ...tt];
-        if (atr) {
-          const g = ["Unload / Load CP 1-2", "Unload / Load Help CP 1-2"]
-            .flatMap((t) => (b.find((o) => o.task == t) || { staff: [] }).staff)
-            .filter((n) => STAFF.includes(n));
-          b.push({ task: "GPU", staff: g });
-        } else {
-          const u = b.find((o) => o.task == "Unload / Load");
-          b.push({
-            task: "GPU",
-            staff: u ? u.staff.filter((n) => STAFF.includes(n)) : [],
-          });
-        }
+        const order = ["Baggage Tractor", ...tt, "GPU"];
+        b.push({ task: "GPU", staff: gpuStaff(b) });
         // keep tractor first, then listed order, Arrival last
         b.sort((x, y) => {
           const f = (t) => (t == "Arrival" ? 99 : order.indexOf(t));
@@ -2634,16 +2675,21 @@
           arr.sort((x, y) => f(x.task) - f(y.task));
         }
       }
+      function gpuStaff(b) {
+        const g = (t) =>
+            (b.find((o) => o.task == t) || { staff: [] }).staff.filter((n) =>
+              STAFF.includes(n),
+            ),
+          atr = b.some((o) => o.task == "Unload / Load CP 1-2"),
+          L = atr
+            ? [...g("Unload / Load CP 1-2"), ...g("Unload / Load Help CP 1-2")]
+            : [...g("Unload / Load Help"), ...g("Unload / Load")];
+        return L.filter((n, i, a) => a.indexOf(n) == i).slice(0, 2);
+      }
       function fixGPU() {
-        const b = res.b,
-          g = b.find((o) => o.task == "GPU");
+        const g = res.b.find((o) => o.task == "GPU");
         if (!g) return;
-        const src = b.some((o) => o.task == "Unload / Load CP 1-2")
-          ? ["Unload / Load CP 1-2", "Unload / Load Help CP 1-2"]
-          : ["Unload / Load"];
-        g.staff = src
-          .flatMap((t) => (b.find((o) => o.task == t) || { staff: [] }).staff)
-          .filter((n) => STAFF.includes(n));
+        g.staff = gpuStaff(res.b.filter((o) => o.task != "GPU"));
       }
       function manual(part, task, i, val) {
         const arr = res[part],
@@ -3341,7 +3387,6 @@
       function ordFor(ac) {
         return [
           "Baggage Tractor",
-          "GPU",
           "Chock / Cabin Cleaning",
           ...(ac.startsWith("ATR")
             ? [
@@ -3351,6 +3396,7 @@
                 "Unload / Load Help CP 3-4",
               ]
             : ["Unload / Load", "Unload / Load Help"]),
+          "GPU",
         ];
       }
       function editFlight(id) {
@@ -5497,11 +5543,7 @@
         }).join("");
         $("fch").innerHTML =
           c1 +
-          `<div class="card"><h2>Aircraft mix</h2>${
-            Object.keys(ac)
-              .map((k) => bar(k, ac[k], am))
-              .join("") || '<p class="lic">No flights in this period.</p>'
-          }</div>` +
+          `${donut(ac, tot, lab)}` +
           (fp != "day"
             ? `<div class="card"><h2>Flights by flight number</h2>${top.map((x) => bar(x[0], x[1], tm)).join("") || '<p class="lic">No flights in this period.</p>'}</div>`
             : `<div class="card" style="grid-column:1/-1"><h2>Timeline · ${d}</h2>${tl || '<p class="lic">No flights on this date.</p>'}${tl ? '<div class="tax"><span>00</span><span>04</span><span>08</span><span>12</span><span>16</span><span>20</span><span>24</span></div>' : ""}</div>`);
@@ -5713,7 +5755,7 @@
                 if (!tk[n]) return;
                 const c = tk[n][l.date] || (tk[n][l.date] = []);
                 if (!c.includes(o.task)) c.push(o.task);
-                last[n + "|" + o.task] = l.date;
+                last[n + "|" + cat(o.task)] = l.date;
               });
             }),
           );
@@ -5750,7 +5792,7 @@
                   else
                     c = (tk[n][d] || [])
                       .map((t) => {
-                        const k = n + "|" + d + "|" + t,
+                        const k = n + "|" + d + "|" + cat(t),
                           h = hl.has(k);
                         return `<span class="hc${h ? " hl" : ""}" title="${esc(t)}${h ? " · longest gap: last done " + gap[k] + " days ago" : ""}">${esc(SHT[t] || t)}</span>`;
                       })
@@ -6299,6 +6341,43 @@
           );
         if (r == "declined") return;
       };
+
+      function donut(ac, total, sub) {
+        const ks = Object.keys(ac)
+            .sort((a, b) => ac[b] - ac[a])
+            .slice(0, 5),
+          COL = [
+            ["#7c5cff", "#a56bff"],
+            ["#ff7a45", "#ff5a6a"],
+            ["#19d3a6", "#12c4e6"],
+            ["#3fa9f5", "#5b7cff"],
+            ["#f5c242", "#ff9f45"],
+          ];
+        const h = `<div class="card dn"><h2>Aircraft Type</h2><div class="sb">${esc(sub)} · ${total} flight${total == 1 ? "" : "s"}</div>`;
+        if (!ks.length)
+          return (
+            h +
+            '<p style="color:#9fb0c0;margin-top:16px">No flights in this period.</p></div>'
+          );
+        const mx = ac[ks[0]],
+          pt = (r, a) => [150 + r * Math.cos(a), 150 + r * Math.sin(a)];
+        let svg = `<svg viewBox="0 0 300 300" class="dsv"><defs>${ks.map((k, i) => `<linearGradient id="dg${i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${COL[i][0]}"/><stop offset="1" stop-color="${COL[i][1]}"/></linearGradient>`).join("")}</defs>`;
+        ks.forEach((k, i) => {
+          const r = 124 - i * 22,
+            deg = Math.max(14, (ac[k] / mx) * 300),
+            a0 = -Math.PI / 2,
+            a1 = a0 + (deg * Math.PI) / 180,
+            [x0, y0] = pt(r, a0),
+            [x1, y1] = pt(r, a1);
+          svg += `<circle cx="150" cy="150" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="12"/><path d="M${x0} ${y0}A${r} ${r} 0 ${deg > 180 ? 1 : 0} 1 ${x1} ${y1}" fill="none" stroke="url(#dg${i})" stroke-width="12" stroke-linecap="round"/><text x="${x0 - 12}" y="${y0 + 4}" text-anchor="end" fill="${COL[i][0]}" font-size="13">${ac[k]}</text>`;
+        });
+        svg += `<text x="150" y="152" text-anchor="middle" fill="#fff" font-size="46" font-weight="300">${Math.round((ac[ks[0]] / total) * 100)}<tspan font-size="16" dy="-18" dx="3">%</tspan></text><text x="150" y="178" text-anchor="middle" fill="#c9d3dd" font-size="14">${esc(ks[0])}</text></svg>`;
+        return (
+          h +
+          svg +
+          `<div class="dl">${ks.map((k, i) => `<span style="--c:${COL[i][0]}"><i></i>${esc(k)} · ${ac[k]}</span>`).join("")}</div></div>`
+        );
+      }
     </script>
   </body>
 </html>
