@@ -1368,6 +1368,7 @@
         white-space: nowrap;
       }
       .dn {
+        background: 
         border-radius: 14px;
         padding: 20px 18px;
         color: #fff;
@@ -1412,6 +1413,32 @@
         border-radius: 50%;
         background: var(--c);
       }
+      .fb {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .fb.ok {
+        background: #cfe8c9;
+        color: #2f3b2d;
+      }
+      .fb.no {
+        background: #f5b7a8;
+        color: #4a2a22;
+      }
+      #sb .badge {
+        background: #f98513;
+        color: #111144;
+      }
+      #pL > * {
+        grid-column: 1/-1;
+      }
+      #lsub button {
+        white-space: nowrap;
+      }
       #modal {
         display: none;
         position: fixed;
@@ -1439,7 +1466,11 @@
         <span data-ic="stats-chart-outline"></span> Dashboard</button
       ><button id="nF"><span data-ic="airplane"></span> Flight Schedule</button
       ><button id="nL">
-        <span data-ic="calendar-outline"></span> Leave Management</button
+        <span data-ic="calendar-outline"></span> Leave Management<span
+          class="badge"
+          id="nlb"
+          style="margin-left: auto; display: none"
+        ></span></button
       ><button id="nA" class="on">
         <span data-ic="clipboard-outline"></span> Task Assignment</button
       ><button id="nU"><span data-ic="time-outline"></span> Duty Time</button
@@ -1450,7 +1481,7 @@
       ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
       <p id="sbw" class="lic" style="padding: 0 6px"></p>
       <p class="lic" style="padding: 10px 6px 0; opacity: 0.7">
-        Version 29 Oct 2026 · n
+        Version 30 Oct 2026 · p
       </p>
     </aside>
     <main>
@@ -2193,61 +2224,219 @@
         </div>
       </div>
       <div id="pL" style="display: none">
-        <div class="card">
-          <h2>Add leave</h2>
-          <div class="g">
-            <div>
-              <label>Staff</label
-              ><select id="ls"></select>
-            </div>
-            <div><label>From</label><input type="date" id="lf" /></div>
-            <div><label>To</label><input type="date" id="lt" /></div>
-            <div>
-              <label>Leave type</label
-              ><select id="lty">
-                <option>Annual Leave</option>
-                <option>FRL</option>
-                <option>SL</option>
-                <option>SLM</option>
-                <option>Off Day</option>
-                <option>Release</option>
-              </select>
-            </div>
-            <div><label>Note (optional)</label><input id="ln" /></div>
+        <div
+          class="tabs"
+          id="lsub"
+          style="
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            max-width: 100%;
+            margin-bottom: 12px;
+          "
+        >
+          <button data-ls="db" class="on">Leave Dashboard</button
+          ><button data-ls="ap">Leave Applications</button
+          ><button data-ls="pl">Leave Planning &amp; Scheduling</button
+          ><button data-ls="bl">Leave Balances</button
+          ><button data-ls="ft">Leave form tracking</button
+          ><button data-ls="po">Leave Types &amp; Policies</button
+          ><button data-ls="hs">Leave History &amp; Audit Logs</button
+          ><button data-ls="cl">Leave Calendar</button>
+        </div>
+        <div class="lv" id="lv-db">
+          <div class="row" style="align-items: center; margin-bottom: 12px">
+            <h2 style="margin: 0; flex: 1">Leave dashboard</h2>
+            <button id="ldap" style="flex: 0 0 auto">
+              <span data-ic="calendar-outline"></span> Apply leave
+            </button>
           </div>
-          <p id="ld" style="margin: 10px 0 0; font-size: 14px"></p>
-          <button id="la" style="margin-top: 10px">
-            <span data-ic="calendar-outline"></span> Add Leave
-          </button>
-          <button id="lcx" class="s" style="margin-top: 10px; display: none">
-            Cancel edit
-          </button>
-          <p class="lic">
-            Staff on leave are automatically excluded when the flight date falls
-            in their leave period.
-          </p>
+          <div class="g kp" id="ldk" style="margin-bottom: 14px"></div>
+          <div class="fgrid" id="ldc"></div>
         </div>
-        <div class="card">
-          <h2>Leave balance</h2>
-          <p class="lic">
-            Annual Leave 30 days (32 days once the person has 5 or more years of
-            service), FRL 10, SL 15 and SLM 15 per leave year. Off Day (one per
-            week) and Release (unlimited) are recorded but never deducted from
-            any balance. Each person's leave year starts on the anniversary of
-            their join date, so enter join dates below. Fridays and public
-            holidays are not deducted from Annual Leave; all other days are
-            counted as calendar days. Leave records saved before this update
-            count as Annual Leave.
-          </p>
-          <div id="lbal" class="sc"></div>
+        <div class="lv" id="lv-ap" style="display: none">
+          <div class="card">
+            <h2>Add leave</h2>
+            <div class="g">
+              <div>
+                <label>Staff</label
+                ><select id="ls"></select>
+              </div>
+              <div><label>From</label><input type="date" id="lf" /></div>
+              <div><label>To</label><input type="date" id="lt" /></div>
+              <div>
+                <label>Leave type</label
+                ><select id="lty">
+                  <option>Annual Leave</option>
+                  <option>FRL</option>
+                  <option>SL</option>
+                  <option>SLM</option>
+                  <option>Off Day</option>
+                  <option>Release</option>
+                </select>
+              </div>
+              <div><label>Note (optional)</label><input id="ln" /></div>
+            </div>
+            <p id="ld" style="margin: 10px 0 0; font-size: 14px"></p>
+            <button id="la" style="margin-top: 10px">
+              <span data-ic="calendar-outline"></span> Add Leave
+            </button>
+            <button id="lcx" class="s" style="margin-top: 10px; display: none">
+              Cancel edit
+            </button>
+            <p class="lic">
+              Staff on leave are automatically excluded when the flight date
+              falls in their leave period.
+            </p>
+          </div>
+          <div class="card">
+            <h2>Leave applications</h2>
+            <div id="ll"></div>
+          </div>
         </div>
-        <div class="card">
-          <h2>Calendar</h2>
-          <div id="lc"></div>
+        <div class="lv" id="lv-pl" style="display: none">
+          <div class="card">
+            <h2>Leave planning &amp; scheduling</h2>
+            <div class="g" style="margin-top: 8px">
+              <div>
+                <label>Department</label
+                ><select id="lpd"></select>
+              </div>
+            </div>
+            <div
+              class="row"
+              style="align-items: center; margin-top: 12px; flex-wrap: nowrap"
+            >
+              <button class="s" id="lpp" style="flex: 0 0 48px">
+                <span data-ic="chevron-back-outline"></span></button
+              ><b
+                id="lpl"
+                style="flex: 1; text-align: center; font-size: 14px"
+              ></b
+              ><button class="s" id="lpn" style="flex: 0 0 48px">
+                <span data-ic="chevron-forward-outline"></span></button
+              ><button class="s" id="lpt0" style="flex: 0 0 auto">Today</button>
+            </div>
+            <p class="lic" style="margin-top: 8px">
+              Coloured cells are planned or taken leave. Tap an empty day to
+              apply leave for that person. The bottom rows show how many are on
+              leave and how many are available; days below the minimum staff
+              level are marked red.
+            </p>
+            <div class="sc" id="lpt" style="margin-top: 8px"></div>
+            <div
+              class="dl"
+              id="lpg"
+              style="justify-content: flex-start; margin-top: 10px"
+            ></div>
+          </div>
         </div>
-        <div class="card">
-          <h2>Leave records</h2>
-          <div id="ll"></div>
+        <div class="lv" id="lv-bl" style="display: none">
+          <div class="card">
+            <h2>Leave balance</h2>
+            <p class="lic">
+              Entitlements and rules are set in Leave Types &amp; Policies. Each
+              person's leave year starts on the anniversary of their join date,
+              so enter join dates below. Fridays and public holidays are not
+              deducted from Annual Leave; all other days are counted as calendar
+              days.
+            </p>
+            <div id="lbal" class="sc"></div>
+          </div>
+        </div>
+        <div class="lv" id="lv-ft" style="display: none">
+          <div class="card">
+            <div class="row" style="align-items: center">
+              <h2 style="margin: 0; flex: 1">Leave form tracking</h2>
+              <div class="tabs" id="ftt" style="flex: 0 0 auto">
+                <button data-fm="pending" class="on">Not submitted</button
+                ><button data-fm="done">Submitted</button
+                ><button data-fm="all">All</button>
+              </div>
+            </div>
+            <div class="g kp" id="ftk" style="margin-top: 12px"></div>
+            <div class="g" style="margin-top: 12px">
+              <div>
+                <label>Leave type</label
+                ><select id="fty">
+                  <option value="">All types</option>
+                  <option value="Annual Leave">
+                    AL · Annual Leave (chit from HR)
+                  </option>
+                  <option>FRL</option>
+                  <option>SL</option>
+                  <option>SLM</option>
+                </select>
+              </div>
+              <div>
+                <label>Staff</label
+                ><select id="ftn"></select>
+              </div>
+            </div>
+            <div class="sc" id="ftl" style="margin-top: 12px"></div>
+            <p class="lic" style="margin-top: 10px">
+              Tracked for AL, FRL, SL and SLM. For Annual Leave (AL), tick when
+              the annual leave chit has been received from HR. For FRL, SL and
+              SLM, tick when the leave form has been received. Off Day and
+              Release need no form.
+            </p>
+          </div>
+        </div>
+        <div class="lv" id="lv-po" style="display: none">
+          <div class="card">
+            <h2>Leave types</h2>
+            <div class="sc" id="lpo"></div>
+          </div>
+          <div class="card">
+            <h2>Policies</h2>
+            <div class="g" id="lpp2"></div>
+            <p class="lic" style="margin-top: 8px">
+              Changes apply straight away to balances, planning warnings and the
+              dashboard.
+            </p>
+          </div>
+        </div>
+        <div class="lv" id="lv-hs" style="display: none">
+          <div class="card">
+            <h2>Leave history</h2>
+            <div class="g">
+              <div>
+                <label>Staff</label
+                ><select id="lhn"></select>
+              </div>
+              <div>
+                <label>Year</label
+                ><select id="lhy"></select>
+              </div>
+              <div>
+                <label>Leave type</label
+                ><select id="lht">
+                  <option value="">All types</option>
+                  <option value="Annual Leave">AL · Annual Leave</option>
+                  <option>FRL</option>
+                  <option>SL</option>
+                  <option>SLM</option>
+                  <option>Off Day</option>
+                  <option>Release</option>
+                </select>
+              </div>
+            </div>
+            <div class="g kp" id="lhk" style="margin-top: 12px"></div>
+            <div class="sc" id="lhl" style="margin-top: 12px"></div>
+          </div>
+          <div class="card">
+            <h2>Audit log</h2>
+            <p class="lic">
+              Every leave applied, updated or deleted, and every form received
+              or unmarked, with the date and time.
+            </p>
+            <div class="sc" id="lau" style="margin-top: 8px"></div>
+          </div>
+        </div>
+        <div class="lv" id="lv-cl" style="display: none">
+          <div class="card">
+            <h2>Calendar</h2>
+            <div id="lc"></div>
+          </div>
         </div>
       </div>
       <div id="pB" style="display: none">
@@ -3352,8 +3541,20 @@
             type: $("lty").value,
           },
           lk = LEDIT ? LV.findIndex((x) => x.id == LEDIT) : -1;
-        if (lk >= 0) LV[lk] = rec;
-        else LV.push(rec);
+        if (lk >= 0) {
+          const o = LV[lk];
+          rec.form = o.form;
+          rec.formDate = o.formDate;
+          aud(
+            "Updated",
+            rec,
+            "was " + (o.type || "Annual Leave") + " " + o.f + " → " + o.t,
+          );
+          LV[lk] = rec;
+        } else {
+          LV.push(rec);
+          aud("Applied", rec, rec.note || "");
+        }
         lEditEnd();
         $("ln").value = "";
         svL();
@@ -3364,18 +3565,25 @@
         cal();
         bal();
         ltot();
+        ftr();
+        ldb();
+        lplan();
+        lpol();
+        lhist();
         const td = fd(new Date());
         $("ll").innerHTML =
           LV.slice()
             .sort((a, b) => (a.f < b.f ? 1 : -1))
             .map(
               (l) =>
-                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t} · ${cdays(l.f, l.t, l.type || "Annual Leave")} day${cdays(l.f, l.t, l.type || "Annual Leave") == 1 ? "" : "s"}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}</small></b><span><button class="del" data-le="${l.id}">${ic("create-outline")} Edit</button><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
+                `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")} · ${l.f} → ${l.t} · ${cdays(l.f, l.t, l.type || "Annual Leave")} day${cdays(l.f, l.t, l.type || "Annual Leave") == 1 ? "" : "s"}${l.note ? " · " + esc(l.note) : ""}${l.f <= td && td <= l.t ? " · ON LEAVE NOW" : ""}${trk(l) ? (l.form ? " · Form submitted" : " · Form not submitted") : ""}</small></b><span><button class="del" data-le="${l.id}">${ic("create-outline")} Edit</button><button class="del" data-lv="${l.id}">${ic("trash-outline")} Delete</button></span></div>`,
             )
             .join("") || "No leave records";
         document.querySelectorAll("[data-lv]").forEach(
           (b) =>
             (b.onclick = () => {
+              const l0 = LV.find((x) => x.id == b.dataset.lv);
+              if (l0) aud("Deleted", l0, "");
               LV = LV.filter((l) => l.id != b.dataset.lv);
               svL();
               leaves();
@@ -3593,6 +3801,8 @@
           SCH,
           SHF,
           CORR,
+          AUD,
+          POL,
         });
       $("bkb").onclick = async () => {
         const name = "turnaround-backup-" + fd(new Date()) + ".json",
@@ -3698,6 +3908,15 @@
             if (!CORR.some((x) => x.id == c.id)) CORR.push(c);
           });
           persist("ta_cor", CORR);
+          (d.AUD || []).forEach((a) => {
+            if (!AUD.some((x) => x.id == a.id)) AUD.push(a);
+          });
+          persist("ta_aud", AUD);
+          if (d.POL) {
+            POL = Object.assign({}, POL, d.POL);
+            persist("ta_pol", POL);
+            applyPol();
+          }
           syncAll();
           schOpts();
           persist("ta_jd", JD);
@@ -3789,7 +4008,7 @@
         const ref = fd(new Date()),
           ks = Object.keys(LT);
         $("lbal").innerHTML =
-          `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${k == "Annual Leave" ? "30 days · 32 after 5 yrs" : LT[k] + " days"}</small></th>`).join("")}</tr>` +
+          `<table><tr><th>Name</th><th>Join date</th><th>Leave year</th>${ks.map((k) => `<th>${k}<br><small class="lic">${k == "Annual Leave" ? LT[k] + " days · " + POL.svcAnnual + " after " + POL.svcYears + " yrs" : LT[k] + " days"}</small></th>`).join("")}</tr>` +
           ALLR.map((n) => {
             const jd = JD[n] || "";
             let c = "",
@@ -3804,7 +4023,10 @@
                 `<br>Service: ${yrs} yr${yrs == 1 ? "" : "s"}`;
               cells = ks
                 .map((k) => {
-                  const tot = k == "Annual Leave" && yrs >= 5 ? 32 : LT[k],
+                  const tot =
+                      k == "Annual Leave" && yrs >= POL.svcYears
+                        ? POL.svcAnnual
+                        : LT[k],
                     u = used(n, k, cs, ce),
                     r = tot - u;
                   return `<td style="font-weight:600;${r < 0 ? "color:#E04B33" : ""}">${r}<br><small class="lic">${u} used · of ${tot}</small></td>`;
@@ -4543,7 +4765,7 @@
         hol();
       };
 
-      function ltot() {
+      function ltot0() {
         const f = $("lf").value,
           t = $("lt").value;
         if (!f || !t) {
@@ -4575,7 +4797,6 @@
             : "");
       }
       ["lf", "lt", "lty"].forEach((i) => ($(i).onchange = ltot));
-      ltot();
       function cdays(f, t, ty) {
         let n = 0;
         for (
@@ -4761,9 +4982,12 @@
       function dpOpts() {
         const o = DEPTS.map((d) => `<option>${d}</option>`).join(""),
           a = '<option value="">All departments</option>' + o,
-          rv = $("rdp").value || "Security";
+          rv = $("rdp").value || "Security",
+          pv = $("lpd").value || "Ground Staff";
         $("rdp").innerHTML = a;
         $("rdp").value = rv;
+        $("lpd").innerHTML = a;
+        $("lpd").value = pv;
         $("edp").innerHTML = o;
         $("efg").innerHTML = a;
         const t = $("tg").value;
@@ -6378,6 +6602,441 @@
           `<div class="dl">${ks.map((k, i) => `<span style="--c:${COL[i][0]}"><i></i>${esc(k)} · ${ac[k]}</span>`).join("")}</div></div>`
         );
       }
+      const TRK = ["Annual Leave", "FRL", "SL", "SLM"],
+        TCD = { "Annual Leave": "AL", FRL: "FRL", SL: "SL", SLM: "SLM" },
+        trk = (l) => TRK.includes(l.type || "Annual Leave");
+      let ftm = "pending";
+      function ftr() {
+        const td = fd(new Date()),
+          all = LV.filter(trk),
+          pend = all.filter((l) => !l.form),
+          over = pend.filter((l) => l.f <= td);
+        $("nlb").style.display = pend.length ? "" : "none";
+        $("nlb").textContent = pend.length;
+        $("ftk").innerHTML = [
+          ["Forms tracked", all.length],
+          ["Submitted", all.length - pend.length],
+          ["Not submitted", pend.length],
+          ["Follow up now", over.length],
+        ]
+          .map(
+            (k) =>
+              `<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`,
+          )
+          .join("");
+        const v = $("ftn").value;
+        $("ftn").innerHTML =
+          '<option value="">All staff</option>' +
+          [...new Set(all.map((l) => l.n))]
+            .sort()
+            .map((n) => `<option>${esc(n)}</option>`)
+            .join("");
+        $("ftn").value = v;
+        const L = all
+          .filter(
+            (l) =>
+              (ftm == "all" || (ftm == "pending") == !l.form) &&
+              (!$("fty").value ||
+                (l.type || "Annual Leave") == $("fty").value) &&
+              (!$("ftn").value || l.n == $("ftn").value),
+          )
+          .sort(
+            (a, b) =>
+              (a.form ? 1 : 0) - (b.form ? 1 : 0) ||
+              (a.f < b.f ? -1 : a.f > b.f ? 1 : 0),
+          );
+        const dd = (a) =>
+          Math.round(
+            (new Date(td + "T00:00:00") - new Date(a + "T00:00:00")) / 864e5,
+          );
+        $("ftl").innerHTML = L.length
+          ? `<table><tr><th>Staff</th><th>Leave type</th><th>Leave dates</th><th>Form status</th><th>Received</th><th>Date received</th></tr>` +
+            L.map((l) => {
+              const t = l.type || "Annual Leave",
+                n = dd(l.f),
+                fu = l.form
+                  ? ""
+                  : `<br><small class="lic">${l.f <= td ? "Leave started " + n + " day" + (n == 1 ? "" : "s") + " ago · follow up" : "Starts in " + -n + " day" + (n == -1 ? "" : "s")}</small>`;
+              return `<tr><td style="text-align:left"><b>${esc(l.n)}</b></td><td><span class="badge" title="${esc(t)}${t == "Annual Leave" ? " · chit from HR" : ""}">${TCD[t]}</span></td><td>${l.f} → ${l.t}<br><small class="lic">${cdays(l.f, l.t, t)} day${cdays(l.f, l.t, t) == 1 ? "" : "s"}</small></td><td><span class="fb ${l.form ? "ok" : "no"}">${l.form ? "✓ Submitted" : "✕ Not submitted"}</span>${fu}</td><td><input type="checkbox" data-fid="${l.id}" ${l.form ? "checked" : ""} style="width:20px;height:20px" title="${t == "Annual Leave" ? "Annual leave chit received from HR" : "Leave form received"}"></td><td><input type="date" data-fdt="${l.id}" value="${l.formDate || ""}" style="height:32px;font-size:12px;min-width:130px"></td></tr>`;
+            }).join("") +
+            "</table>"
+          : `<p class="lic">${ftm == "pending" ? "No pending forms. Every tracked leave form has been submitted." : "No leave forms to show."}</p>`;
+      }
+      $("ftt").onclick = (e) => {
+        const b = e.target.closest("[data-fm]");
+        if (!b) return;
+        ftm = b.dataset.fm;
+        [...$("ftt").children].forEach((x) => x.classList.toggle("on", x == b));
+        ftr();
+      };
+      $("fty").onchange = ftr;
+      $("ftn").onchange = ftr;
+      $("ftl").onchange = (e) => {
+        const t = e.target,
+          id = t.dataset.fid || t.dataset.fdt,
+          l = LV.find((x) => x.id == id);
+        if (!l) return;
+        if (t.dataset.fid) {
+          l.form = t.checked;
+          l.formDate = t.checked ? l.formDate || fd(new Date()) : "";
+        } else {
+          l.formDate = t.value;
+          l.form = !!t.value;
+        }
+        aud(l.form ? "Form received" : "Form unmarked", l, l.formDate || "");
+        svL();
+        leaves();
+      };
+      ftr();
+      let POL = {
+        ent: { "Annual Leave": 30, FRL: 10, SL: 15, SLM: 15 },
+        svcYears: 5,
+        svcAnnual: 32,
+        minStaff: 7,
+      };
+      try {
+        const x = JSON.parse(localStorage.getItem("ta_pol"));
+        if (x) POL = Object.assign(POL, x);
+      } catch (e) {}
+      const applyPol = () => Object.assign(LT, POL.ent);
+      applyPol();
+      let AUD = [];
+      try {
+        AUD = JSON.parse(localStorage.getItem("ta_aud")) || [];
+      } catch (e) {}
+      function aud(a, l, d) {
+        AUD.push({
+          id: Date.now() + Math.random(),
+          at: new Date().toISOString(),
+          a,
+          n: l.n,
+          type: l.type || "Annual Leave",
+          f: l.f,
+          t: l.t,
+          d: d || "",
+        });
+        if (AUD.length > 2000) AUD = AUD.slice(-2000);
+        persist("ta_aud", AUD);
+      }
+      function confl(n, f, t) {
+        if (!STAFF.includes(n) || !f || !t || t < f) return [];
+        const out = [];
+        for (
+          let x = new Date(f + "T00:00:00"), e = new Date(t + "T00:00:00");
+          x <= e && out.length < 60;
+          x.setDate(x.getDate() + 1)
+        ) {
+          const d = fd(x),
+            off = new Set(
+              LV.filter(
+                (l) =>
+                  l.id != LEDIT && STAFF.includes(l.n) && l.f <= d && d <= l.t,
+              ).map((l) => l.n),
+            );
+          off.add(n);
+          if (STAFF.length - off.size < POL.minStaff) out.push(d);
+        }
+        return out;
+      }
+      function ltot() {
+        ltot0();
+        const cf = confl($("ls").value, $("lf").value, $("lt").value);
+        if (cf.length)
+          $("ld").innerHTML +=
+            `<br><span style="color:#E04B33">Staff shortage: fewer than ${POL.minStaff} Ground Staff would be available on ${cf.slice(0, 6).join(", ")}${cf.length > 6 ? " …" : ""}</span>`;
+      }
+      $("ls").onchange = ltot;
+      const LSV = ["db", "ap", "pl", "bl", "ft", "po", "hs", "cl"];
+      function lsw(x) {
+        document
+          .querySelectorAll("#lsub button")
+          .forEach((b) => b.classList.toggle("on", b.dataset.ls == x));
+        LSV.forEach((k) => ($("lv-" + k).style.display = k == x ? "" : "none"));
+        leaves();
+      }
+      $("lsub").onclick = (e) => {
+        const b = e.target.closest("[data-ls]");
+        if (b) lsw(b.dataset.ls);
+      };
+      $("ldap").onclick = () => lsw("ap");
+      const addD = (d, n) => {
+        const x = new Date(d + "T00:00:00");
+        x.setDate(x.getDate() + n);
+        return fd(x);
+      };
+      function dcount(l, a, b) {
+        const ty = l.type || "Annual Leave",
+          s0 = l.f > a ? l.f : a,
+          e0 = l.t < b ? l.t : b;
+        if (s0 > e0) return 0;
+        let c = 0;
+        for (
+          let x = new Date(s0 + "T00:00:00"), e = new Date(e0 + "T00:00:00");
+          x <= e;
+          x.setDate(x.getDate() + 1)
+        ) {
+          if (ty == "Annual Leave" && (x.getDay() == 5 || HOL[fd(x)])) continue;
+          c++;
+        }
+        return c;
+      }
+      const LTC = {
+        "Annual Leave": ["AL", "#C5D5F2"],
+        FRL: ["FRL", "#CFE8C9"],
+        SL: ["SL", "#F5B7A8"],
+        SLM: ["SLM", "#DCC8EE"],
+        "Off Day": ["OFF", "#E2DED9"],
+        Release: ["REL", "#FBD9B5"],
+      };
+      function ldb() {
+        const td = fd(new Date()),
+          yr = td.slice(0, 4),
+          on = LV.filter((l) => l.f <= td && td <= l.t),
+          up = LV.filter((l) => l.f > td && l.f <= addD(td, 14)).sort((a, b) =>
+            a.f < b.f ? -1 : 1,
+          ),
+          pend = LV.filter((l) => trk(l) && !l.form).length,
+          Y = [yr + "-01-01", yr + "-12-31"],
+          cnt = (l) =>
+            ["Annual Leave", "FRL", "SL", "SLM"].includes(
+              l.type || "Annual Leave",
+            );
+        const yd = LV.filter(cnt).reduce(
+          (a, l) => a + dcount(l, Y[0], Y[1]),
+          0,
+        );
+        $("ldk").innerHTML = [
+          ["On leave today", on.length],
+          ["Starting in 14 days", up.length],
+          ["Forms not submitted", pend],
+          ["Leave days this year", yd],
+        ]
+          .map(
+            (k) =>
+              `<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`,
+          )
+          .join("");
+        const row = (l, w) =>
+          `<div class="t"><b>${esc(l.n)}<br><small class="lic">${esc(l.type || "Annual Leave")}</small></b><span>${w}</span></div>`;
+        const bt = {},
+          bm = Array(12).fill(0);
+        LV.forEach((l) => {
+          const t = l.type || "Annual Leave";
+          bt[t] = (bt[t] || 0) + dcount(l, Y[0], Y[1]);
+          if (cnt(l))
+            for (let m = 0; m < 12; m++) {
+              const a = yr + "-" + pad(m + 1) + "-01",
+                b = yr + "-" + pad(m + 1) + "-31";
+              bm[m] += dcount(l, a, b);
+            }
+        });
+        const bx = Math.max(1, ...Object.values(bt)),
+          mx = Math.max(1, ...bm),
+          mons = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ],
+          al = [];
+        ALLR.forEach((n) => {
+          const jd = JD[n];
+          if (!jd) return;
+          const [cs, ce] = cyc(jd, td),
+            yrs = Math.max(0, +cs.slice(0, 4) - +jd.slice(0, 4)),
+            tot = yrs >= POL.svcYears ? POL.svcAnnual : LT["Annual Leave"],
+            rem = tot - used(n, "Annual Leave", cs, ce);
+          if (rem <= 3) al.push([n, rem]);
+        });
+        $("ldc").innerHTML =
+          `<div class="card"><h2>On leave today</h2>${on.map((l) => row(l, "until " + l.t)).join("") || '<p class="lic">Nobody is on leave today.</p>'}</div><div class="card"><h2>Starting in the next 14 days</h2>${up.map((l) => row(l, l.f + " → " + l.t)).join("") || '<p class="lic">No leave starting soon.</p>'}</div><div class="card"><h2>Leave days by type · ${yr}</h2>${
+            Object.keys(bt)
+              .map((k) => bar((LTC[k] || [k])[0], bt[k], bx))
+              .join("") || '<p class="lic">No leave recorded.</p>'
+          }</div><div class="card"><h2>Leave days per month · ${yr}</h2>${bm.map((v, i) => bar(mons[i], v, mx)).join("")}</div><div class="card"><h2>Annual leave balance alerts</h2>${al.map((a) => row({ n: a[0], type: "Annual Leave" }, a[1] < 0 ? `<b style="color:#E04B33">${a[1]} days (over)</b>` : a[1] + " days left")).join("") || '<p class="lic">No low annual leave balances.</p>'}</div>`;
+      }
+      let lpref = fd(new Date()).slice(0, 7) + "-01";
+      function lplan() {
+        const ym = lpref.slice(0, 7),
+          days = mdays(ym),
+          dp = $("lpd").value,
+          L = EMP.filter(
+            (e) => e.status != "Inactive" && (!dp || e.dept == dp),
+          ),
+          mn = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+        $("lpl").textContent = mn[+ym.slice(5) - 1] + " " + ym.slice(0, 4);
+        const lv = (e, d) =>
+            LV.find((l) => l.n == ref(e) && l.f <= d && d <= l.t),
+          on = (d) => L.filter((e) => lv(e, d)).length,
+          low = (d) => dp == "Ground Staff" && L.length - on(d) < POL.minStaff;
+        $("lpt").innerHTML = L.length
+          ? `<table class="rs"><tr><th>${dp || "All"}</th>${days.map((d) => `<th title="${d}"><small>${WDN[new Date(d + "T00:00:00").getDay()]}</small><br>${+d.slice(8)}</th>`).join("")}</tr>${L.map(
+              (e) =>
+                `<tr><td>${esc(ref(e))}</td>${days
+                  .map((d) => {
+                    const l = lv(e, d);
+                    if (l) {
+                      const c = LTC[l.type || "Annual Leave"] || ["?", "#ddd"];
+                      return `<td style="background:${c[1]};font-weight:700;font-size:10px;color:#2b2b2b" title="${esc(l.type || "Annual Leave")} ${l.f} → ${l.t}">${c[0]}</td>`;
+                    }
+                    return `<td data-pn="${esc(ref(e))}" data-pd="${d}" style="cursor:pointer"></td>`;
+                  })
+                  .join("")}</tr>`,
+            ).join(
+              "",
+            )}<tr><td><b>On leave</b></td>${days.map((d) => `<td>${on(d) || ""}</td>`).join("")}</tr><tr><td><b>Available</b></td>${days.map((d) => `<td${low(d) ? ' style="background:#F5B7A8;font-weight:700"' : ""}>${L.length - on(d)}</td>`).join("")}</tr></table>`
+          : '<p class="lic">No employees in this department.</p>';
+        $("lpg").innerHTML = Object.entries(LTC)
+          .map(
+            ([k, c]) =>
+              `<span style="--c:${c[1]}"><i></i>${c[0]} · ${k}</span>`,
+          )
+          .join("");
+      }
+      $("lpt").onclick = (e) => {
+        const c = e.target.closest("[data-pn]");
+        if (!c) return;
+        lEditEnd();
+        $("ls").value = c.dataset.pn;
+        $("lf").value = $("lt").value = c.dataset.pd;
+        ltot();
+        lsw("ap");
+      };
+      $("lpd").onchange = lplan;
+      $("lpp").onclick = () => {
+        const x = new Date(lpref + "T00:00:00");
+        x.setMonth(x.getMonth() - 1, 1);
+        lpref = fd(x);
+        lplan();
+      };
+      $("lpn").onclick = () => {
+        const x = new Date(lpref + "T00:00:00");
+        x.setMonth(x.getMonth() + 1, 1);
+        lpref = fd(x);
+        lplan();
+      };
+      $("lpt0").onclick = () => {
+        lpref = fd(new Date()).slice(0, 7) + "-01";
+        lplan();
+      };
+      function lpol() {
+        const rows = [
+          [
+            "Annual Leave",
+            "AL",
+            "Yes",
+            "Yes",
+            "Fridays and public holidays are not counted",
+          ],
+          ["FRL", "FRL", "Yes", "Yes", "Calendar days"],
+          ["SL", "SL", "Yes", "Yes", "Calendar days"],
+          ["SLM", "SLM", "Yes", "Yes", "Calendar days"],
+        ];
+        $("lpo").innerHTML =
+          `<table><tr><th>Code</th><th>Leave type</th><th>Days per year</th><th>Deducted from balance</th><th>Form tracked</th><th>How days are counted</th></tr>${rows.map((r) => `<tr><td><b>${r[1]}</b></td><td style="text-align:left">${r[0]}${r[0] == "Annual Leave" ? " (chit from HR)" : ""}</td><td><input type="number" min="0" data-pe="${r[0]}" value="${POL.ent[r[0]]}" style="height:32px;width:80px"></td><td>${r[2]}</td><td>${r[3]}</td><td style="text-align:left">${r[4]}</td></tr>`).join("")}<tr><td><b>OFF</b></td><td style="text-align:left">Off Day</td><td>1 per week</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr><tr><td><b>REL</b></td><td style="text-align:left">Release</td><td>Unlimited</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr></table>`;
+        $("lpp2").innerHTML =
+          `<div><label>Long service after (years)</label><input type="number" min="0" id="pls" value="${POL.svcYears}"></div><div><label>Annual Leave days after long service</label><input type="number" min="0" id="plsa" value="${POL.svcAnnual}"></div><div><label>Minimum Ground Staff available per day</label><input type="number" min="0" id="pmin" value="${POL.minStaff}"></div>`;
+      }
+      $("lpo").onchange = (e) => {
+        const t = e.target;
+        if (!t.dataset.pe) return;
+        POL.ent[t.dataset.pe] = Math.max(0, +t.value || 0);
+        persist("ta_pol", POL);
+        applyPol();
+        leaves();
+      };
+      $("lpp2").onchange = (e) => {
+        const t = e.target;
+        if (t.id == "pls") POL.svcYears = Math.max(0, +t.value || 0);
+        else if (t.id == "plsa") POL.svcAnnual = Math.max(0, +t.value || 0);
+        else if (t.id == "pmin") POL.minStaff = Math.max(0, +t.value || 0);
+        else return;
+        persist("ta_pol", POL);
+        leaves();
+      };
+      function lhist() {
+        const nv = $("lhn").value,
+          yv = $("lhy").value,
+          tv2 = $("lht").value,
+          ns = [...new Set(LV.map((l) => l.n))].sort(),
+          ys = [
+            ...new Set([
+              fd(new Date()).slice(0, 4),
+              ...LV.map((l) => l.f.slice(0, 4)),
+            ]),
+          ]
+            .sort()
+            .reverse();
+        $("lhn").innerHTML =
+          '<option value="">All staff</option>' +
+          ns.map((n) => `<option>${esc(n)}</option>`).join("");
+        $("lhn").value = nv;
+        $("lhy").innerHTML =
+          '<option value="">All years</option>' +
+          ys.map((y) => `<option>${y}</option>`).join("");
+        $("lhy").value = yv;
+        const L = LV.filter(
+            (l) =>
+              (!nv || l.n == nv) &&
+              (!yv || l.f.slice(0, 4) == yv) &&
+              (!tv2 || (l.type || "Annual Leave") == tv2),
+          ).sort((a, b) => (a.f < b.f ? 1 : -1)),
+          by = {};
+        L.forEach((l) => {
+          const t = l.type || "Annual Leave";
+          by[t] = (by[t] || 0) + cdays(l.f, l.t, t);
+        });
+        $("lhk").innerHTML = [
+          ["Leave records", L.length],
+          ...Object.keys(by).map((k) => [(LTC[k] || [k])[0] + " days", by[k]]),
+        ]
+          .map(
+            (k) =>
+              `<div class="card"><label>${k[0]}</label><b>${k[1]}</b></div>`,
+          )
+          .join("");
+        $("lhl").innerHTML = L.length
+          ? `<table><tr><th>Staff</th><th>Type</th><th>Dates</th><th>Days</th><th>Note</th><th>Form</th></tr>${L.map(
+              (l) => {
+                const t = l.type || "Annual Leave";
+                return `<tr><td style="text-align:left">${esc(l.n)}</td><td>${(LTC[t] || [t])[0]}</td><td>${l.f} → ${l.t}</td><td>${cdays(l.f, l.t, t)}</td><td style="text-align:left">${esc(l.note || "")}</td><td>${trk(l) ? (l.form ? "Submitted" : "Not submitted") : "—"}</td></tr>`;
+              },
+            ).join("")}</table>`
+          : '<p class="lic">No leave records for this selection.</p>';
+        $("lau").innerHTML = AUD.length
+          ? `<table><tr><th>When</th><th>Action</th><th>Staff</th><th>Type</th><th>Dates</th><th>Detail</th></tr>${AUD.slice()
+              .reverse()
+              .slice(0, 300)
+              .map(
+                (a) =>
+                  `<tr><td>${a.at.slice(0, 16).replace("T", " ")}</td><td>${esc(a.a)}</td><td style="text-align:left">${esc(a.n)}</td><td>${(LTC[a.type] || [a.type])[0]}</td><td>${a.f} → ${a.t}</td><td style="text-align:left">${esc(a.d)}</td></tr>`,
+              )
+              .join("")}</table>`
+          : '<p class="lic">No activity recorded yet. Changes made from now on will appear here.</p>';
+      }
+      ["lhn", "lhy", "lht"].forEach((i) => ($(i).onchange = lhist));
+      leaves();
     </script>
   </body>
 </html>

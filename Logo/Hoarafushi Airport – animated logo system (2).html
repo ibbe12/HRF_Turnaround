@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hoarafushi Airport – animated logo system</title>
+<style>
+:root{--sand:#E6E0D3;--navy:#0A2540;--gold:#D4B069;--gold-dim:#A8803A;--paper:#FFFFFF;--line:#D9D2C1;--muted:#52514E;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--sand);color:var(--navy);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px 12px}
+svg{width:100%;max-width:520px;height:auto;display:block;overflow:visible}
+button{font:inherit;font-size:13px;color:var(--navy);background:transparent;border:1px solid var(--navy);border-radius:999px;padding:9px 22px;min-height:40px;cursor:pointer}
+button:hover{background:var(--navy);color:var(--sand)}
+button:focus-visible{outline:2px solid var(--gold-dim);outline-offset:3px}
+.lbl{font-size:12px;fill:var(--muted)}
+.w{font-weight:500;fill:var(--navy)}
+.a{font-weight:400;fill:var(--gold-dim)}
+
+.card,.wing,.body,.tail,.dash,.ring{transform-box:fill-box}
+.card{transform-origin:50% 50%}
+.bar{transform-origin:0% 50%}
+.wr{transform-origin:0% 50%}
+.wl{transform-origin:100% 50%}
+.body{transform-origin:50% 100%}
+.tail{transform-origin:50% 0%}
+.dash{transform-origin:50% 100%}
+.ring{transform-origin:50% 50%;transform:rotate(-90deg)}
+
+@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@keyframes wipe{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes wingR{from{transform:scaleX(0) rotate(-14deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes wingL{from{transform:scaleX(0) rotate(14deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes dash{from{opacity:0;transform:scaleY(0)}to{opacity:1;transform:none}}
+@keyframes track{from{opacity:0;letter-spacing:1px}to{opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes glide{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+.play .card{animation:pop .6s cubic-bezier(.2,.8,.2,1) var(--t) both}
+.play .bar{animation:wipe .8s cubic-bezier(.7,0,.2,1) var(--t) both}
+@keyframes riseUp{0%{transform:translateY(90px);opacity:0}35%{opacity:1}100%{transform:none;opacity:1}}
+.play .rise{animation:riseUp 1.1s cubic-bezier(.16,1,.3,1) calc(var(--t) + .2s) both}
+.play .dash{animation:dash .25s ease-out both;animation-delay:calc(var(--t) + 1.3s + var(--d) * .1s)}
+.play .wr{animation:wingR .9s cubic-bezier(.34,1.45,.64,1) calc(var(--t) + .5s) both}
+.play .wl{animation:wingL .9s cubic-bezier(.34,1.45,.64,1) calc(var(--t) + .5s) both}
+.play .float{animation:glide 5s ease-in-out calc(var(--t) + 2.8s) infinite}
+.play .w{animation:track .9s cubic-bezier(.2,.8,.2,1) calc(var(--t) + 1.4s) both}
+.play .a{animation:track .9s cubic-bezier(.2,.8,.2,1) calc(var(--t) + 1.8s) both}
+.play .lbl{animation:fade .6s ease-out calc(var(--t) + .3s) both}
+.play .ring{animation:draw 1.1s cubic-bezier(.5,0,.2,1) calc(var(--t) + .1s) both}
+.play .late{animation:fade .6s ease-out calc(var(--t) + .8s) both}
+
+@media (prefers-reduced-motion:reduce){.play *{animation:none!important}}
+</style>
+</head>
+<body>
+<svg id="sys" class="play" viewBox="0 0 380 366" role="img" aria-label="Animated Hoarafushi Airport logo system: website header, app icon, favicons, one-colour merchandise badge and reversed lockup">
+  <g style="--t:0s">
+    <rect class="card" x="20" y="20" width="340" height="76" rx="8" fill="#FFFFFF" stroke="#D9D2C1" stroke-width="0.5"/>
+    <g class="bird" data-c="#0A2540" data-d="1" transform="translate(1.2,24.1) scale(0.32)"></g>
+    <text class="w" x="106" y="54" style="font-size:15px;letter-spacing:5px">HOARAFUSHI</text>
+    <text class="a" x="106" y="72" style="font-size:10px;letter-spacing:7px">AIRPORT</text>
+    <text class="lbl" x="20" y="114">Website header</text>
+  </g>
+
+  <g style="--t:.5s">
+    <rect class="card" x="20" y="130" width="88" height="88" rx="20" fill="#0A2540"/>
+    <g class="bird" data-c="#FFFFFF" data-d="0" transform="translate(3.2,140.1) scale(0.32)"></g>
+    <text class="lbl" x="20" y="236">App icon</text>
+  </g>
+
+  <g style="--t:1s">
+    <rect class="card" x="124" y="138" width="120" height="30" rx="6" fill="#FFFFFF" stroke="#D9D2C1" stroke-width="0.5"/>
+    <g class="bird" data-c="#0A2540" data-d="0" transform="translate(125.75,145.05) scale(0.075)"></g>
+    <text class="late" x="154" y="157" style="font-size:11px;fill:#0A2540">Hoarafushi</text>
+    <text class="lbl" x="124" y="236">Favicon 16 / 32</text>
+  </g>
+
+  <g style="--t:1.3s">
+    <rect class="card" x="124" y="178" width="40" height="40" rx="6" fill="#FFFFFF" stroke="#D9D2C1" stroke-width="0.5"/>
+    <g class="bird" data-c="#0A2540" data-d="0" transform="translate(115.5,182.1) scale(0.15)"></g>
+  </g>
+
+  <g style="--t:1.6s">
+    <circle class="ring" cx="308" cy="174" r="44" fill="none" stroke="#0A2540" stroke-width="1.5" pathLength="1" stroke-dasharray="1" stroke-dashoffset="0"/>
+    <g class="bird" data-c="#0A2540" data-d="0" transform="translate(251,142.2) scale(0.3)"></g>
+    <text class="lbl" x="262" y="236">Merch, one colour</text>
+  </g>
+
+  <g style="--t:2s">
+    <rect class="bar card" x="20" y="256" width="340" height="76" rx="8" fill="#0A2540"/>
+    <g class="bird" data-c="#FFFFFF" data-d="1" transform="translate(1.2,260.1) scale(0.32)"></g>
+    <text class="w" x="106" y="290" style="font-size:15px;letter-spacing:5px;fill:#FFFFFF">HOARAFUSHI</text>
+    <text class="a" x="106" y="308" style="font-size:10px;letter-spacing:7px;fill:#D4B069">AIRPORT</text>
+    <text class="lbl" x="20" y="350">Reversed, signage and tags</text>
+  </g>
+</svg>
+<button id="replay" type="button">Replay</button>
+<script>
+(function(){
+  var P={wr:"M196 80L250 64L296 112L252 100L204 116Z",wl:"M184 80L130 64L84 112L128 100L176 116Z",b:"M190 36L194 48L200 128L180 128L186 48Z",t:"M180 126L166 176L188 150L190 154L192 150L214 176L200 126Z"};
+  var Y=[113,95,77,59];
+  document.querySelectorAll('.bird').forEach(function(g){
+    var c=g.getAttribute('data-c'),d=g.getAttribute('data-d')==='1';
+    var h='<g class="rise"><g class="float"><g fill="'+c+'">'+
+      '<path class="wing wr" d="'+P.wr+'"/><path class="wing wl" d="'+P.wl+'"/><path class="body" d="'+P.b+'"/><path class="tail" d="'+P.t+'"/></g>';
+    if(d){h+='<g fill="#D4B069">';Y.forEach(function(y,i){h+='<rect class="dash" style="--d:'+i+'" x="188" y="'+y+'" width="4" height="11"/>';});h+='</g>';}
+    g.innerHTML=h+'</g></g>';
+  });
+  var s=document.getElementById('sys');
+  document.getElementById('replay').addEventListener('click',function(){
+    s.classList.remove('play');void s.getBoundingClientRect();s.classList.add('play');
+  });
+})();
+</script>
+</body>
+</html>
