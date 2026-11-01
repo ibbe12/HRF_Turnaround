@@ -1368,7 +1368,7 @@
         white-space: nowrap;
       }
       .dn {
-        background:
+        background: linear-gradient(160deg, #34424f, #27323e);
         border-radius: 14px;
         padding: 20px 18px;
         color: #fff;
@@ -1439,6 +1439,251 @@
       #lsub button {
         white-space: nowrap;
       }
+      #sb {
+        overflow-y: auto;
+      }
+      #login {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        background: hsl(var(--page));
+      }
+      #lgl {
+        flex: 1 1 50%;
+        background: #0a2540;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        overflow: hidden;
+      }
+      #lgstage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+      #lgstage svg {
+        width: min(34vw, 340px);
+        height: auto;
+        overflow: visible;
+      }
+      #lgstage .word {
+        margin: 18px 0 0;
+        font-weight: 400;
+        font-size: clamp(22px, 3vw, 34px);
+        letter-spacing: 0.34em;
+        text-indent: 0.34em;
+        white-space: nowrap;
+        line-height: 1;
+        color: #fff;
+      }
+      #lgstage .word span {
+        display: inline-block;
+      }
+      #lgstage .air {
+        margin: 14px 0 0;
+        font-size: clamp(11px, 1.2vw, 14px);
+        letter-spacing: 0.72em;
+        text-indent: 0.72em;
+        color: #d4b069;
+        line-height: 1;
+      }
+      #lgstage .rule {
+        width: min(24vw, 150px);
+        height: 1px;
+        background: #a8803a;
+        margin-top: 16px;
+        transform-origin: center;
+      }
+      #lgstage .wing,
+      #lgstage .body,
+      #lgstage .tail,
+      #lgstage .dash {
+        transform-box: fill-box;
+      }
+      #lgstage .wr {
+        transform-origin: 0% 50%;
+      }
+      #lgstage .wl {
+        transform-origin: 100% 50%;
+      }
+      #lgstage .body {
+        transform-origin: 50% 100%;
+      }
+      #lgstage .tail {
+        transform-origin: 50% 0%;
+      }
+      #lgstage .dash {
+        transform-origin: 50% 100%;
+      }
+      @keyframes lgWR {
+        from {
+          transform: scaleX(0) rotate(-14deg);
+          opacity: 0;
+        }
+        to {
+          transform: none;
+          opacity: 1;
+        }
+      }
+      @keyframes lgWL {
+        from {
+          transform: scaleX(0) rotate(14deg);
+          opacity: 0;
+        }
+        to {
+          transform: none;
+          opacity: 1;
+        }
+      }
+      @keyframes lgDash {
+        from {
+          opacity: 0;
+          transform: scaleY(0);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes lgWord {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes lgFade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes lgRule {
+        from {
+          transform: scaleX(0);
+        }
+        to {
+          transform: scaleX(1);
+        }
+      }
+      @keyframes lgGlide {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
+      @keyframes lgRise {
+        0% {
+          transform: translateY(var(--dy, 300px));
+          opacity: 0;
+        }
+        8% {
+          opacity: 1;
+        }
+        100% {
+          transform: none;
+          opacity: 1;
+        }
+      }
+      #lgstage.play .rise {
+        animation: lgRise 1.8s cubic-bezier(0.22, 0.8, 0.25, 1) 0.2s both;
+      }
+      #lgstage.play .dash {
+        animation: lgDash 0.3s ease-out both;
+        animation-delay: calc(2.1s + var(--d) * 0.14s);
+      }
+      #lgstage.play .wr {
+        animation: lgWR 0.9s cubic-bezier(0.34, 1.45, 0.64, 1) 1.1s both;
+      }
+      #lgstage.play .wl {
+        animation: lgWL 0.9s cubic-bezier(0.34, 1.45, 0.64, 1) 1.1s both;
+      }
+      #lgstage.play .float {
+        animation: lgGlide 5s ease-in-out 2.4s infinite;
+      }
+      #lgstage.play .word span {
+        animation: lgWord 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        animation-delay: calc(1.9s + var(--i) * 0.05s);
+      }
+      #lgstage.play .rule {
+        animation: lgRule 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 2.6s both;
+      }
+      #lgstage.play .air {
+        animation: lgFade 0.9s ease-out 2.9s both;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #lgstage.play * {
+          animation: none !important;
+        }
+      }
+      #lgr {
+        flex: 1 1 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        overflow: auto;
+        background: hsl(var(--background));
+      }
+      #lgbox {
+        width: 100%;
+        max-width: 380px;
+      }
+      .lgh {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      @media (max-width: 800px) {
+        #login {
+          flex-direction: column;
+          overflow: auto;
+        }
+        #lgl {
+          flex: 0 0 auto;
+          padding: 30px 16px 26px;
+        }
+        #lgstage svg {
+          width: min(42vw, 190px);
+        }
+        #lgstage .word {
+          font-size: 22px;
+        }
+        #lgstage .rule {
+          width: 110px;
+        }
+        #lgr {
+          flex: 1 0 auto;
+          align-items: flex-start;
+          padding: 26px 20px;
+        }
+      }
+      #pwmod {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 101;
+        overflow: auto;
+        padding: 16px;
+      }
+      #pwmod > .card {
+        max-width: 420px;
+        margin: 60px auto;
+      }
       #modal {
         display: none;
         position: fixed;
@@ -1458,6 +1703,183 @@
     </style>
   </head>
   <body>
+    <div id="login">
+      <div id="lgl">
+        <div id="lgstage" class="play" aria-label="Hoarafushi Airport logo">
+          <svg
+            viewBox="70 24 240 164"
+            role="img"
+            aria-label="Frigate bird whose body is a runway with a gold centerline"
+          >
+            <g class="rise">
+              <g class="float">
+                <g fill="#FFFFFF">
+                  <path
+                    class="wing wr"
+                    d="M196 80L250 64L296 112L252 100L204 116Z"
+                  />
+                  <path
+                    class="wing wl"
+                    d="M184 80L130 64L84 112L128 100L176 116Z"
+                  />
+                  <path
+                    class="body"
+                    d="M190 36L194 48L200 128L180 128L186 48Z"
+                  />
+                  <path
+                    class="tail"
+                    d="M180 126L166 176L188 150L190 154L192 150L214 176L200 126Z"
+                  />
+                </g>
+                <g fill="#D4B069">
+                  <rect
+                    class="dash"
+                    style="--d: 0"
+                    x="188"
+                    y="113"
+                    width="4"
+                    height="11"
+                  />
+                  <rect
+                    class="dash"
+                    style="--d: 1"
+                    x="188"
+                    y="95"
+                    width="4"
+                    height="11"
+                  />
+                  <rect
+                    class="dash"
+                    style="--d: 2"
+                    x="188"
+                    y="77"
+                    width="4"
+                    height="11"
+                  />
+                  <rect
+                    class="dash"
+                    style="--d: 3"
+                    x="188"
+                    y="59"
+                    width="4"
+                    height="11"
+                  />
+                </g>
+              </g>
+            </g>
+          </svg>
+          <p class="word" aria-label="Hoarafushi">
+            <span style="--i: 0">H</span><span style="--i: 1">O</span
+            ><span style="--i: 2">A</span><span style="--i: 3">R</span
+            ><span style="--i: 4">A</span><span style="--i: 5">F</span
+            ><span style="--i: 6">U</span><span style="--i: 7">S</span
+            ><span style="--i: 8">H</span><span style="--i: 9">I</span>
+          </p>
+          <div class="rule"></div>
+          <p class="air">AIRPORT</p>
+        </div>
+      </div>
+      <div id="lgr">
+        <div id="lgbox">
+          <div class="lgh">Sign in</div>
+          <p class="lic" style="margin: 6px 0 20px; font-size: 13px">
+            Welcome back. Sign in to HRF Operations.
+          </p>
+          <label for="lgu">Username</label
+          ><input
+            id="lgu"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+          />
+          <label for="lgp" style="margin-top: 14px">Password</label>
+          <div style="position: relative">
+            <input
+              id="lgp"
+              type="password"
+              autocomplete="current-password"
+              style="padding-right: 46px"
+            /><button
+              id="lgeye"
+              type="button"
+              class="s"
+              aria-label="Show password"
+              style="
+                position: absolute;
+                right: 4px;
+                top: 4px;
+                height: 32px;
+                width: 36px;
+                padding: 0;
+              "
+            >
+              <span data-ic="eye-outline"></span>
+            </button>
+          </div>
+          <label
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin-top: 14px;
+              font-weight: 500;
+            "
+            ><input
+              type="checkbox"
+              id="lgk"
+              style="width: 16px; height: 16px"
+            />
+            Keep me signed in on this device</label
+          >
+          <p
+            id="lge"
+            role="alert"
+            style="
+              color: #e04b33;
+              font-size: 13px;
+              min-height: 20px;
+              margin: 12px 0 0;
+            "
+          ></p>
+          <button id="lgb" style="width: 100%; margin-top: 6px">Sign in</button>
+        </div>
+      </div>
+    </div>
+    <div id="pwmod">
+      <div class="card">
+        <div class="row" style="align-items: center; flex-wrap: nowrap">
+          <h2 style="margin: 0; flex: 1">Change password</h2>
+          <button
+            class="s"
+            id="pwx"
+            style="flex: 0 0 auto; height: 34px; padding: 0 10px"
+          >
+            <span data-ic="close-outline"></span>
+          </button>
+        </div>
+        <label style="margin-top: 12px">Current password</label
+        ><input
+          id="pwo"
+          type="password"
+          autocomplete="current-password"
+        /><label style="margin-top: 12px"
+          >New password (at least 6 characters)</label
+        ><input id="pwn" type="password" autocomplete="new-password" /><label
+          style="margin-top: 12px"
+          >Confirm new password</label
+        ><input id="pwc" type="password" autocomplete="new-password" />
+        <p
+          id="pwe"
+          style="
+            color: #e04b33;
+            font-size: 13px;
+            min-height: 20px;
+            margin: 10px 0 0;
+          "
+        ></p>
+        <button id="pwb" style="margin-top: 4px">Save password</button>
+      </div>
+    </div>
     <aside id="sb">
       <h2 style="padding: 0 6px">
         <span data-ic="airplane"></span> HRF OPERATIONS
@@ -1481,8 +1903,26 @@
       ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
       <p id="sbw" class="lic" style="padding: 0 6px"></p>
       <p class="lic" style="padding: 10px 6px 0; opacity: 0.7">
-        Version 30 Oct 2026 · p
+        Version 31 Oct 2026 · q
       </p>
+      <div
+        style="
+          padding: 12px 0 0;
+          margin-top: 10px;
+          border-top: 1px solid rgba(255, 255, 255, 0.12);
+        "
+      >
+        <div
+          id="sbun"
+          style="font-weight: 700; font-size: 13px; padding: 0 6px"
+        ></div>
+        <div class="lic" id="sbur" style="padding: 0 6px 8px"></div>
+        <button id="sbpw">
+          <span data-ic="key-outline"></span> Change password</button
+        ><button id="sbo">
+          <span data-ic="log-out-outline"></span> Sign out
+        </button>
+      </div>
     </aside>
     <main>
       <h1 id="ptitle">
@@ -2605,6 +3045,14 @@
           '<path d="M402 168c-2.93 40.67-33.1 72-66 72s-63.12-31.32-66-72c-3-42.31 26.37-72 66-72s69 30.46 66 72z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M336 304c-65.17 0-127.84 32.37-143.54 95.41-2.08 8.34 3.15 16.59 11.72 16.59h263.65c8.57 0 13.77-8.25 11.72-16.59C463.85 335.36 401.18 304 336 304z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path d="M200 185.94c-2.34 32.48-26.72 58.06-53 58.06s-50.7-25.57-53-58.06C91.61 152.15 115.34 128 147 128s55.39 24.77 53 57.94z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><path d="M206 306c-18.05-8.27-37.93-11.45-59-11.45-52 0-102.1 25.85-114.65 76.2-1.65 6.66 2.53 13.25 9.37 13.25H154" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>',
         "finger-print-outline":
           '<path d="M390.42 75.28a10.45 10.45 0 01-5.32-1.44C340.72 50.08 302.35 40 256.35 40c-45.77 0-89.23 11.28-128.76 33.84C122 77 115.11 74.8 111.87 69a12.4 12.4 0 014.63-16.32A281.81 281.81 0 01256.35 16c49.23 0 92.23 11.28 139.39 36.48a12 12 0 014.85 16.08 11.3 11.3 0 01-10.17 6.72zm-330.79 126a11.73 11.73 0 01-6.7-2.16 12.26 12.26 0 01-2.78-16.8c22.89-33.6 52-60 86.69-78.48 72.58-38.84 165.51-39.12 238.32-.24 34.68 18.48 63.8 44.64 86.69 78a12.29 12.29 0 01-2.78 16.8 11.26 11.26 0 01-16.18-2.88c-20.8-30.24-47.15-54-78.36-70.56-66.34-35.28-151.18-35.28-217.29.24-31.44 16.8-57.79 40.8-78.59 71a10 10 0 01-9.02 5.08zM204.1 491a10.66 10.66 0 01-8.09-3.6C175.9 466.48 165 453 149.55 424c-16-29.52-24.27-65.52-24.27-104.16 0-71.28 58.71-129.36 130.84-129.36S387 248.56 387 319.84a11.56 11.56 0 11-23.11 0c0-58.08-48.32-105.36-107.72-105.36S148.4 261.76 148.4 319.84c0 34.56 7.39 66.48 21.49 92.4 14.8 27.6 25 39.36 42.77 58.08a12.67 12.67 0 010 17 12.44 12.44 0 01-8.56 3.68zm165.75-44.4c-27.51 0-51.78-7.2-71.66-21.36a129.1 129.1 0 01-55-105.36 11.57 11.57 0 1123.12 0 104.28 104.28 0 0044.84 85.44c16.41 11.52 35.6 17 58.72 17a147.41 147.41 0 0024-2.4c6.24-1.2 12.25 3.12 13.4 9.84a11.92 11.92 0 01-9.47 13.92 152.28 152.28 0 01-27.95 2.88zM323.38 496a13 13 0 01-3-.48c-36.76-10.56-60.8-24.72-86-50.4-32.37-33.36-50.16-77.76-50.16-125.28 0-38.88 31.9-70.56 71.19-70.56s71.2 31.68 71.2 70.56c0 25.68 21.5 46.56 48.08 46.56s48.08-20.88 48.08-46.56c0-90.48-75.13-163.92-167.59-163.92-65.65 0-125.75 37.92-152.79 96.72-9 19.44-13.64 42.24-13.64 67.2 0 18.72 1.61 48.24 15.48 86.64 2.32 6.24-.69 13.2-6.7 15.36a11.34 11.34 0 01-14.79-7 276.39 276.39 0 01-16.88-95c0-28.8 5.32-55 15.72-77.76 30.75-67 98.94-110.4 173.6-110.4 105.18 0 190.71 84.24 190.71 187.92 0 38.88-31.9 70.56-71.2 70.56s-71.2-31.68-71.2-70.56c.01-25.68-21.49-46.6-48.07-46.6s-48.08 20.88-48.08 46.56c0 41 15.26 79.44 43.23 108.24 22 22.56 43 35 75.59 44.4 6.24 1.68 9.71 8.4 8.09 14.64a11.39 11.39 0 01-10.87 9.16z"/>',
+        "log-out-outline":
+          '<path d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 0140-40h152c22.09 0 48 17.91 48 40v40M368 336l80-80-80-80M176 256h256" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>',
+        "key-outline":
+          '<path d="M218.1 167.17c0 13 0 25.6 4.1 37.4-43.1 50.6-156.9 184.3-167.5 194.5a20.17 20.17 0 00-6.7 15c0 8.5 5.2 16.7 9.6 21.3 6.6 6.9 34.8 33 40 28 15.4-15 18.5-19 24.8-25.2 9.5-9.3-1-28.3 2.3-36s6.8-9.2 12.5-10.4 15.8 2.9 23.7 3c8.3.1 12.8-3.4 19-9.2 5-4.6 8.6-8.9 8.7-15.6.2-9-12.8-20.9-3.1-30.4s23.7 6.2 34 5 22.8-15.5 24.1-21.6-11.7-21.8-9.7-30.7c.7-3 6.8-10 11.4-11s25 6.9 29.6 5.9c5.6-1.2 12.1-7.1 17.4-10.4 15.5 6.7 29.6 9.4 47.7 9.4 68.5 0 124-53.4 124-119.2S408.5 48 340 48s-121.9 53.37-121.9 119.17zM400 144a32 32 0 11-32-32 32 32 0 0132 32z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/>',
+        "eye-outline":
+          '<path d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="256" cy="256" r="80" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>',
+        "eye-off-outline":
+          '<path d="M432 448a15.92 15.92 0 01-11.31-4.69l-352-352a16 16 0 0122.62-22.62l352 352A16 16 0 01432 448zM255.66 384c-41.49 0-81.5-12.28-118.92-36.5-34.07-22-64.74-53.51-88.7-91v-.08c19.94-28.57 41.78-52.73 65.24-72.21a2 2 0 00.14-2.94L93.5 161.38a2 2 0 00-2.71-.12c-24.92 21-48.05 46.76-69.08 76.92a31.92 31.92 0 00-.64 35.54c26.41 41.33 60.4 76.14 98.28 100.65C162 402 207.9 416 255.66 416a239.13 239.13 0 0075.8-12.58 2 2 0 00.77-3.31l-21.58-21.58a4 4 0 00-3.83-1 204.8 204.8 0 01-51.16 6.47zM490.84 238.6c-26.46-40.92-60.79-75.68-99.27-100.53C349 110.55 302 96 255.66 96a227.34 227.34 0 00-74.89 12.83 2 2 0 00-.75 3.31l21.55 21.55a4 4 0 003.88 1 192.82 192.82 0 0150.21-6.69c40.69 0 80.58 12.43 118.55 37 34.71 22.4 65.74 53.88 89.76 91a.13.13 0 010 .16 310.72 310.72 0 01-64.12 72.73 2 2 0 00-.15 2.95l19.9 19.89a2 2 0 002.7.13 343.49 343.49 0 0068.64-78.48 32.2 32.2 0 00-.1-34.78z"/><path d="M256 160a95.88 95.88 0 00-21.37 2.4 2 2 0 00-1 3.38l112.59 112.56a2 2 0 003.38-1A96 96 0 00256 160zM165.78 233.66a2 2 0 00-3.38 1 96 96 0 00115 115 2 2 0 001-3.38z"/>',
       };
       const ic = (n) =>
         `<svg class="i" viewBox="0 0 512 512" aria-hidden="true">${ICONS[n] || ""}</svg>`;
@@ -7037,6 +7485,218 @@
       }
       ["lhn", "lhy", "lht"].forEach((i) => ($(i).onchange = lhist));
       leaves();
+      const SD = {
+        u: "Rafeeu",
+        role: "Super Admin",
+        salt: "hrf0",
+        hash: "c3cf5cfb361a4b79f1fd29a2dc1a0008c24b625bed2483bc685ea0d722cd1bda",
+        fh: "faf5440c5",
+      };
+      let USERS = [];
+      try {
+        USERS = JSON.parse(localStorage.getItem("ta_users")) || [];
+      } catch (e) {}
+      const svU = () => {
+        try {
+          localStorage.setItem("ta_users", JSON.stringify(USERS));
+        } catch (e) {}
+      };
+      if (!USERS.some((x) => x.role == "Super Admin")) {
+        USERS.push(SD);
+        svU();
+      }
+      const hasSub = () =>
+        typeof crypto !== "undefined" && crypto.subtle && crypto.subtle.digest;
+      async function sha(t) {
+        const b = await crypto.subtle.digest(
+          "SHA-256",
+          new TextEncoder().encode(t),
+        );
+        return [...new Uint8Array(b)]
+          .map((x) => x.toString(16).padStart(2, "0"))
+          .join("");
+      }
+      function fbh(t) {
+        let h = 5381;
+        for (const c of t) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0;
+        return "f" + h.toString(16);
+      }
+      async function lgCheck(u, pw) {
+        const x = USERS.find(
+          (a) => a.u.toLowerCase() == u.trim().toLowerCase(),
+        );
+        const t = (x ? x.salt : "hrf0") + ":" + pw,
+          hh = hasSub() ? await sha(t) : null,
+          ok = x && (hasSub() ? hh == x.hash : fbh(t) == x.fh);
+        return ok ? x : null;
+      }
+      function lgDy() {
+        try {
+          const r = document.querySelector("#lgstage .rise"),
+            m = r.getScreenCTM(),
+            b = r.getBoundingClientRect();
+          if (m && m.a)
+            r.style.setProperty(
+              "--dy",
+              (window.innerHeight - b.top + 30) / m.a + "px",
+            );
+        } catch (e) {}
+      }
+      function lgShow() {
+        $("login").style.display = "flex";
+        document.body.style.overflow = "hidden";
+        const st = $("lgstage");
+        st.classList.remove("play");
+        lgDy();
+        void st.offsetWidth;
+        st.classList.add("play");
+        $("lgp").value = "";
+        $("lge").textContent = "";
+        setTimeout(() => $("lgu").focus(), 60);
+      }
+      function lgHide() {
+        $("login").style.display = "none";
+        document.body.style.overflow = "";
+      }
+      function lgUser(u) {
+        $("sbun").textContent = u.u;
+        $("sbur").textContent = u.role;
+      }
+      async function lgGo() {
+        const fl = JSON.parse(sessionStorage.getItem("ta_fail") || "{}"),
+          now = Date.now();
+        if (fl.until && now < fl.until) {
+          $("lge").textContent =
+            "Too many attempts. Try again in " +
+            Math.ceil((fl.until - now) / 1000) +
+            " seconds.";
+          return;
+        }
+        if (!$("lgu").value.trim() || !$("lgp").value) {
+          $("lge").textContent = "Enter your username and password.";
+          return;
+        }
+        $("lgb").disabled = true;
+        let u = null;
+        try {
+          u = await lgCheck($("lgu").value, $("lgp").value);
+        } catch (e) {
+          $("lge").textContent = "Sign-in is not available in this browser.";
+          $("lgb").disabled = false;
+          return;
+        }
+        $("lgb").disabled = false;
+        if (!u) {
+          const n = (fl.n || 0) + 1;
+          sessionStorage.setItem(
+            "ta_fail",
+            JSON.stringify(n >= 5 ? { n: 0, until: now + 30000 } : { n }),
+          );
+          $("lge").textContent =
+            n >= 5
+              ? "Too many attempts. Try again in 30 seconds."
+              : "Incorrect username or password.";
+          $("lgp").value = "";
+          $("lgp").focus();
+          return;
+        }
+        sessionStorage.removeItem("ta_fail");
+        const se = JSON.stringify({ u: u.u, role: u.role, t: now });
+        try {
+          sessionStorage.setItem("ta_sess", se);
+          if ($("lgk").checked) localStorage.setItem("ta_sess", se);
+        } catch (e) {}
+        lgUser(u);
+        lgHide();
+        $("lgu").value = "";
+        $("lgp").value = "";
+      }
+      $("lgb").onclick = lgGo;
+      [$("lgu"), $("lgp")].forEach(
+        (i) =>
+          (i.onkeydown = (e) => {
+            if (e.key == "Enter") lgGo();
+          }),
+      );
+      $("lgeye").onclick = () => {
+        const h = $("lgp").type == "password";
+        $("lgp").type = h ? "text" : "password";
+        $("lgeye").innerHTML = ic(h ? "eye-off-outline" : "eye-outline");
+        $("lgeye").setAttribute(
+          "aria-label",
+          h ? "Hide password" : "Show password",
+        );
+      };
+      $("sbo").onclick = () => {
+        try {
+          sessionStorage.removeItem("ta_sess");
+          localStorage.removeItem("ta_sess");
+        } catch (e) {}
+        $("sb").classList.remove("o");
+        lgShow();
+      };
+      $("sbpw").onclick = () => {
+        ["pwo", "pwn", "pwc"].forEach((i) => ($(i).value = ""));
+        $("pwe").textContent = "";
+        $("pwmod").style.display = "block";
+        $("pwo").focus();
+      };
+      $("pwx").onclick = () => ($("pwmod").style.display = "none");
+      $("pwb").onclick = async () => {
+        const se = (() => {
+            try {
+              return JSON.parse(
+                sessionStorage.getItem("ta_sess") ||
+                  localStorage.getItem("ta_sess"),
+              );
+            } catch (e) {
+              return null;
+            }
+          })(),
+          x = se && USERS.find((a) => a.u == se.u);
+        if (!x) {
+          $("pwe").textContent = "Please sign in again.";
+          return;
+        }
+        if (!(await lgCheck(x.u, $("pwo").value))) {
+          $("pwe").textContent = "Current password is incorrect.";
+          return;
+        }
+        if ($("pwn").value.length < 6) {
+          $("pwe").textContent =
+            "The new password must be at least 6 characters.";
+          return;
+        }
+        if ($("pwn").value != $("pwc").value) {
+          $("pwe").textContent = "The new passwords do not match.";
+          return;
+        }
+        const salt = Math.random().toString(36).slice(2, 10),
+          t = salt + ":" + $("pwn").value;
+        x.salt = salt;
+        x.fh = fbh(t);
+        x.hash = hasSub() ? await sha(t) : "";
+        svU();
+        $("pwmod").style.display = "none";
+        alert("Password changed.");
+      };
+      {
+        const se = (() => {
+            try {
+              return JSON.parse(
+                sessionStorage.getItem("ta_sess") ||
+                  localStorage.getItem("ta_sess"),
+              );
+            } catch (e) {
+              return null;
+            }
+          })(),
+          u = se && USERS.find((a) => a.u == se.u && a.role == se.role);
+        if (u) {
+          lgUser(u);
+          lgHide();
+        } else lgShow();
+      }
     </script>
   </body>
 </html>
