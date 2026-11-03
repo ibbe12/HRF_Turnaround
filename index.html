@@ -1368,7 +1368,6 @@
         white-space: nowrap;
       }
       .dn {
-        background: linear-gradient(160deg, #34424f, #27323e);
         border-radius: 14px;
         padding: 20px 18px;
         color: #fff;
@@ -1671,7 +1670,8 @@
           padding: 26px 20px;
         }
       }
-      #pwmod {
+      #pwmod,
+      #rsmod {
         display: none;
         position: fixed;
         inset: 0;
@@ -1680,7 +1680,8 @@
         overflow: auto;
         padding: 16px;
       }
-      #pwmod > .card {
+      #pwmod > .card,
+      #rsmod > .card {
         max-width: 420px;
         margin: 60px auto;
       }
@@ -1900,10 +1901,13 @@
       ><button id="nT">
         <span data-ic="finger-print-outline"></span> Time &amp; Attendance</button
       ><button id="nH"><span data-ic="flag-outline"></span> Holidays</button
-      ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button>
+      ><button id="nB"><span data-ic="save-outline"></span> Data Backup</button
+      ><button id="nX" style="display: none">
+        <span data-ic="key-outline"></span> User Management
+      </button>
       <p id="sbw" class="lic" style="padding: 0 6px"></p>
       <p class="lic" style="padding: 10px 6px 0; opacity: 0.7">
-        Version 31 Oct 2026 · q
+        Version 1 Nov 2026 · r
       </p>
       <div
         style="
@@ -2712,6 +2716,7 @@
                   <option>SLM</option>
                   <option>Off Day</option>
                   <option>Release</option>
+                  <option>Duty Travel</option>
                 </select>
               </div>
               <div><label>Note (optional)</label><input id="ln" /></div>
@@ -2857,6 +2862,7 @@
                   <option>SLM</option>
                   <option>Off Day</option>
                   <option>Release</option>
+                  <option>Duty Travel</option>
                 </select>
               </div>
             </div>
@@ -2877,6 +2883,79 @@
             <h2>Calendar</h2>
             <div id="lc"></div>
           </div>
+        </div>
+      </div>
+      <div id="pX" style="display: none">
+        <div class="card">
+          <h2 id="uxh">Create user</h2>
+          <div class="g">
+            <div><label>Full name</label><input id="uxn" /></div>
+            <div>
+              <label>Username *</label
+              ><input id="uxu" autocapitalize="none" spellcheck="false" />
+            </div>
+            <div>
+              <label>Role</label
+              ><select id="uxr">
+                <option>User</option>
+                <option>Admin</option>
+              </select>
+            </div>
+            <div>
+              <label id="uxpl">Temporary password * (min 6 characters)</label
+              ><input id="uxp" type="text" autocomplete="off" />
+            </div>
+          </div>
+          <label style="margin-top: 12px">Menu access</label>
+          <div id="uxm"></div>
+          <p class="lic">
+            The user is asked to choose a new password the first time they sign
+            in. Only the Super Admin sees User Management.
+          </p>
+          <p
+            id="uxe"
+            style="
+              color: #e04b33;
+              font-size: 13px;
+              min-height: 20px;
+              margin: 6px 0 0;
+            "
+          ></p>
+          <div class="row" style="margin-top: 6px">
+            <button id="uxs">Create user</button
+            ><button id="uxc" class="s" style="display: none">Cancel</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Users</h2>
+          <div class="sc" id="uxl"></div>
+        </div>
+      </div>
+      <div id="rsmod">
+        <div class="card">
+          <div class="row" style="align-items: center; flex-wrap: nowrap">
+            <h2 id="rsh" style="margin: 0; flex: 1">Reset password</h2>
+            <button
+              class="s"
+              id="rsx"
+              style="flex: 0 0 auto; height: 34px; padding: 0 10px"
+            >
+              <span data-ic="close-outline"></span>
+            </button>
+          </div>
+          <label style="margin-top: 12px"
+            >New temporary password (min 6 characters)</label
+          ><input id="rsp" type="text" autocomplete="off" />
+          <p
+            id="rse"
+            style="
+              color: #e04b33;
+              font-size: 13px;
+              min-height: 20px;
+              margin: 10px 0 0;
+            "
+          ></p>
+          <button id="rsb">Save password</button>
         </div>
       </div>
       <div id="pB" style="display: none">
@@ -2961,6 +3040,7 @@
     <!-- Icons: Ionicons (MIT) https://ionic.io/ionicons -->
     <script>
       const PT = {
+          X: "User Management",
           A: "Task Assignment",
           D: "Dashboard",
           F: "Flight Schedule",
@@ -2972,6 +3052,7 @@
           B: "Data Backup",
         },
         PI = {
+          X: "key-outline",
           A: "clipboard-outline",
           D: "stats-chart-outline",
           F: "airplane",
@@ -2982,6 +3063,8 @@
           T: "finger-print-outline",
           B: "save-outline",
         };
+      let CUR = null,
+        CT = "A";
       const ICONS = {
         airplane:
           '<path d="M186.62 464H160a16 16 0 01-14.57-22.6l64.46-142.25L113.1 297l-35.3 42.77C71.07 348.23 65.7 352 52 352H34.08a17.66 17.66 0 01-14.7-7.06c-2.38-3.21-4.72-8.65-2.44-16.41l19.82-71c.15-.53.33-1.06.53-1.58a.38.38 0 000-.15 14.82 14.82 0 01-.53-1.59l-19.84-71.45c-2.15-7.61.2-12.93 2.56-16.06a16.83 16.83 0 0113.6-6.7H52c10.23 0 20.16 4.59 26 12l34.57 42.05 97.32-1.44-64.44-142A16 16 0 01160 48h26.91a25 25 0 0119.35 9.8l125.05 152 57.77-1.52c4.23-.23 15.95-.31 18.66-.31C463 208 496 225.94 496 256c0 9.46-3.78 27-29.07 38.16-14.93 6.6-34.85 9.94-59.21 9.94-2.68 0-14.37-.08-18.66-.31l-57.76-1.54-125.36 152a25 25 0 01-19.32 9.75z"/>',
@@ -3823,7 +3906,12 @@
         `<optgroup label="Staff">${STAFF.map((n) => `<option>${n}</option>`).join("")}</optgroup><optgroup label="Officers">${OFFS.map((n) => `<option>${n}</option>`).join("")}</optgroup>`;
       ["fp", "fr", "fs"].forEach((i) => ($(i).onchange = dash));
       function tab(t) {
-        ["A", "D", "F", "U", "H", "L", "E", "T", "B"].forEach((k) => {
+        if (!canTab(t)) {
+          t = firstTab();
+          if (!t) return;
+        }
+        CT = t;
+        ["A", "D", "F", "U", "H", "L", "E", "T", "B", "X"].forEach((k) => {
           $("p" + k).style.display = k == t ? "" : "none";
           $("n" + k).className = k == t ? "on" : "";
         });
@@ -3833,12 +3921,13 @@
         if (t == "L") leaves();
         if (t == "U") uOpen();
         if (t == "H") hol();
+        if (t == "X") usr();
         if (t == "F") sch();
         if (t == "A") hist();
         if (t == "E") emp();
         if (t == "T") att();
       }
-      ["A", "D", "F", "U", "H", "L", "E", "T", "B"].forEach(
+      ["A", "D", "F", "U", "H", "L", "E", "T", "B", "X"].forEach(
         (k) => ($("n" + k).onclick = () => tab(k)),
       );
       $("mb").onclick = () => $("sb").classList.toggle("o");
@@ -5602,7 +5691,12 @@
       };
       function dflt(e, d) {
         const lv = LV.find((l) => l.n == ref(e) && l.f <= d && d <= l.t);
-        if (lv) return lv.type == "Off Day" ? "O" : "L";
+        if (lv)
+          return lv.type == "Off Day"
+            ? "O"
+            : lv.type == "Duty Travel"
+              ? "P"
+              : "L";
         {
           const r = ROS[d.slice(0, 7)],
             c = r && r[e.name] && r[e.name][+d.slice(8) - 1];
@@ -6377,6 +6471,7 @@
           SLM: "SLM",
           "Off Day": "OFF",
           Release: "REL",
+          "Duty Travel": "DT",
         };
       let hpd = "month",
         href = fd(new Date());
@@ -7235,6 +7330,7 @@
         SLM: ["SLM", "#DCC8EE"],
         "Off Day": ["OFF", "#E2DED9"],
         Release: ["REL", "#FBD9B5"],
+        "Duty Travel": ["DT", "#BFE3E0"],
       };
       function ldb() {
         const td = fd(new Date()),
@@ -7402,7 +7498,7 @@
           ["SLM", "SLM", "Yes", "Yes", "Calendar days"],
         ];
         $("lpo").innerHTML =
-          `<table><tr><th>Code</th><th>Leave type</th><th>Days per year</th><th>Deducted from balance</th><th>Form tracked</th><th>How days are counted</th></tr>${rows.map((r) => `<tr><td><b>${r[1]}</b></td><td style="text-align:left">${r[0]}${r[0] == "Annual Leave" ? " (chit from HR)" : ""}</td><td><input type="number" min="0" data-pe="${r[0]}" value="${POL.ent[r[0]]}" style="height:32px;width:80px"></td><td>${r[2]}</td><td>${r[3]}</td><td style="text-align:left">${r[4]}</td></tr>`).join("")}<tr><td><b>OFF</b></td><td style="text-align:left">Off Day</td><td>1 per week</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr><tr><td><b>REL</b></td><td style="text-align:left">Release</td><td>Unlimited</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr></table>`;
+          `<table><tr><th>Code</th><th>Leave type</th><th>Days per year</th><th>Deducted from balance</th><th>Form tracked</th><th>How days are counted</th></tr>${rows.map((r) => `<tr><td><b>${r[1]}</b></td><td style="text-align:left">${r[0]}${r[0] == "Annual Leave" ? " (chit from HR)" : ""}</td><td><input type="number" min="0" data-pe="${r[0]}" value="${POL.ent[r[0]]}" style="height:32px;width:80px"></td><td>${r[2]}</td><td>${r[3]}</td><td style="text-align:left">${r[4]}</td></tr>`).join("")}<tr><td><b>OFF</b></td><td style="text-align:left">Off Day</td><td>1 per week</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr><tr><td><b>REL</b></td><td style="text-align:left">Release</td><td>Unlimited</td><td>No</td><td>No</td><td style="text-align:left">Recorded only</td></tr><tr><td><b>DT</b></td><td style="text-align:left">Duty Travel</td><td>Unlimited</td><td>No</td><td>No</td><td style="text-align:left">Recorded only. Shown as Present in attendance</td></tr></table>`;
         $("lpp2").innerHTML =
           `<div><label>Long service after (years)</label><input type="number" min="0" id="pls" value="${POL.svcYears}"></div><div><label>Annual Leave days after long service</label><input type="number" min="0" id="plsa" value="${POL.svcAnnual}"></div><div><label>Minimum Ground Staff available per day</label><input type="number" min="0" id="pmin" value="${POL.minStaff}"></div>`;
       }
@@ -7559,8 +7655,9 @@
         document.body.style.overflow = "";
       }
       function lgUser(u) {
-        $("sbun").textContent = u.u;
+        $("sbun").textContent = u.name || u.u;
         $("sbur").textContent = u.role;
+        lgAccess(u);
       }
       async function lgGo() {
         const fl = JSON.parse(sessionStorage.getItem("ta_fail") || "{}"),
@@ -7600,6 +7697,11 @@
           $("lgp").focus();
           return;
         }
+        if (u.off) {
+          $("lge").textContent =
+            "This account is disabled. Please contact the Super Admin.";
+          return;
+        }
         sessionStorage.removeItem("ta_fail");
         const se = JSON.stringify({ u: u.u, role: u.role, t: now });
         try {
@@ -7610,6 +7712,7 @@
         lgHide();
         $("lgu").value = "";
         $("lgp").value = "";
+        if (u.must) forcePw();
       }
       $("lgb").onclick = lgGo;
       [$("lgu"), $("lgp")].forEach(
@@ -7676,6 +7779,8 @@
         x.salt = salt;
         x.fh = fbh(t);
         x.hash = hasSub() ? await sha(t) : "";
+        x.must = false;
+        $("pwx").style.display = "";
         svU();
         $("pwmod").style.display = "none";
         alert("Password changed.");
@@ -7691,12 +7796,220 @@
               return null;
             }
           })(),
-          u = se && USERS.find((a) => a.u == se.u && a.role == se.role);
+          u =
+            se && USERS.find((a) => a.u == se.u && a.role == se.role && !a.off);
         if (u) {
           lgUser(u);
           lgHide();
         } else lgShow();
       }
+
+      const MN = [
+          ["D", "Dashboard"],
+          ["F", "Flight Schedule"],
+          ["L", "Leave Management"],
+          ["A", "Task Assignment"],
+          ["U", "Duty Time"],
+          ["E", "Employee"],
+          ["T", "Time & Attendance"],
+          ["H", "Holidays"],
+          ["B", "Data Backup"],
+        ],
+        MID = {
+          D: "nD",
+          F: "nF",
+          L: "nL",
+          A: "nA",
+          U: "nU",
+          E: "nE",
+          T: "nT",
+          H: "nH",
+          B: "nB",
+        },
+        PRE = {
+          Admin: ["D", "F", "L", "A", "U", "E", "T", "H", "B"],
+          User: ["D", "F", "A", "U"],
+        },
+        isSA = () => CUR && CUR.role == "Super Admin";
+      const canTab = (t) =>
+          !CUR || isSA() || (t != "X" && (CUR.menus || []).includes(t)),
+        firstTab = () => {
+          const f = MN.map((m) => m[0]).find((k) => canTab(k));
+          return f || "";
+        };
+      function lgAccess(u) {
+        CUR = u;
+        Object.keys(MID).forEach(
+          (k) => ($(MID[k]).style.display = canTab(k) ? "" : "none"),
+        );
+        $("nX").style.display = isSA() ? "" : "none";
+        if (!canTab(CT)) {
+          const f = firstTab();
+          if (f) tab(f);
+        }
+      }
+      function forcePw() {
+        $("sbpw").onclick();
+        $("pwx").style.display = "none";
+        $("pwe").textContent = "Please choose a new password to continue.";
+      }
+      let uxE = null;
+      function uxChecks(sel) {
+        $("uxm").innerHTML = MN.map(
+          ([k, l]) =>
+            `<label style="display:inline-flex;align-items:center;gap:6px;margin:0 14px 8px 0;font-weight:500"><input type="checkbox" data-mk="${k}" style="width:16px;height:16px" ${sel.includes(k) ? "checked" : ""}> ${l}</label>`,
+        ).join("");
+      }
+      function uxClear() {
+        uxE = null;
+        $("uxh").textContent = "Create user";
+        $("uxs").textContent = "Create user";
+        $("uxc").style.display = "none";
+        ["uxn", "uxu", "uxp"].forEach((i) => ($(i).value = ""));
+        $("uxu").disabled = false;
+        $("uxp").disabled = false;
+        $("uxpl").textContent = "Temporary password * (min 6 characters)";
+        $("uxr").value = "User";
+        uxChecks(PRE.User);
+        $("uxe").textContent = "";
+      }
+      function usr() {
+        const ok = isSA();
+        document.querySelector("#pX .card").style.display = ok ? "" : "none";
+        if (!ok) {
+          $("uxl").innerHTML =
+            '<p class="lic">Only the Super Admin can manage users.</p>';
+          return;
+        }
+        if (!$("uxm").children.length) uxChecks(PRE.User);
+        $("uxl").innerHTML =
+          `<table><tr><th>Name</th><th>Username</th><th>Role</th><th>Menu access</th><th>Status</th><th></th></tr>${USERS.map(
+            (x) => {
+              const sa = x.role == "Super Admin",
+                me = CUR && x.u == CUR.u;
+              return `<tr><td style="text-align:left">${esc(x.name || x.u)}</td><td>${esc(x.u)}</td><td>${esc(x.role)}</td><td style="text-align:left;max-width:260px;white-space:normal">${sa ? "All menus + User Management" : esc((x.menus || []).map((k) => (MN.find((m) => m[0] == k) || [0, k])[1]).join(", ") || "None")}</td><td><span class="fb ${x.off ? "no" : "ok"}">${x.off ? "Disabled" : "Active"}</span>${x.must ? '<br><small class="lic">Must change password</small>' : ""}</td><td style="white-space:nowrap">${sa ? (me ? "You" : "—") : `<button class="del" data-ue="${esc(x.u)}">Edit</button> <button class="del" data-ur="${esc(x.u)}">Reset password</button> <button class="del" data-ut="${esc(x.u)}">${x.off ? "Enable" : "Disable"}</button> <button class="del" data-ud="${esc(x.u)}" style="color:#E04B33">Delete</button>`}</td></tr>`;
+            },
+          ).join("")}</table>`;
+      }
+      $("uxr").onchange = () => {
+        if (!uxE) uxChecks(PRE[$("uxr").value]);
+      };
+      $("uxc").onclick = uxClear;
+      $("uxs").onclick = async () => {
+        if (!isSA()) return;
+        const u = $("uxu").value.trim(),
+          pw = $("uxp").value,
+          nm = $("uxn").value.trim(),
+          menus = [...document.querySelectorAll("#uxm input:checked")].map(
+            (c) => c.dataset.mk,
+          );
+        if (uxE) {
+          const x = USERS.find((a) => a.u == uxE);
+          if (!x || x.role == "Super Admin") return;
+          x.name = nm;
+          x.role = $("uxr").value;
+          x.menus = menus;
+          svU();
+          uxClear();
+          usr();
+          return;
+        }
+        if (!/^[A-Za-z0-9._-]{3,30}$/.test(u)) {
+          $("uxe").textContent =
+            "Username must be 3 to 30 characters: letters, numbers, dot, dash or underscore.";
+          return;
+        }
+        if (USERS.some((a) => a.u.toLowerCase() == u.toLowerCase())) {
+          $("uxe").textContent = "That username is already taken.";
+          return;
+        }
+        if (pw.length < 6) {
+          $("uxe").textContent =
+            "The temporary password must be at least 6 characters.";
+          return;
+        }
+        const salt = Math.random().toString(36).slice(2, 10),
+          t = salt + ":" + pw;
+        USERS.push({
+          u,
+          name: nm,
+          role: $("uxr").value,
+          salt,
+          fh: fbh(t),
+          hash: hasSub() ? await sha(t) : "",
+          menus,
+          off: false,
+          must: true,
+          created: new Date().toISOString(),
+        });
+        svU();
+        uxClear();
+        usr();
+      };
+      $("uxl").onclick = (e) => {
+        if (!isSA()) return;
+        const b = e.target.closest("[data-ue],[data-ur],[data-ut],[data-ud]");
+        if (!b) return;
+        const k = b.dataset.ue || b.dataset.ur || b.dataset.ut || b.dataset.ud,
+          x = USERS.find((a) => a.u == k);
+        if (
+          !x ||
+          x.role == "Super Admin" ||
+          (CUR && x.u == CUR.u && !b.dataset.ur)
+        )
+          return;
+        if (b.dataset.ue) {
+          uxE = k;
+          $("uxh").textContent = "Edit user · " + k;
+          $("uxs").textContent = "Save changes";
+          $("uxc").style.display = "";
+          $("uxn").value = x.name || "";
+          $("uxu").value = x.u;
+          $("uxu").disabled = true;
+          $("uxp").value = "";
+          $("uxp").disabled = true;
+          $("uxpl").textContent = "Password (use Reset password to change)";
+          $("uxr").value = x.role;
+          uxChecks(x.menus || []);
+          $("uxe").textContent = "";
+          window.scrollTo(0, 0);
+        } else if (b.dataset.ur) {
+          rsU = k;
+          $("rsh").textContent = "Reset password · " + k;
+          $("rsp").value = "";
+          $("rse").textContent = "";
+          $("rsmod").style.display = "block";
+        } else if (b.dataset.ut) {
+          x.off = !x.off;
+          svU();
+          usr();
+        } else if (b.dataset.ud && confirm("Delete user " + k + "?")) {
+          USERS = USERS.filter((a) => a.u != k);
+          svU();
+          usr();
+        }
+      };
+      let rsU = null;
+      $("rsx").onclick = () => ($("rsmod").style.display = "none");
+      $("rsb").onclick = async () => {
+        if (!isSA()) return;
+        const x = USERS.find((a) => a.u == rsU),
+          pw = $("rsp").value;
+        if (!x || x.role == "Super Admin") return;
+        if (pw.length < 6) {
+          $("rse").textContent = "The password must be at least 6 characters.";
+          return;
+        }
+        const salt = Math.random().toString(36).slice(2, 10),
+          t = salt + ":" + pw;
+        x.salt = salt;
+        x.fh = fbh(t);
+        x.hash = hasSub() ? await sha(t) : "";
+        x.must = true;
+        svU();
+        $("rsmod").style.display = "none";
+        usr();
+      };
     </script>
   </body>
 </html>
